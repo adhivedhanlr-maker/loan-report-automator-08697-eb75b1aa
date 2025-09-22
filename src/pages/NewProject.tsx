@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
@@ -104,28 +104,85 @@ const steps = [
   { id: 4, title: "Generate Report", description: "Create comprehensive project report" },
 ];
 
+// localStorage utility functions
+const PROJECT_DATA_KEY = 'loanApplicationProjectData';
+const CURRENT_STEP_KEY = 'loanApplicationCurrentStep';
+
+const saveToLocalStorage = (data: Partial<ProjectData>, step: number) => {
+  try {
+    localStorage.setItem(PROJECT_DATA_KEY, JSON.stringify(data));
+    localStorage.setItem(CURRENT_STEP_KEY, step.toString());
+  } catch (error) {
+    console.error('Failed to save to localStorage:', error);
+  }
+};
+
+const loadFromLocalStorage = (): { data: Partial<ProjectData>; step: number } => {
+  try {
+    const data = localStorage.getItem(PROJECT_DATA_KEY);
+    const step = localStorage.getItem(CURRENT_STEP_KEY);
+    return {
+      data: data ? JSON.parse(data) : {},
+      step: step ? parseInt(step) : 1
+    };
+  } catch (error) {
+    console.error('Failed to load from localStorage:', error);
+    return { data: {}, step: 1 };
+  }
+};
+
+const clearLocalStorage = () => {
+  try {
+    localStorage.removeItem(PROJECT_DATA_KEY);
+    localStorage.removeItem(CURRENT_STEP_KEY);
+  } catch (error) {
+    console.error('Failed to clear localStorage:', error);
+  }
+};
+
 const NewProject = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [projectData, setProjectData] = useState<Partial<ProjectData>>({});
 
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    const { data, step } = loadFromLocalStorage();
+    if (Object.keys(data).length > 0) {
+      setProjectData(data);
+      setCurrentStep(step);
+    }
+  }, []);
+
   const handleNext = () => {
     if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      saveToLocalStorage(projectData, newStep);
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      const newStep = currentStep - 1;
+      setCurrentStep(newStep);
+      saveToLocalStorage(projectData, newStep);
     }
   };
 
   const updateProjectData = (stepData: any, step: keyof ProjectData) => {
-    setProjectData(prev => ({
-      ...prev,
+    const updatedData = {
+      ...projectData,
       [step]: stepData
-    }));
+    };
+    setProjectData(updatedData);
+    saveToLocalStorage(updatedData, currentStep);
+  };
+
+  const handleClearData = () => {
+    clearLocalStorage();
+    setProjectData({});
+    setCurrentStep(1);
   };
 
   return (
@@ -133,20 +190,34 @@ const NewProject = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
+          <div className="flex justify-between items-start mb-4">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/')}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+            
+            {Object.keys(projectData).length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={handleClearData}
+                size="sm"
+              >
+                Clear Saved Data
+              </Button>
+            )}
+          </div>
           
           <h1 className="text-3xl font-bold text-foreground mb-2">
             New Loan Application Project
           </h1>
           <p className="text-muted-foreground">
             Create a comprehensive project report for loan approval
+            {Object.keys(projectData).length > 0 && (
+              <span className="text-success ml-2">• Data saved locally</span>
+            )}
           </p>
         </div>
 
