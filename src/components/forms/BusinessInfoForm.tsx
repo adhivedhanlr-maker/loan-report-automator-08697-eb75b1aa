@@ -79,7 +79,7 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="shopName">Name of Shop</Label>
+            <Label htmlFor="shopName">Name of Shop *</Label>
             <Input
               id="shopName"
               value={formData.shopName}
@@ -96,7 +96,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.buildingLandmark}
               onChange={(e) => handleInputChange('buildingLandmark', e.target.value)}
               placeholder="Near Post Office, Location"
-              required
             />
           </div>
 
@@ -128,7 +127,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.monthlyRent || ''}
               onChange={(e) => handleInputChange('monthlyRent', parseInt(e.target.value) || 0)}
               placeholder="5500"
-              required
             />
           </div>
 
@@ -139,7 +137,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.village}
               onChange={(e) => handleInputChange('village', e.target.value)}
               placeholder="Village Name"
-              required
             />
           </div>
 
@@ -150,7 +147,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.municipality}
               onChange={(e) => handleInputChange('municipality', e.target.value)}
               placeholder="Municipality"
-              required
             />
           </div>
 
@@ -161,7 +157,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.postOffice}
               onChange={(e) => handleInputChange('postOffice', e.target.value)}
               placeholder="Post Office"
-              required
             />
           </div>
 
@@ -172,7 +167,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.taluk}
               onChange={(e) => handleInputChange('taluk', e.target.value)}
               placeholder="Taluk"
-              required
             />
           </div>
 
@@ -183,7 +177,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.block}
               onChange={(e) => handleInputChange('block', e.target.value)}
               placeholder="Block"
-              required
             />
           </div>
 
@@ -194,7 +187,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.district}
               onChange={(e) => handleInputChange('district', e.target.value)}
               placeholder="District"
-              required
             />
           </div>
 
@@ -206,7 +198,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               onChange={(e) => handleInputChange('pinCode', e.target.value)}
               placeholder="671314"
               maxLength={6}
-              required
             />
           </div>
         </CardContent>
@@ -239,7 +230,7 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="proprietorName">Name of Proprietor</Label>
+            <Label htmlFor="proprietorName">Name of Proprietor *</Label>
             <Input
               id="proprietorName"
               value={formData.proprietorName}
@@ -256,7 +247,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.fatherName}
               onChange={(e) => handleInputChange('fatherName', e.target.value)}
               placeholder="Father's Name"
-              required
             />
           </div>
 
@@ -267,12 +257,11 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.houseName}
               onChange={(e) => handleInputChange('houseName', e.target.value)}
               placeholder="House Name"
-              required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="contactNumber">Contact Number</Label>
+            <Label htmlFor="contactNumber">Contact Number *</Label>
             <Input
               id="contactNumber"
               value={formData.contactNumber}
@@ -290,7 +279,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               type="date"
               value={formData.dateOfBirth}
               onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-              required
             />
           </div>
 
@@ -302,7 +290,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               onChange={(e) => handleInputChange('panNo', e.target.value)}
               placeholder="EVOPS0533P"
               maxLength={10}
-              required
             />
           </div>
 
@@ -314,7 +301,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               onChange={(e) => handleInputChange('aadhaarNo', e.target.value)}
               placeholder="3616 3601 1234"
               maxLength={14}
-              required
             />
           </div>
         </CardContent>
@@ -361,7 +347,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.qualification}
               onChange={(e) => handleInputChange('qualification', e.target.value)}
               placeholder="SSLC"
-              required
             />
           </div>
 
@@ -373,12 +358,11 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.experience || ''}
               onChange={(e) => handleInputChange('experience', parseInt(e.target.value) || 0)}
               placeholder="12"
-              required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="proposedBusiness">Proposed Business</Label>
+            <Label htmlFor="proposedBusiness">Proposed Business *</Label>
             <Input
               id="proposedBusiness"
               value={formData.proposedBusiness}
@@ -411,7 +395,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.loanYears || ''}
               onChange={(e) => handleInputChange('loanYears', parseInt(e.target.value) || 0)}
               placeholder="5"
-              required
             />
           </div>
 
@@ -422,7 +405,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.bankName}
               onChange={(e) => handleInputChange('bankName', e.target.value)}
               placeholder="FEDERAL BANK"
-              required
             />
           </div>
 
@@ -433,7 +415,6 @@ export const BusinessInfoForm = ({ data, onUpdate, onNext }: BusinessInfoFormPro
               value={formData.bankBranch}
               onChange={(e) => handleInputChange('bankBranch', e.target.value)}
               placeholder="Branch Name"
-              required
             />
           </div>
         </CardContent>
