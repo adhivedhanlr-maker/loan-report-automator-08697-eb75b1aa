@@ -49,11 +49,36 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   };
 
   const handleSaveAndContinue = () => {
-    navigate('/');
-    toast({
-      title: "Project Saved",
-      description: "Your loan application project has been saved successfully.",
-    });
+    // Save project to localStorage
+    const savedProject = {
+      id: Date.now().toString(),
+      name: projectData.businessInfo?.shopName || 'Untitled Project',
+      data: projectData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    try {
+      const existingProjects = JSON.parse(localStorage.getItem('savedLoanProjects') || '[]');
+      const updatedProjects = [savedProject, ...existingProjects];
+      localStorage.setItem('savedLoanProjects', JSON.stringify(updatedProjects));
+      
+      // Clear the current project data since it's now saved
+      localStorage.removeItem('loanApplicationProjectData');
+      localStorage.removeItem('loanApplicationCurrentStep');
+      
+      navigate('/');
+      toast({
+        title: "Project Saved Successfully!",
+        description: "Your loan application project has been saved and can be accessed from the dashboard.",
+      });
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "There was an error saving your project. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

@@ -50,34 +50,45 @@ export const FinancialProjectionsForm = ({ data, onUpdate, onNext, onBack }: Fin
   }, [data]);
 
   useEffect(() => {
-    // Auto-calculate amounts for sales projections
+    // Auto-calculate amounts for sales projections when user changes values
     const updatedSales = { ...salesProjections };
     Object.keys(updatedSales).forEach(key => {
       const item = updatedSales[key as keyof typeof updatedSales];
       item.amount = item.rate * item.qty;
     });
     
+    setSalesProjections(updatedSales);
+  }, [monthlyExpenses]); // Remove onUpdate from here to prevent infinite loop
+
+  const handleExpenseChange = (field: keyof typeof monthlyExpenses, value: number) => {
+    const updatedExpenses = { ...monthlyExpenses, [field]: value };
+    setMonthlyExpenses(updatedExpenses);
+    
+    // Update parent with new data
+    const projections: FinancialProjections = {
+      monthlyExpenses: updatedExpenses,
+      salesProjections
+    };
+    onUpdate(projections);
+  };
+
+  const handleSalesChange = (category: keyof typeof salesProjections, field: 'rate' | 'qty', value: number) => {
+    const updatedSales = {
+      ...salesProjections,
+      [category]: {
+        ...salesProjections[category],
+        [field]: value,
+        amount: field === 'rate' ? value * salesProjections[category].qty : salesProjections[category].rate * value
+      }
+    };
+    setSalesProjections(updatedSales);
+    
+    // Update parent with new data
     const projections: FinancialProjections = {
       monthlyExpenses,
       salesProjections: updatedSales
     };
-    
     onUpdate(projections);
-  }, [monthlyExpenses, salesProjections]);
-
-  const handleExpenseChange = (field: keyof typeof monthlyExpenses, value: number) => {
-    setMonthlyExpenses(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSalesChange = (category: keyof typeof salesProjections, field: 'rate' | 'qty', value: number) => {
-    setSalesProjections(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [field]: value,
-        amount: field === 'rate' ? value * prev[category].qty : prev[category].rate * value
-      }
-    }));
   };
 
   const totalMonthlyExpenses = Object.values(monthlyExpenses).reduce((sum, expense) => sum + expense, 0);

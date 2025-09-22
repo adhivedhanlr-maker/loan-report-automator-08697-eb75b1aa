@@ -1,10 +1,38 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Calculator, FileText, BarChart3, TrendingUp } from "lucide-react";
+import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { ProjectData } from "./NewProject";
+
+// localStorage utility for saved projects
+const SAVED_PROJECTS_KEY = 'savedLoanProjects';
+
+interface SavedProject {
+  id: string;
+  name: string;
+  data: ProjectData;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const getSavedProjects = (): SavedProject[] => {
+  try {
+    const projects = localStorage.getItem(SAVED_PROJECTS_KEY);
+    return projects ? JSON.parse(projects) : [];
+  } catch (error) {
+    console.error('Failed to load saved projects:', error);
+    return [];
+  }
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
+
+  useEffect(() => {
+    setSavedProjects(getSavedProjects());
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
@@ -75,15 +103,55 @@ const Dashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-lg mb-2">No projects yet</p>
-              <p className="mb-4">Create your first loan application project to get started</p>
-              <Button onClick={() => navigate('/new-project')} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground">
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Project
-              </Button>
-            </div>
+            {savedProjects.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p className="text-lg mb-2">No projects yet</p>
+                <p className="mb-4">Create your first loan application project to get started</p>
+                <Button onClick={() => navigate('/new-project')} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Project
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {savedProjects.slice(0, 5).map((project) => (
+                  <div key={project.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground">{project.name}</h3>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(project.createdAt).toLocaleDateString()}
+                        </span>
+                        <span>Total Project Cost: ₹{project.data.projectCost?.totalProjectCost?.toLocaleString() || '0'}</span>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        // Load project data and navigate to continue editing
+                        localStorage.setItem('loanApplicationProjectData', JSON.stringify(project.data));
+                        localStorage.setItem('loanApplicationCurrentStep', '4'); // Go to report generation
+                        navigate('/new-project');
+                      }}
+                    >
+                      View Report
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                ))}
+                
+                {savedProjects.length > 5 && (
+                  <div className="text-center pt-4">
+                    <Button variant="outline" onClick={() => {/* TODO: Navigate to full reports page */}}>
+                      View All Projects ({savedProjects.length})
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
