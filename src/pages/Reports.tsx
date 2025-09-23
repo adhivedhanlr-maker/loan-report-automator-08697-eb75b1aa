@@ -118,16 +118,16 @@ const ReportsPage = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-lg">{project.name}</CardTitle>
-                      <CardDescription>
-                        <div className="space-y-1 mt-2">
-                          <p><span className="font-medium">Proprietor:</span> {project.data.businessInfo?.proprietorName || 'N/A'}</p>
-                          <p><span className="font-medium">Business:</span> {project.data.businessInfo?.proposedBusiness || 'N/A'}</p>
-                          <p className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            Created: {new Date(project.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </CardDescription>
+                       <CardDescription>
+                         <div className="space-y-1 mt-2">
+                           <div><span className="font-medium">Proprietor:</span> {project.data.businessInfo?.proprietorName || 'N/A'}</div>
+                           <div><span className="font-medium">Business:</span> {project.data.businessInfo?.proposedBusiness || 'N/A'}</div>
+                           <div className="flex items-center gap-1">
+                             <Calendar className="h-3 w-3" />
+                             Created: {new Date(project.createdAt).toLocaleDateString()}
+                           </div>
+                         </div>
+                       </CardDescription>
                     </div>
                     <div className="flex gap-2">
                       <Button
