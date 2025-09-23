@@ -7,6 +7,8 @@ import { ArrowLeft, FileText, Download, Calculator, TrendingUp, CheckCircle, Ale
 import { ProjectData } from "@/pages/NewProject";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 interface ReportGenerationProps {
   projectData: ProjectData;
@@ -38,14 +40,54 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   const handleGenerateReport = async () => {
     setIsGenerating(true);
     
-    // Simulate report generation
-    setTimeout(() => {
-      setIsGenerating(false);
-      toast({
-        title: "Report Generated Successfully!",
-        description: "Your comprehensive loan application report is ready.",
+    try {
+      // Create PDF from the report content
+      const reportElement = document.getElementById('loan-report');
+      if (!reportElement) {
+        throw new Error('Report element not found');
+      }
+
+      const canvas = await html2canvas(reportElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
       });
-    }, 2000);
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210;
+      const pageHeight = 295;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`${projectData.businessInfo.shopName || 'Loan'}_Application_Report.pdf`);
+      
+      toast({
+        title: "PDF Generated Successfully!",
+        description: "Your loan application report has been downloaded.",
+      });
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      toast({
+        title: "PDF Generation Failed",
+        description: "There was an error generating the PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleSaveAndContinue = () => {
@@ -82,7 +124,7 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   };
 
   return (
-    <div className="space-y-6">
+    <div id="loan-report" className="space-y-6">
       {/* Project Overview */}
       <Card>
         <CardHeader>

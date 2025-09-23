@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight } from "lucide-react";
+import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ProjectData } from "./NewProject";
@@ -26,6 +26,18 @@ const getSavedProjects = (): SavedProject[] => {
   }
 };
 
+const deleteProject = (projectId: string): SavedProject[] => {
+  try {
+    const projects = getSavedProjects();
+    const updatedProjects = projects.filter(p => p.id !== projectId);
+    localStorage.setItem(SAVED_PROJECTS_KEY, JSON.stringify(updatedProjects));
+    return updatedProjects;
+  } catch (error) {
+    console.error('Failed to delete project:', error);
+    return getSavedProjects();
+  }
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
@@ -33,6 +45,11 @@ const Dashboard = () => {
   useEffect(() => {
     setSavedProjects(getSavedProjects());
   }, []);
+
+  const handleDeleteProject = (projectId: string) => {
+    const updatedProjects = deleteProject(projectId);
+    setSavedProjects(updatedProjects);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
@@ -60,7 +77,8 @@ const Dashboard = () => {
             </CardHeader>
           </Card>
 
-          <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group">
+          <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
+                onClick={() => navigate('/calculator')}>
             <CardHeader className="text-center pb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-success to-success-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                 <Calculator className="h-6 w-6 text-success-foreground" />
@@ -70,7 +88,8 @@ const Dashboard = () => {
             </CardHeader>
           </Card>
 
-          <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group">
+          <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
+                onClick={() => navigate('/reports')}>
             <CardHeader className="text-center pb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-warning to-amber-400 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                 <FileText className="h-6 w-6 text-warning-foreground" />
@@ -80,7 +99,8 @@ const Dashboard = () => {
             </CardHeader>
           </Card>
 
-          <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group">
+          <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
+                onClick={() => navigate('/analytics')}>
             <CardHeader className="text-center pb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                 <BarChart3 className="h-6 w-6 text-white" />
@@ -127,19 +147,34 @@ const Dashboard = () => {
                         <span>Total Project Cost: ₹{project.data.projectCost?.totalProjectCost?.toLocaleString() || '0'}</span>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => {
-                        // Load project data and navigate to continue editing
-                        localStorage.setItem('loanApplicationProjectData', JSON.stringify(project.data));
-                        localStorage.setItem('loanApplicationCurrentStep', '4'); // Go to report generation
-                        navigate('/new-project');
-                      }}
-                    >
-                      View Report
-                      <ArrowRight className="h-3 w-3 ml-1" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          // Load project data and navigate to continue editing
+                          localStorage.setItem('loanApplicationProjectData', JSON.stringify(project.data));
+                          localStorage.setItem('loanApplicationCurrentStep', '4'); // Go to report generation
+                          navigate('/new-project');
+                        }}
+                      >
+                        View Report
+                        <ArrowRight className="h-3 w-3 ml-1" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm('Are you sure you want to delete this project?')) {
+                            handleDeleteProject(project.id);
+                          }
+                        }}
+                        className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
                 
