@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2 } from "lucide-react";
+import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ProjectData } from "./NewProject";
@@ -55,13 +55,23 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            Loan Application System
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Professional project reports for loan approval requests
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-foreground mb-2">
+              Loan Application System
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Professional project reports for loan approval requests
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/settings')}
+            className="flex items-center gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Settings
+          </Button>
         </div>
 
         {/* Quick Actions */}
