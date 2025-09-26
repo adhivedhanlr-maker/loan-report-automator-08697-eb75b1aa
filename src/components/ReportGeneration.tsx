@@ -22,8 +22,8 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
 
   // Calculate key financial metrics
   const totalMonthlyExpenses = Object.values(projectData.financialProjections.monthlyExpenses).reduce((sum, expense) => sum + expense, 0);
-  const totalQuarterlySales = Object.values(projectData.financialProjections.salesProjections).reduce((sum, item) => sum + item.amount, 0);
-  const monthlySales = totalQuarterlySales / 3;
+  const totalSalesAmount = Object.values(projectData.financialProjections.salesProjections).reduce((sum, item) => sum + item.amount, 0);
+  const monthlySales = totalSalesAmount; // This is already the total monthly sales
   const monthlyProfit = monthlySales - totalMonthlyExpenses;
   const annualProfit = monthlyProfit * 12;
   
@@ -50,25 +50,31 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
       const canvas = await html2canvas(reportElement, {
         scale: 2,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        height: reportElement.scrollHeight,
+        width: reportElement.scrollWidth
       });
 
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      const imgWidth = 210;
-      const pageHeight = 295;
+      const imgWidth = 190; // Leave margins
+      const pageHeight = 277; // A4 height minus margins
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
-      let position = 0;
+      let position = 10; // Top margin
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
+      // Add subsequent pages if needed
       while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
+        position = heightLeft - imgHeight + 10;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
 
@@ -124,9 +130,15 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   };
 
   return (
-    <div id="loan-report" className="space-y-6">
+    <div id="loan-report" className="max-w-4xl mx-auto space-y-6 p-6 bg-white">
+      {/* PDF Header */}
+      <div className="text-center border-b pb-4 mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">LOAN APPLICATION REPORT</h1>
+        <p className="text-sm text-gray-600 mt-2">Generated on {new Date().toLocaleDateString('en-IN')}</p>
+      </div>
+
       {/* Project Overview */}
-      <Card>
+      <Card className="print:shadow-none print:border-gray-300">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
