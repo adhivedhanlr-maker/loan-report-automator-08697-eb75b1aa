@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, FileText, Download, Calculator, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
-import { ProjectData } from "@/pages/NewProject";
+import { ProjectData } from "@/types/LegacyTypes";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, DollarSign, TrendingUp, Calculator } from "lucide-react";
-import { FinancialProjections } from "@/pages/NewProject";
+import { FinancialProjections } from "@/types/LegacyTypes";
 import { useToast } from "@/hooks/use-toast";
 
 interface FinancialProjectionsFormProps {

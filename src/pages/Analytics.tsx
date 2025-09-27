@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BarChart3, TrendingUp, DollarSign, FileText, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ProjectData } from "./NewProject";
+import { ProjectData } from "@/types/LegacyTypes";
 
 interface SavedProject {
   id: string;

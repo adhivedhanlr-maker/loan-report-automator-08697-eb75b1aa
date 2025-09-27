@@ -1,0 +1,3712 @@
+{
+  "meta": {
+    "file_analyzed": "shas_printing_analysis.json",
+    "generated_at": "2025-09-27T18:03:17.154265",
+    "sheets_count": 7,
+    "warning": "This mapping is auto-generated; please verify scheme-specific rules and adjust settings as needed (settings_schema)."
+  },
+  "settings_schema": [
+    {
+      "id": "default_gst_rate",
+      "label": "Default GST rate (%)",
+      "type": "number",
+      "default": 18,
+      "ui": "number_input"
+    },
+    {
+      "id": "compute_missing_amounts",
+      "label": "Compute missing amounts (=rate*qty)",
+      "type": "boolean",
+      "default": true,
+      "ui": "toggle"
+    },
+    {
+      "id": "min_dscr_threshold",
+      "label": "Min DSCR for auto-approve",
+      "type": "number",
+      "default": 1.25,
+      "ui": "number_input"
+    },
+    {
+      "id": "mask_sensitive_preview",
+      "label": "Mask PAN/Aadhaar in preview",
+      "type": "boolean",
+      "default": true,
+      "ui": "toggle"
+    }
+  ],
+  "inputs": [],
+  "tables": [
+    {
+      "id": "tbl_DATA INPUT _2",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A2",
+      "header_row": 2,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "NAME OF BUILDING & LAND MARK /PLACE ",
+          "NEAR POST OFFICE, NILESHWAR"
+        ],
+        [
+          "BUILDING NO. ",
+          "W-III/1022"
+        ],
+        [
+          "GST  NO. ",
+          null
+        ],
+        [
+          "MONTHLY RENT OF SHOP ",
+          5500
+        ],
+        [
+          "VILLAGE ",
+          "NILESHWAR"
+        ],
+        [
+          "MUNICIPALITY",
+          "NILESHWAR"
+        ],
+        [
+          "POST OFFICE ",
+          "NILESHWAR"
+        ],
+        [
+          "TALUK ",
+          "HOSDURG"
+        ],
+        [
+          "BLOCK ",
+          "NILESHWAR"
+        ],
+        [
+          "DISTRICT ",
+          "KASARAGOD"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _3",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A3",
+      "header_row": 3,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "BUILDING NO. ",
+          "W-III/1022"
+        ],
+        [
+          "GST  NO. ",
+          null
+        ],
+        [
+          "MONTHLY RENT OF SHOP ",
+          5500
+        ],
+        [
+          "VILLAGE ",
+          "NILESHWAR"
+        ],
+        [
+          "MUNICIPALITY",
+          "NILESHWAR"
+        ],
+        [
+          "POST OFFICE ",
+          "NILESHWAR"
+        ],
+        [
+          "TALUK ",
+          "HOSDURG"
+        ],
+        [
+          "BLOCK ",
+          "NILESHWAR"
+        ],
+        [
+          "DISTRICT ",
+          "KASARAGOD"
+        ],
+        [
+          "PIN CODE ",
+          671314
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _6",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A6",
+      "header_row": 6,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "VILLAGE ",
+          "NILESHWAR"
+        ],
+        [
+          "MUNICIPALITY",
+          "NILESHWAR"
+        ],
+        [
+          "POST OFFICE ",
+          "NILESHWAR"
+        ],
+        [
+          "TALUK ",
+          "HOSDURG"
+        ],
+        [
+          "BLOCK ",
+          "NILESHWAR"
+        ],
+        [
+          "DISTRICT ",
+          "KASARAGOD"
+        ],
+        [
+          "PIN CODE ",
+          671314
+        ],
+        [
+          "AS PER ADHAR CARD ",
+          null
+        ],
+        [
+          "GENDER ",
+          "MALE"
+        ],
+        [
+          "NAME OF PROPRIETOR ",
+          "SHAFEEK N N"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _16",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A16",
+      "header_row": 16,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "W/O S/O D/O ",
+          "S/o."
+        ],
+        [
+          "Name of Father",
+          "M MOIDEEN"
+        ],
+        [
+          "HOUSE NAME ",
+          "BAITHUL SHAMNA HOUSE"
+        ],
+        [
+          "VILLAGE ",
+          "KANHANGAD"
+        ],
+        [
+          "MUNICIPALITY",
+          "NILESHWAR"
+        ],
+        [
+          "POST OFFICE ",
+          "OZHINJAVALAPPU"
+        ],
+        [
+          "TALUK ",
+          "HOSDURG"
+        ],
+        [
+          "BLOCK ",
+          "NILESHWAR"
+        ],
+        [
+          "DISTRICT ",
+          "KASARAGOD"
+        ],
+        [
+          "CONTACT NUMBER ",
+          9847599008
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _18",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A18",
+      "header_row": 18,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "HOUSE NAME ",
+          "BAITHUL SHAMNA HOUSE"
+        ],
+        [
+          "VILLAGE ",
+          "KANHANGAD"
+        ],
+        [
+          "MUNICIPALITY",
+          "NILESHWAR"
+        ],
+        [
+          "POST OFFICE ",
+          "OZHINJAVALAPPU"
+        ],
+        [
+          "TALUK ",
+          "HOSDURG"
+        ],
+        [
+          "BLOCK ",
+          "NILESHWAR"
+        ],
+        [
+          "DISTRICT ",
+          "KASARAGOD"
+        ],
+        [
+          "CONTACT NUMBER ",
+          9847599008
+        ],
+        [
+          "PIN CODE ",
+          671314
+        ],
+        [
+          "Date Of Birth ",
+          " 10/05/1988"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _19",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A19",
+      "header_row": 19,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "VILLAGE ",
+          "KANHANGAD"
+        ],
+        [
+          "MUNICIPALITY",
+          "NILESHWAR"
+        ],
+        [
+          "POST OFFICE ",
+          "OZHINJAVALAPPU"
+        ],
+        [
+          "TALUK ",
+          "HOSDURG"
+        ],
+        [
+          "BLOCK ",
+          "NILESHWAR"
+        ],
+        [
+          "DISTRICT ",
+          "KASARAGOD"
+        ],
+        [
+          "CONTACT NUMBER ",
+          9847599008
+        ],
+        [
+          "PIN CODE ",
+          671314
+        ],
+        [
+          "Date Of Birth ",
+          " 10/05/1988"
+        ],
+        [
+          "PAN No:",
+          "EVXXX33P"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _29",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A29",
+      "header_row": 29,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "ADHAAR CARD NO.",
+          "3616 3601 1234"
+        ],
+        [
+          "Line of activity ",
+          "SERVICE"
+        ],
+        [
+          "Status of the unit ",
+          "FRESH"
+        ],
+        [
+          "Qualification",
+          "SSLC"
+        ],
+        [
+          "Experience (Yrs) in this field ",
+          12
+        ],
+        [
+          "Proposed Business ",
+          "DIGITAL PRINTING"
+        ],
+        [
+          "Scheme of Loan ",
+          "MUDRA"
+        ],
+        [
+          "No. Of YEARS Loan Required ",
+          5
+        ],
+        [
+          "NAMEOF BANK ",
+          "FEDERAL BANK"
+        ],
+        [
+          "BRANCH ",
+          "NILESHWAR"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _36",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A36",
+      "header_row": 36,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "No. Of YEARS Loan Required ",
+          5
+        ],
+        [
+          "NAMEOF BANK ",
+          "FEDERAL BANK"
+        ],
+        [
+          "BRANCH ",
+          "NILESHWAR"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _37",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A37",
+      "header_row": 37,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "NAMEOF BANK ",
+          "FEDERAL BANK"
+        ],
+        [
+          "BRANCH ",
+          "NILESHWAR"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_DATA INPUT _38",
+      "label": "Table",
+      "sheet": "DATA INPUT ",
+      "anchor": "A38",
+      "header_row": 38,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "BRANCH ",
+          "NILESHWAR"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_INTRODUCTION _5",
+      "label": "Table",
+      "sheet": "INTRODUCTION ",
+      "anchor": "A5",
+      "header_row": 5,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          null,
+          "='DATA INPUT '!C8"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_INTRODUCTION _7",
+      "label": "Table",
+      "sheet": "INTRODUCTION ",
+      "anchor": "A7",
+      "header_row": 7,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='DATA INPUT '!C19",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C21",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C12",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _6",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A6",
+      "header_row": 6,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          null,
+          "='DATA INPUT '!C3",
+          8
+        ],
+        [
+          "Building No. ",
+          "='DATA INPUT '!C4",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _8",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A8",
+      "header_row": 8,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          null,
+          null,
+          null,
+          "=N8-O8",
+          null
+        ],
+        [
+          "Village",
+          "='DATA INPUT '!C8",
+          "count from present month to next  march",
+          null,
+          null
+        ],
+        [
+          "Muicipalty/Panchayath",
+          "='DATA INPUT '!C8",
+          null,
+          "='DATA INPUT '!C16",
+          null
+        ],
+        [
+          "Block",
+          "='DATA INPUT '!C11",
+          null,
+          "='DATA INPUT '!C15",
+          null
+        ],
+        [
+          "Taluk ",
+          "='DATA INPUT '!C10",
+          null,
+          null,
+          null
+        ],
+        [
+          " District",
+          "='DATA INPUT '!C12",
+          null,
+          null,
+          null
+        ],
+        [
+          "PIN",
+          "='DATA INPUT '!C13",
+          null,
+          null,
+          null
+        ],
+        [
+          "Cell No:",
+          "='DATA INPUT '!C26",
+          "WORKING CAPITAL ",
+          null,
+          "=IF(O21=\"PMEGP\",(1),(3))"
+        ],
+        [
+          "Chief Executive Name",
+          "=IF(O12=\"MALE\",(\"Mr.\"&O11),\"Mrs.\"&O11)",
+          " Rqrd  for Monyhly ",
+          " divided by 1",
+          null
+        ],
+        [
+          "='DATA INPUT '!B18",
+          "='DATA INPUT '!C18",
+          " Rqrd  for Quarterly ",
+          "divided by  3",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _10",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A10",
+      "header_row": 10,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Muicipalty/Panchayath",
+          "='DATA INPUT '!C8",
+          null
+        ],
+        [
+          "Block",
+          "='DATA INPUT '!C11",
+          null
+        ],
+        [
+          "Taluk ",
+          "='DATA INPUT '!C10",
+          null
+        ],
+        [
+          " District",
+          "='DATA INPUT '!C12",
+          null
+        ],
+        [
+          "PIN",
+          "='DATA INPUT '!C13",
+          null
+        ],
+        [
+          "Cell No:",
+          "='DATA INPUT '!C26",
+          "WORKING CAPITAL "
+        ],
+        [
+          "Chief Executive Name",
+          "=IF(O12=\"MALE\",(\"Mr.\"&O11),\"Mrs.\"&O11)",
+          " Rqrd  for Monyhly "
+        ],
+        [
+          "='DATA INPUT '!B18",
+          "='DATA INPUT '!C18",
+          " Rqrd  for Quarterly "
+        ],
+        [
+          "Address",
+          "='DATA INPUT '!C19",
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C20",
+          "MUDRA LOAN"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _11",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A11",
+      "header_row": 11,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Block",
+          "='DATA INPUT '!C11",
+          "='DATA INPUT '!C15"
+        ],
+        [
+          "Taluk ",
+          "='DATA INPUT '!C10",
+          null
+        ],
+        [
+          " District",
+          "='DATA INPUT '!C12",
+          null
+        ],
+        [
+          "PIN",
+          "='DATA INPUT '!C13",
+          null
+        ],
+        [
+          "Cell No:",
+          "='DATA INPUT '!C26",
+          null
+        ],
+        [
+          "Chief Executive Name",
+          "=IF(O12=\"MALE\",(\"Mr.\"&O11),\"Mrs.\"&O11)",
+          " divided by 1"
+        ],
+        [
+          "='DATA INPUT '!B18",
+          "='DATA INPUT '!C18",
+          "divided by  3"
+        ],
+        [
+          "Address",
+          "='DATA INPUT '!C19",
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C20",
+          0.75
+        ],
+        [
+          null,
+          "='DATA INPUT '!C11",
+          "='DATA INPUT '!C36"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _16",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A16",
+      "header_row": 16,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Chief Executive Name",
+          "=IF(O12=\"MALE\",(\"Mr.\"&O11),\"Mrs.\"&O11)",
+          " Rqrd  for Monyhly ",
+          null
+        ],
+        [
+          "='DATA INPUT '!B18",
+          "='DATA INPUT '!C18",
+          " Rqrd  for Quarterly ",
+          null
+        ],
+        [
+          "Address",
+          "='DATA INPUT '!C19",
+          null,
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C20",
+          "MUDRA LOAN",
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C11",
+          null,
+          75
+        ],
+        [
+          null,
+          "='DATA INPUT '!C25",
+          "PMEGP LOAN ",
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C27",
+          null,
+          null
+        ],
+        [
+          "Age, Date Of Birth ",
+          "='DATA INPUT '!C28",
+          "NO. OF WORKERS ",
+          "=(J361/100000)+0.7"
+        ],
+        [
+          "PAN No:",
+          null,
+          "Term loan amt divided by 1 lakh ",
+          "=ROUND(P24,0)"
+        ],
+        [
+          "ADHAAR CARD NO.",
+          "='DATA INPUT '!C30",
+          "without decimal , to nxt full digit ",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _17",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A17",
+      "header_row": 17,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='DATA INPUT '!B18",
+          "='DATA INPUT '!C18",
+          " Rqrd  for Quarterly ",
+          "divided by  3",
+          null
+        ],
+        [
+          "Address",
+          "='DATA INPUT '!C19",
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C20",
+          "MUDRA LOAN",
+          0.75,
+          "IF (K11 >M13,\"3MONTHS SALES REVENUE) "
+        ],
+        [
+          null,
+          "='DATA INPUT '!C11",
+          null,
+          "='DATA INPUT '!C36",
+          "IF (K11 <M13,\"MONTHLY SALES REVENUE) "
+        ],
+        [
+          null,
+          "='DATA INPUT '!C25",
+          "PMEGP LOAN ",
+          0.95,
+          null
+        ],
+        [
+          null,
+          "='DATA INPUT '!C27",
+          null,
+          null,
+          null
+        ],
+        [
+          "Age, Date Of Birth ",
+          "='DATA INPUT '!C28",
+          "NO. OF WORKERS ",
+          "NO. OF MACHINE WHICH IS HIGH )",
+          null
+        ],
+        [
+          "PAN No:",
+          null,
+          "Term loan amt divided by 1 lakh ",
+          null,
+          null
+        ],
+        [
+          "ADHAAR CARD NO.",
+          "='DATA INPUT '!C30",
+          "without decimal , to nxt full digit ",
+          null,
+          null
+        ],
+        [
+          "Line of activity ",
+          "='DATA INPUT '!C31",
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _20",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A20",
+      "header_row": 20,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='DATA INPUT '!C11",
+          null,
+          "='DATA INPUT '!C36",
+          "IF (K11 <M13,\"MONTHLY SALES REVENUE) "
+        ],
+        [
+          "='DATA INPUT '!C25",
+          "PMEGP LOAN ",
+          0.95,
+          null
+        ],
+        [
+          "='DATA INPUT '!C27",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C28",
+          "NO. OF WORKERS ",
+          "NO. OF MACHINE WHICH IS HIGH )",
+          null
+        ],
+        [
+          null,
+          "Term loan amt divided by 1 lakh ",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C30",
+          "without decimal , to nxt full digit ",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C31",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C35",
+          "PERCENTAGE OF BANK LOAN  INT.",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C32",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C33",
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _21",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A21",
+      "header_row": 21,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='DATA INPUT '!C25",
+          0.95,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C27",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C28",
+          "NO. OF MACHINE WHICH IS HIGH )",
+          "=(J361/100000)+0.7",
+          null
+        ],
+        [
+          null,
+          null,
+          "=ROUND(P24,0)",
+          null
+        ],
+        [
+          "='DATA INPUT '!C30",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C31",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C35",
+          null,
+          10.5,
+          null
+        ],
+        [
+          "='DATA INPUT '!C32",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C33",
+          null,
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C34",
+          null,
+          null,
+          "IF (M30 >M31,\"1000) "
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _22",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A22",
+      "header_row": 22,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='DATA INPUT '!C27",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C28",
+          "NO. OF WORKERS ",
+          "NO. OF MACHINE WHICH IS HIGH )"
+        ],
+        [
+          null,
+          "Term loan amt divided by 1 lakh ",
+          null
+        ],
+        [
+          "='DATA INPUT '!C30",
+          "without decimal , to nxt full digit ",
+          null
+        ],
+        [
+          "='DATA INPUT '!C31",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C35",
+          "PERCENTAGE OF BANK LOAN  INT.",
+          null
+        ],
+        [
+          "='DATA INPUT '!C32",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C33",
+          null,
+          null
+        ],
+        [
+          "='DATA INPUT '!C34",
+          "AUDIT FEE ",
+          null
+        ],
+        [
+          null,
+          "W.C  UPTO 5 LAKH ",
+          500
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _25",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A25",
+      "header_row": 25,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "ADHAAR CARD NO.",
+          "without decimal , to nxt full digit ",
+          null
+        ],
+        [
+          "Line of activity ",
+          null,
+          null
+        ],
+        [
+          "Proposed Business  ",
+          "PERCENTAGE OF BANK LOAN  INT.",
+          10.5
+        ],
+        [
+          "Status of the unit ",
+          null,
+          null
+        ],
+        [
+          "Qualification",
+          null,
+          null
+        ],
+        [
+          "Yearsof  Experience in this field ",
+          "AUDIT FEE ",
+          null
+        ],
+        [
+          null,
+          "W.C  UPTO 5 LAKH ",
+          null
+        ],
+        [
+          "Scheme of Loan ",
+          null,
+          "=IF(R32>R33,\"1000\",\"500\")"
+        ],
+        [
+          "Details of collateral security ",
+          "W.C  ABOVE  5 LAKH ",
+          null
+        ],
+        [
+          "Fixed Capital ",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _28",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A28",
+      "header_row": 28,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Status of the unit ",
+          "='DATA INPUT '!C32",
+          null,
+          null
+        ],
+        [
+          "Qualification",
+          "='DATA INPUT '!C33",
+          null,
+          null
+        ],
+        [
+          "Yearsof  Experience in this field ",
+          "='DATA INPUT '!C34",
+          "AUDIT FEE ",
+          null
+        ],
+        [
+          null,
+          null,
+          "W.C  UPTO 5 LAKH ",
+          null
+        ],
+        [
+          "Scheme of Loan ",
+          "OFOE ",
+          null,
+          "=IF(R32>R33,\"1000\",\"500\")"
+        ],
+        [
+          "Details of collateral security ",
+          "MACHINARY & STOCK ",
+          "W.C  ABOVE  5 LAKH ",
+          null
+        ],
+        [
+          "Fixed Capital ",
+          "=L167",
+          null,
+          null
+        ],
+        [
+          "working Capital ",
+          "=F308",
+          "DATE: FOR SUSHIL ONLY cuurent datein PR & + 5 days  IN BANK APLLICATION ",
+          null
+        ],
+        [
+          "Total Cost Of the Project",
+          "=J365",
+          null,
+          null
+        ],
+        [
+          "Means of Finance",
+          null,
+          "No. Of months loan required",
+          "='DATA INPUT '!C37*12"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _33",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A33",
+      "header_row": 33,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Details of collateral security ",
+          "MACHINARY & STOCK ",
+          null,
+          null
+        ],
+        [
+          "Fixed Capital ",
+          "=L167",
+          null,
+          null
+        ],
+        [
+          "working Capital ",
+          "=F308",
+          null,
+          null
+        ],
+        [
+          "Total Cost Of the Project",
+          "=J365",
+          null,
+          null
+        ],
+        [
+          "Means of Finance",
+          null,
+          "='DATA INPUT '!C37*12",
+          null
+        ],
+        [
+          "a) Own  fund",
+          "=F365",
+          null,
+          null
+        ],
+        [
+          "b)Term Loan",
+          "=H361",
+          "=H41*5/100/2*12",
+          null
+        ],
+        [
+          "c)Working Capital loan",
+          "=H363",
+          null,
+          null
+        ],
+        [
+          "Total",
+          "=SUM(H39:H41)",
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          "0.85to 6",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _35",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A35",
+      "header_row": 35,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "working Capital ",
+          "=F308",
+          null
+        ],
+        [
+          "Total Cost Of the Project",
+          "=J365",
+          null
+        ],
+        [
+          "Means of Finance",
+          null,
+          null
+        ],
+        [
+          "a) Own  fund",
+          "=F365",
+          null
+        ],
+        [
+          "b)Term Loan",
+          "=H361",
+          null
+        ],
+        [
+          "c)Working Capital loan",
+          "=H363",
+          null
+        ],
+        [
+          "Total",
+          "=SUM(H39:H41)",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _36",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A36",
+      "header_row": 36,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Total Cost Of the Project",
+          "=J365",
+          null
+        ],
+        [
+          "Means of Finance",
+          null,
+          "No. Of months loan required"
+        ],
+        [
+          "a) Own  fund",
+          "=F365",
+          null
+        ],
+        [
+          "b)Term Loan",
+          "=H361",
+          "CHITTY "
+        ],
+        [
+          "c)Working Capital loan",
+          "=H363",
+          null
+        ],
+        [
+          "Total",
+          "=SUM(H39:H41)",
+          null
+        ],
+        [
+          null,
+          null,
+          "PERCENTAGE OF EXPENSES "
+        ],
+        [
+          "Total Connected load",
+          "1hp",
+          "ON  WORKING CAPITAL "
+        ],
+        [
+          "Employemnt Potential ",
+          "=F393",
+          null
+        ],
+        [
+          "Expected Sales Per annum ",
+          "=L471*12",
+          "Transportation"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _37",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A37",
+      "header_row": 37,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Means of Finance",
+          null
+        ],
+        [
+          "a) Own  fund",
+          "=F365"
+        ],
+        [
+          "b)Term Loan",
+          "=H361"
+        ],
+        [
+          "c)Working Capital loan",
+          "=H363"
+        ],
+        [
+          "Total",
+          "=SUM(H39:H41)"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _38",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A38",
+      "header_row": 38,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "a) Own  fund",
+          null,
+          null
+        ],
+        [
+          "b)Term Loan",
+          "CHITTY ",
+          "=H41*5/100/2*12"
+        ],
+        [
+          "c)Working Capital loan",
+          null,
+          null
+        ],
+        [
+          "Total",
+          null,
+          null
+        ],
+        [
+          null,
+          "PERCENTAGE OF EXPENSES ",
+          "0.85to 6"
+        ],
+        [
+          "Total Connected load",
+          "ON  WORKING CAPITAL ",
+          null
+        ],
+        [
+          "Employemnt Potential ",
+          null,
+          null
+        ],
+        [
+          "Expected Sales Per annum ",
+          "Transportation",
+          0.65
+        ],
+        [
+          "Operating Profit ",
+          "Electricity charges ",
+          0.3
+        ],
+        [
+          "Break Even Point  -BEP",
+          "Printing & Stationary ",
+          0.09
+        ]
+      ]
+    },
+    {
+      "id": "tbl_PROJECT REPORT _40",
+      "label": "Table",
+      "sheet": "PROJECT REPORT ",
+      "anchor": "A40",
+      "header_row": 40,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "c)Working Capital loan",
+          "=H363",
+          null,
+          null
+        ],
+        [
+          "Total",
+          "=SUM(H39:H41)",
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          "PERCENTAGE OF EXPENSES ",
+          "0.85to 6"
+        ],
+        [
+          "Total Connected load",
+          "1hp",
+          "ON  WORKING CAPITAL ",
+          null
+        ],
+        [
+          "Employemnt Potential ",
+          "=F393",
+          null,
+          null
+        ],
+        [
+          "Expected Sales Per annum ",
+          "=L471*12",
+          "Transportation",
+          0.65
+        ],
+        [
+          "Operating Profit ",
+          "=J492",
+          "Electricity charges ",
+          0.3
+        ],
+        [
+          "Break Even Point  -BEP",
+          "=L596",
+          "Printing & Stationary ",
+          0.09
+        ],
+        [
+          "Debt Service Coverage Ratio ",
+          "=D632",
+          "Telephone & internrt charges ",
+          0.09
+        ],
+        [
+          "Land & Building ",
+          null,
+          "Repairs & others ",
+          0.35
+        ]
+      ]
+    },
+    {
+      "id": "tbl_T,P&L,BS_5",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A5",
+      "header_row": 5,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_T,P&L,BS_7",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A7",
+      "header_row": 7,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "\" Purchase ",
+          470500,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          "By Closing Stock ",
+          "=C78"
+        ],
+        [
+          "\" Gross profit C/d",
+          "=F11-C7-C8-C9",
+          null,
+          null
+        ],
+        [
+          "                                         TOTAL",
+          "=SUM(C7:C10)",
+          "                                    TOTAL",
+          "=SUM(F6:F10)"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_T,P&L,BS_10",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A10",
+      "header_row": 10,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "                                         TOTAL",
+          "=SUM(C7:C10)"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_T,P&L,BS_11",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A11",
+      "header_row": 11,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_T,P&L,BS_13",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A13",
+      "header_row": 13,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_T,P&L,BS_18",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A18",
+      "header_row": 18,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "\" Administrative expense",
+          17500,
+          145550
+        ],
+        [
+          "\" Printing & stationery",
+          2850,
+          null
+        ],
+        [
+          "\" Miscellaneous expense",
+          12350,
+          "=G19-C24"
+        ],
+        [
+          "\" Depreciation",
+          "=G46",
+          null
+        ],
+        [
+          "\" Rent ",
+          42000,
+          null
+        ],
+        [
+          "\" Net Profit",
+          "=F26-C14-C15-C16-C17-C18-C19-C20-C21-C22-C23",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_T,P&L,BS_22",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A22",
+      "header_row": 22,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "\" Rent ",
+          42000
+        ],
+        [
+          "\" Net Profit",
+          "=F26-C14-C15-C16-C17-C18-C19-C20-C21-C22-C23"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_T,P&L,BS_24",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A24",
+      "header_row": 24,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_T,P&L,BS_26",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A26",
+      "header_row": 26,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_T,P&L,BS_39",
+      "label": "Table",
+      "sheet": "T,P&L,BS",
+      "anchor": "A39",
+      "header_row": 39,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          null,
+          null,
+          null,
+          "FIXED ASSETS",
+          null,
+          null
+        ],
+        [
+          "CAPITAL ACCOUNT",
+          533897,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          " Add : Net profit",
+          "=C24",
+          null,
+          "=D115",
+          "=I42",
+          null
+        ],
+        [
+          null,
+          "=SUM(B41:B42)",
+          null,
+          "Less depreciation",
+          "=E42*10/100",
+          "=E42-E43"
+        ],
+        [
+          "Less : drawings",
+          60000,
+          "=B43-B44",
+          "=D117",
+          "=I44",
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          "Less depreciation",
+          "=E44*10/100",
+          "=E44-E45"
+        ],
+        [
+          null,
+          null,
+          null,
+          "=D120",
+          "=I46",
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          "Less depreciation",
+          "=E46*10/100",
+          "=E46-E47"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_20",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A20",
+      "header_row": 20,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_Depreciation Schedule_22",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A22",
+      "header_row": 22,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E22*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B86",
+          "='PROJECT REPORT '!H86",
+          "=SUM(D24:D24)"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E24*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B88",
+          "='PROJECT REPORT '!H88",
+          "=D26"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E26*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B89",
+          "='PROJECT REPORT '!H89",
+          "=D28"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E28*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          "='PROJECT REPORT '!H90",
+          "=D30"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E30*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          "='PROJECT REPORT '!H91",
+          "=D32"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_23",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A23",
+      "header_row": 23,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B86",
+          null,
+          "=SUM(D24:D24)",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E24*10/100/12*'PROJECT REPORT '!O62",
+          "=E24-E25"
+        ],
+        [
+          "='PROJECT REPORT '!B88",
+          null,
+          "=D26",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E26*10/100/12*'PROJECT REPORT '!O62",
+          "=E26-E27"
+        ],
+        [
+          "='PROJECT REPORT '!B89",
+          null,
+          "=D28",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E28*10/100/12*'PROJECT REPORT '!O62",
+          "=E28-E29"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          null,
+          "=D30",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E30*10/100/12*'PROJECT REPORT '!O62",
+          "=E30-E31"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          null,
+          "=D32",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E32*10/100/12*'PROJECT REPORT '!O62",
+          "=E32-E33"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_24",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A24",
+      "header_row": 24,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E24*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B88",
+          "='PROJECT REPORT '!H88",
+          "=D26"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E26*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B89",
+          "='PROJECT REPORT '!H89",
+          "=D28"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E28*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          "='PROJECT REPORT '!H90",
+          "=D30"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E30*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          "='PROJECT REPORT '!H91",
+          "=D32"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E32*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          "='PROJECT REPORT '!H92",
+          "=D34"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_25",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A25",
+      "header_row": 25,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B88",
+          null,
+          "=D26",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E26*10/100/12*'PROJECT REPORT '!O62",
+          "=E26-E27"
+        ],
+        [
+          "='PROJECT REPORT '!B89",
+          null,
+          "=D28",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E28*10/100/12*'PROJECT REPORT '!O62",
+          "=E28-E29"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          null,
+          "=D30",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E30*10/100/12*'PROJECT REPORT '!O62",
+          "=E30-E31"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          null,
+          "=D32",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E32*10/100/12*'PROJECT REPORT '!O62",
+          "=E32-E33"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          null,
+          "=D34",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E34*10/100/12*'PROJECT REPORT '!O62",
+          "=E34-E35"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_26",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A26",
+      "header_row": 26,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E26*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B89",
+          "='PROJECT REPORT '!H89",
+          "=D28"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E28*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          "='PROJECT REPORT '!H90",
+          "=D30"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E30*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          "='PROJECT REPORT '!H91",
+          "=D32"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E32*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          "='PROJECT REPORT '!H92",
+          "=D34"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E34*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          "='PROJECT REPORT '!H93",
+          "=SUM(D36:D36)"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_27",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A27",
+      "header_row": 27,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B89",
+          null,
+          "=D28",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E28*10/100/12*'PROJECT REPORT '!O62",
+          "=E28-E29"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          null,
+          "=D30",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E30*10/100/12*'PROJECT REPORT '!O62",
+          "=E30-E31"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          null,
+          "=D32",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E32*10/100/12*'PROJECT REPORT '!O62",
+          "=E32-E33"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          null,
+          "=D34",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E34*10/100/12*'PROJECT REPORT '!O62",
+          "=E34-E35"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          null,
+          "=SUM(D36:D36)",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E36*10/100/12*'PROJECT REPORT '!O62",
+          "=E36-E37"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_28",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A28",
+      "header_row": 28,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E28*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B90",
+          "='PROJECT REPORT '!H90",
+          "=D30"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E30*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          "='PROJECT REPORT '!H91",
+          "=D32"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E32*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          "='PROJECT REPORT '!H92",
+          "=D34"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E34*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          "='PROJECT REPORT '!H93",
+          "=SUM(D36:D36)"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E36*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          "='PROJECT REPORT '!H94",
+          "=D38"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_29",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A29",
+      "header_row": 29,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B90",
+          null,
+          "=D30",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E30*10/100/12*'PROJECT REPORT '!O62",
+          "=E30-E31"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          null,
+          "=D32",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E32*10/100/12*'PROJECT REPORT '!O62",
+          "=E32-E33"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          null,
+          "=D34",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E34*10/100/12*'PROJECT REPORT '!O62",
+          "=E34-E35"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          null,
+          "=SUM(D36:D36)",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E36*10/100/12*'PROJECT REPORT '!O62",
+          "=E36-E37"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          null,
+          "=D38",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E38*10/100/12*'PROJECT REPORT '!O62",
+          "=E38-E39"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_30",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A30",
+      "header_row": 30,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E30*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B91",
+          "='PROJECT REPORT '!H91",
+          "=D32"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E32*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          "='PROJECT REPORT '!H92",
+          "=D34"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E34*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          "='PROJECT REPORT '!H93",
+          "=SUM(D36:D36)"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E36*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          "='PROJECT REPORT '!H94",
+          "=D38"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          "='PROJECT REPORT '!H102",
+          "=E38*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          "='PROJECT REPORT '!H95",
+          "=D40"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_31",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A31",
+      "header_row": 31,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B91",
+          null,
+          "=D32",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E32*10/100/12*'PROJECT REPORT '!O62",
+          "=E32-E33"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          null,
+          "=D34",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E34*10/100/12*'PROJECT REPORT '!O62",
+          "=E34-E35"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          null,
+          "=SUM(D36:D36)",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E36*10/100/12*'PROJECT REPORT '!O62",
+          "=E36-E37"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          null,
+          "=D38",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E38*10/100/12*'PROJECT REPORT '!O62",
+          "=E38-E39"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          null,
+          "=D40",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E40*10/100/12*'PROJECT REPORT '!O62",
+          "=E40-E41"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_32",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A32",
+      "header_row": 32,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E32*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B92",
+          "='PROJECT REPORT '!H92",
+          "=D34"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E34*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          "='PROJECT REPORT '!H93",
+          "=SUM(D36:D36)"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E36*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          "='PROJECT REPORT '!H94",
+          "=D38"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          "='PROJECT REPORT '!H102",
+          "=E38*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          "='PROJECT REPORT '!H95",
+          "=D40"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E40*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          "='PROJECT REPORT '!H96",
+          "=D42"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_33",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A33",
+      "header_row": 33,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B92",
+          null,
+          "=D34",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E34*10/100/12*'PROJECT REPORT '!O62",
+          "=E34-E35"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          null,
+          "=SUM(D36:D36)",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E36*10/100/12*'PROJECT REPORT '!O62",
+          "=E36-E37"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          null,
+          "=D38",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E38*10/100/12*'PROJECT REPORT '!O62",
+          "=E38-E39"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          null,
+          "=D40",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E40*10/100/12*'PROJECT REPORT '!O62",
+          "=E40-E41"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          null,
+          "=D42",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E42*10/100/12*'PROJECT REPORT '!O62",
+          "=E42-E43"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_34",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A34",
+      "header_row": 34,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E34*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B93",
+          "='PROJECT REPORT '!H93",
+          "=SUM(D36:D36)"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E36*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          "='PROJECT REPORT '!H94",
+          "=D38"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          "='PROJECT REPORT '!H102",
+          "=E38*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          "='PROJECT REPORT '!H95",
+          "=D40"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E40*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          "='PROJECT REPORT '!H96",
+          "=D42"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E42*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          "='PROJECT REPORT '!H97",
+          "=D44"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_35",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A35",
+      "header_row": 35,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B93",
+          null,
+          "=SUM(D36:D36)",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E36*10/100/12*'PROJECT REPORT '!O62",
+          "=E36-E37"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          null,
+          "=D38",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E38*10/100/12*'PROJECT REPORT '!O62",
+          "=E38-E39"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          null,
+          "=D40",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E40*10/100/12*'PROJECT REPORT '!O62",
+          "=E40-E41"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          null,
+          "=D42",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E42*10/100/12*'PROJECT REPORT '!O62",
+          "=E42-E43"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          null,
+          "=D44",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E44*10/100/12*'PROJECT REPORT '!O62",
+          "=E44-E45"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_36",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A36",
+      "header_row": 36,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E36*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B94",
+          "='PROJECT REPORT '!H94",
+          "=D38"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          "='PROJECT REPORT '!H102",
+          "=E38*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          "='PROJECT REPORT '!H95",
+          "=D40"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E40*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          "='PROJECT REPORT '!H96",
+          "=D42"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E42*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          "='PROJECT REPORT '!H97",
+          "=D44"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E44*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B98",
+          "='PROJECT REPORT '!H98",
+          "=D46"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_37",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A37",
+      "header_row": 37,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B94",
+          null,
+          "=D38",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E38*10/100/12*'PROJECT REPORT '!O62",
+          "=E38-E39"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          null,
+          "=D40",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E40*10/100/12*'PROJECT REPORT '!O62",
+          "=E40-E41"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          null,
+          "=D42",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E42*10/100/12*'PROJECT REPORT '!O62",
+          "=E42-E43"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          null,
+          "=D44",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E44*10/100/12*'PROJECT REPORT '!O62",
+          "=E44-E45"
+        ],
+        [
+          "='PROJECT REPORT '!B98",
+          null,
+          "=D46",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          "=E46*10/100/12*'PROJECT REPORT '!O62",
+          "=E46-E47"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_38",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A38",
+      "header_row": 38,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          "='PROJECT REPORT '!H102",
+          "=E38*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B95",
+          "='PROJECT REPORT '!H95",
+          "=D40"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E40*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          "='PROJECT REPORT '!H96",
+          "=D42"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E42*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          "='PROJECT REPORT '!H97",
+          "=D44"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E44*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B98",
+          "='PROJECT REPORT '!H98",
+          "=D46"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E46*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B99",
+          "='PROJECT REPORT '!H99",
+          "=D48"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_39",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A39",
+      "header_row": 39,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!B95",
+          null,
+          "='PROJECT REPORT '!H95",
+          "=D40",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          null,
+          "=E40*10/100/12*'PROJECT REPORT '!O62",
+          "=E40-E41"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          null,
+          "='PROJECT REPORT '!H96",
+          "=D42",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          null,
+          "=E42*10/100/12*'PROJECT REPORT '!O62",
+          "=E42-E43"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          null,
+          "='PROJECT REPORT '!H97",
+          "=D44",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          null,
+          "=E44*10/100/12*'PROJECT REPORT '!O62",
+          "=E44-E45"
+        ],
+        [
+          "='PROJECT REPORT '!B98",
+          null,
+          "='PROJECT REPORT '!H98",
+          "=D46",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          null,
+          "=E46*10/100/12*'PROJECT REPORT '!O62",
+          "=E46-E47"
+        ],
+        [
+          "='PROJECT REPORT '!B99",
+          null,
+          "='PROJECT REPORT '!H99",
+          "=D48",
+          null
+        ],
+        [
+          "Less: Depreciation Written off ",
+          10,
+          null,
+          "=E48*10/100/12*'PROJECT REPORT '!O62",
+          "=E48-E49"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Depreciation Schedule_40",
+      "label": "Table",
+      "sheet": "Depreciation Schedule",
+      "anchor": "A40",
+      "header_row": 40,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E40*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B96",
+          "='PROJECT REPORT '!H96",
+          "=D42"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E42*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B97",
+          "='PROJECT REPORT '!H97",
+          "=D44"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E44*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B98",
+          "='PROJECT REPORT '!H98",
+          "=D46"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E46*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B99",
+          "='PROJECT REPORT '!H99",
+          "=D48"
+        ],
+        [
+          "Less: Depreciation Written off ",
+          null,
+          "=E48*10/100/12*'PROJECT REPORT '!O62"
+        ],
+        [
+          "='PROJECT REPORT '!B100",
+          "='PROJECT REPORT '!H100",
+          "=D50"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _13",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A13",
+      "header_row": 13,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "='PROJECT REPORT '!H6",
+          null,
+          "='PROJECT REPORT '!H53",
+          "Shishu/Kishor/Tarun"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _14",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A14",
+      "header_row": 14,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_MUDRA _18",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A18",
+      "header_row": 18,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_MUDRA _20",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A20",
+      "header_row": 20,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": []
+    },
+    {
+      "id": "tbl_MUDRA _23",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A23",
+      "header_row": 23,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          null,
+          "Business Premises",
+          null,
+          "\u221a",
+          "Owned"
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _26",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A26",
+      "header_row": 26,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Factory/Shop/",
+          "='PROJECT REPORT '!H11",
+          null
+        ],
+        [
+          "Business",
+          "='PROJECT REPORT '!H14",
+          null
+        ],
+        [
+          "Taluk ",
+          "='PROJECT REPORT '!H13",
+          null
+        ],
+        [
+          "Telephone No.",
+          null,
+          null
+        ],
+        [
+          "Email ID",
+          null,
+          null
+        ],
+        [
+          "Business",
+          "Existing",
+          null
+        ],
+        [
+          "Activity",
+          "Proposed",
+          null
+        ],
+        [
+          "Date of Commencement(DD/MM/YYYY",
+          null,
+          null
+        ],
+        [
+          "Whether the Unit is Registered",
+          null,
+          "\u221a"
+        ],
+        [
+          "If Registered (Please mention:Registration",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _27",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A27",
+      "header_row": 27,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Business",
+          "='PROJECT REPORT '!H14"
+        ],
+        [
+          "Taluk ",
+          "='PROJECT REPORT '!H13"
+        ],
+        [
+          "Telephone No.",
+          null
+        ],
+        [
+          "Email ID",
+          null
+        ],
+        [
+          "Business",
+          "Existing"
+        ],
+        [
+          "Activity",
+          "Proposed"
+        ],
+        [
+          "Date of Commencement(DD/MM/YYYY",
+          null
+        ],
+        [
+          "Whether the Unit is Registered",
+          null
+        ],
+        [
+          "If Registered (Please mention:Registration",
+          null
+        ],
+        [
+          "no. And the Act under which registered )",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _28",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A28",
+      "header_row": 28,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Taluk ",
+          "='PROJECT REPORT '!H13"
+        ],
+        [
+          "Telephone No.",
+          null
+        ],
+        [
+          "Email ID",
+          null
+        ],
+        [
+          "Business",
+          "Existing"
+        ],
+        [
+          "Activity",
+          "Proposed"
+        ],
+        [
+          "Date of Commencement(DD/MM/YYYY",
+          null
+        ],
+        [
+          "Whether the Unit is Registered",
+          null
+        ],
+        [
+          "If Registered (Please mention:Registration",
+          null
+        ],
+        [
+          "no. And the Act under which registered )",
+          null
+        ],
+        [
+          "Registered office Address",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _29",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A29",
+      "header_row": 29,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Telephone No.",
+          null,
+          "Mobile  No.",
+          "='PROJECT REPORT '!H16"
+        ],
+        [
+          "Email ID",
+          null,
+          null,
+          null
+        ],
+        [
+          "Business",
+          "Existing",
+          null,
+          null
+        ],
+        [
+          "Activity",
+          "Proposed",
+          null,
+          null
+        ],
+        [
+          "Date of Commencement(DD/MM/YYYY",
+          null,
+          null,
+          null
+        ],
+        [
+          "Whether the Unit is Registered",
+          null,
+          null,
+          "No"
+        ],
+        [
+          "If Registered (Please mention:Registration",
+          null,
+          null,
+          null
+        ],
+        [
+          "no. And the Act under which registered )",
+          null,
+          null,
+          null
+        ],
+        [
+          "Registered office Address",
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _30",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A30",
+      "header_row": 30,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Email ID",
+          null,
+          null
+        ],
+        [
+          "Business",
+          null,
+          null
+        ],
+        [
+          "Activity",
+          null,
+          null
+        ],
+        [
+          "Date of Commencement(DD/MM/YYYY",
+          null,
+          null
+        ],
+        [
+          "Whether the Unit is Registered",
+          null,
+          "No"
+        ],
+        [
+          "If Registered (Please mention:Registration",
+          null,
+          null
+        ],
+        [
+          "no. And the Act under which registered )",
+          null,
+          null
+        ],
+        [
+          "Registered office Address",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_MUDRA _32",
+      "label": "Table",
+      "sheet": "MUDRA ",
+      "anchor": "A32",
+      "header_row": 32,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          "Activity",
+          "Proposed",
+          null
+        ],
+        [
+          "Date of Commencement(DD/MM/YYYY",
+          null,
+          null
+        ],
+        [
+          "Whether the Unit is Registered",
+          null,
+          "Yes"
+        ],
+        [
+          "If Registered (Please mention:Registration",
+          null,
+          null
+        ],
+        [
+          "no. And the Act under which registered )",
+          null,
+          null
+        ],
+        [
+          "Registered office Address",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": "tbl_Sheet1_12",
+      "label": "Table",
+      "sheet": "Sheet1",
+      "anchor": "A12",
+      "header_row": 12,
+      "columns": [],
+      "row_rule": "generate rows from inputs; compute derived columns where formulas exist",
+      "is_variable_length": true,
+      "sample_rows": [
+        [
+          1,
+          "RAAGA PB SPA 4HEAD NOURISHMENT CREAM BATH 750 ML",
+          417.7126,
+          35,
+          14619.941
+        ],
+        [
+          2,
+          "RAAGA PB SPA 4HEAD NOURISHMENT CREAM BATH 750 ML",
+          417.7126,
+          35,
+          14619.941
+        ],
+        [
+          3,
+          "RAAGA ECO PAK WITH PILY SKIN 200M",
+          223.3054,
+          75,
+          16747.905
+        ],
+        [
+          4,
+          "RAAGA STEMCELLS PLATINUM FACIAL KIT 61G",
+          246.9522,
+          60,
+          14817.132
+        ],
+        [
+          5,
+          "RAAGA PROF STEMCELLS FAIRNESS KIT 61G",
+          218.0478,
+          75,
+          16353.585
+        ],
+        [
+          6,
+          "RAGA PROF STEMCELLS ANTICANE FACIAL KIT 61G",
+          225.9342,
+          60,
+          13556.052
+        ],
+        [
+          7,
+          "RAAGA PEDI MENI ALOVERA 63GM",
+          144.491,
+          75,
+          10836.825
+        ],
+        [
+          8,
+          "RAAGA LS WAX ALOVERA 800ML",
+          520.1676,
+          100,
+          52016.76
+        ],
+        [
+          9,
+          "RAAGA PB CLR PROTECT SHAMPOO &CONDITIONER 1000ML",
+          1024.5748,
+          25,
+          25614.37
+        ],
+        [
+          10,
+          "SCHWARZKOPF GLATT STRAIGHTENER AND NEUTRALIZING BALM",
+          1011.4432,
+          22.5,
+          22757.472
+        ]
+      ]
+    }
+  ],
+  "derived_fields": [
+    {
+      "id": "machinery_total",
+      "description": "Sum of fixed assets amounts (computed from fixed_assets table)",
+      "excel_formula": "=SUM([fixed_assets.amount_range])",
+      "normalized_js": "sum(inputs.fixed_assets.map(a => a.amount ?? (a.rate * a.qty)))",
+      "depends_on": [
+        "tables.fixed_assets"
+      ],
+      "is_example": false
+    },
+    {
+      "id": "working_capital_total",
+      "description": "Sum of working capital rows (amount_with_gst)",
+      "excel_formula": "=SUM([working_capital.amount_with_gst_range])",
+      "normalized_js": "sum(inputs.working_capital.map(w => (w.amount || (w.rate*w.qty)) * (1 + ((w.gst_rate||default_gst_rate)/100)) ))",
+      "depends_on": [
+        "tables.working_capital"
+      ],
+      "is_example": false
+    },
+    {
+      "id": "total_project_cost",
+      "description": "Total project cost = machinery_total + working_capital_total + other_capex",
+      "excel_formula": "=machinery_total + working_capital_total + [other_capex_cells]",
+      "normalized_js": "derived_fields.machinery_total + derived_fields.working_capital_total + (inputs.other_capex||0)",
+      "depends_on": [
+        "machinery_total",
+        "working_capital_total"
+      ],
+      "is_example": false
+    },
+    {
+      "id": "loan_to_project_ratio",
+      "description": "Loan requested / total project cost",
+      "excel_formula": "=IF(total_project_cost=0, \"N/A\", loan_amount_required / total_project_cost)",
+      "normalized_js": "(inputs.loan_amount_required && derived_fields.total_project_cost) ? inputs.loan_amount_required / derived_fields.total_project_cost : null",
+      "depends_on": [
+        "total_project_cost",
+        "inputs.loan_amount_required"
+      ],
+      "is_example": false
+    }
+  ],
+  "calculation_graph": {
+    "nodes": [
+      {
+        "id": "inputs",
+        "depends_on": []
+      },
+      {
+        "id": "tables",
+        "depends_on": [
+          "inputs"
+        ]
+      },
+      {
+        "id": "derived_fields",
+        "depends_on": [
+          "tables",
+          "inputs"
+        ]
+      },
+      {
+        "id": "templates",
+        "depends_on": [
+          "derived_fields"
+        ]
+      }
+    ]
+  },
+  "scheme_rules": {
+    "MUDRA": {
+      "description": "Rules inferred from MUDRA sheet (verify manually).",
+      "required_docs": [
+        "ID PROOF",
+        "ADDRESS PROOF",
+        "BANK STATEMENT"
+      ],
+      "observations": [
+        {
+          "note": "Sheet contains scheme notes and sample caps; convert literals to settings."
+        }
+      ]
+    }
+  },
+  "tests": [
+    {
+      "id": "t_compute_amount_from_rate_qty",
+      "description": "If amount missing but rate & qty present, amount = rate * qty",
+      "input": {
+        "fixed_assets": [
+          {
+            "particulars": "X",
+            "rate": 2000,
+            "qty": 2
+          }
+        ]
+      },
+      "expected": {
+        "fixed_assets[0].amount": 4000
+      }
+    },
+    {
+      "id": "t_working_capital_gst",
+      "description": "Compute amount_with_gst with default GST",
+      "input": {
+        "working_capital": [
+          {
+            "particulars": "TONER",
+            "rate": 12000,
+            "qty": 4,
+            "amount": 48000,
+            "gst_rate": 18
+          }
+        ]
+      },
+      "expected": {
+        "working_capital[0].amount_with_gst": 56640
+      }
+    }
+  ],
+  "raw_analysis_reference": "/mnt/data/shas_printing_analysis.json"
+}

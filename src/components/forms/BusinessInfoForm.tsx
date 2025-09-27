@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, Building2, User } from "lucide-react";
-import { BusinessInfo } from "@/pages/NewProject";
+import { BusinessInfo } from "@/types/LegacyTypes";
 
 interface BusinessInfoFormProps {
   data?: BusinessInfo;

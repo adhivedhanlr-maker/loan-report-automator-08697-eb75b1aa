@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowRight, ArrowLeft, Plus, Trash2, Wrench, Briefcase } from "lucide-react";
-import { ProjectCost, MachineryItem, WorkingCapitalItem } from "@/pages/NewProject";
+import { ProjectCost, MachineryItem, WorkingCapitalItem } from "@/types/LegacyTypes";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProjectCostFormProps {

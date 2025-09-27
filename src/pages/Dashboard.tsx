@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ProjectData } from "./NewProject";
+import { ProjectData } from "@/types/LegacyTypes";
 
 // localStorage utility for saved projects
 const SAVED_PROJECTS_KEY = 'savedLoanProjects';

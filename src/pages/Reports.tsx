@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, FileText, Search, Calendar, Download, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ProjectData } from "./NewProject";
+import { ProjectData } from "@/types/LegacyTypes";
 
 interface SavedProject {
   id: string;

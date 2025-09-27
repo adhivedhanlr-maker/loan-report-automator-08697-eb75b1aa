@@ -1,4 +1,4 @@
-import { ProjectData } from "@/pages/NewProject";
+import { ProjectData } from "@/types/LegacyTypes";
 
 export const generateSampleProjectData = (): ProjectData => {
   return {
