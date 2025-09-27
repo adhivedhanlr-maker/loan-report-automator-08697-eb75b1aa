@@ -66,108 +66,13 @@ const Dashboard = () => {
           </div>
         <div className="flex items-center space-x-4">
           <Button
-            onClick={() => {
-              // Load sample project and navigate to new project page
-              const sampleData = {
-                businessInfo: {
-                  shopName: "Modern Electronics & Appliances",
-                  buildingLandmark: "Near City Mall",
-                  buildingNo: "A-123",
-                  gstNo: "03ABCDE1234F1Z5",
-                  monthlyRent: 35000,
-                  village: "Model Town",
-                  municipality: "Ludhiana Municipal Corporation",
-                  postOffice: "Model Town",
-                  taluk: "Ludhiana",
-                  block: "Ludhiana-I",
-                  district: "Ludhiana",
-                  pinCode: "141001",
-                  gender: "Male",
-                  proprietorName: "Rajesh Kumar Sharma",
-                  fatherName: "Ramesh Kumar Sharma",
-                  houseName: "Sharma House",
-                  contactNumber: "9876543210",
-                  dateOfBirth: "1985-03-15",
-                  panNo: "ABCDE1234F",
-                  aadhaarNo: "123456789012",
-                  lineOfActivity: "Electronics & Electrical Appliances Retail",
-                  unitStatus: "New",
-                  qualification: "B.Com",
-                  experience: 8,
-                  proposedBusiness: "Electronics & Electrical Appliances Retail Store",
-                  loanScheme: "PMEGP (Prime Minister's Employment Generation Programme)",
-                  loanYears: 7,
-                  bankName: "State Bank of India",
-                  bankBranch: "Model Town Branch"
-                },
-                projectCost: {
-                  machineryItems: [
-                    {
-                      id: "1",
-                      particulars: "Display Refrigerator for Cold Drinks",
-                      rate: 35000,
-                      qty: 2,
-                      amount: 70000
-                    },
-                    {
-                      id: "2", 
-                      particulars: "Air Conditioner (Split AC 1.5 Ton)",
-                      rate: 45000,
-                      qty: 3,
-                      amount: 135000
-                    }
-                  ],
-                  workingCapitalItems: [
-                    {
-                      id: "1",
-                      particulars: "Electronics Inventory",
-                      rate: 800000,
-                      qty: 1,
-                      amount: 800000,
-                      gstAmount: 144000
-                    }
-                  ],
-                  totalFixedInvestment: 205000,
-                  totalWorkingCapital: 944000,
-                  totalProjectCost: 1149000
-                },
-                financialProjections: {
-                  monthlyExpenses: {
-                    rawMaterials: 450000,
-                    salaryWages: 75000,
-                    transportation: 10000,
-                    electricity: 12000,
-                    printingStationary: 5000,
-                    telephone: 3000,
-                    repairs: 8000,
-                    advertisement: 15000,
-                    miscellaneous: 8000,
-                    interestBankCharges: 25000,
-                    depreciation: 15000,
-                    gstPaid: 45000,
-                    cessPaid: 2000,
-                    auditFee: 5000,
-                    rent: 35000
-                  },
-                  salesProjections: {
-                    printingChargesStickers: { rate: 50, qty: 1500, amount: 75000 },
-                    printingChargesVinyl: { rate: 150, qty: 800, amount: 120000 },
-                    designingCharges: { rate: 500, qty: 200, amount: 100000 },
-                    momentos: { rate: 80, qty: 500, amount: 40000 }
-                  }
-                }
-              };
-              
-              localStorage.setItem('loanApplicationProjectData', JSON.stringify(sampleData));
-              localStorage.setItem('loanApplicationCurrentStep', '3');
-              navigate("/new-project");
-            }}
+            onClick={() => navigate('/settings')}
             variant="outline"
             size="sm"
             className="text-sm"
           >
-            <FileText className="h-4 w-4 mr-2" />
-            Load Sample Project
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
           </Button>
         </div>
         </div>
@@ -236,10 +141,114 @@ const Dashboard = () => {
                 <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p className="text-lg mb-2">No projects yet</p>
                 <p className="mb-4">Create your first loan application project to get started</p>
-                <Button onClick={() => navigate('/new-project')} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create New Project
-                </Button>
+                <div className="flex gap-3 justify-center">
+                  <Button onClick={() => navigate('/new-project')} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create New Project
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      // Load sample project and navigate to new project page
+                      const sampleData = {
+                        businessInfo: {
+                          shopName: "Modern Electronics & Appliances",
+                          buildingLandmark: "Near City Mall",
+                          buildingNo: "A-123",
+                          gstNo: "03ABCDE1234F1Z5",
+                          monthlyRent: 35000,
+                          village: "Model Town",
+                          municipality: "Ludhiana Municipal Corporation",
+                          postOffice: "Model Town",
+                          taluk: "Ludhiana",
+                          block: "Ludhiana-I",
+                          district: "Ludhiana",
+                          pinCode: "141001",
+                          gender: "Male",
+                          proprietorName: "Rajesh Kumar Sharma",
+                          fatherName: "Ramesh Kumar Sharma",
+                          houseName: "Sharma House",
+                          contactNumber: "9876543210",
+                          dateOfBirth: "1985-03-15",
+                          panNo: "ABCDE1234F",
+                          aadhaarNo: "123456789012",
+                          lineOfActivity: "Electronics & Electrical Appliances Retail",
+                          unitStatus: "New",
+                          qualification: "B.Com",
+                          experience: 8,
+                          proposedBusiness: "Electronics & Electrical Appliances Retail Store",
+                          loanScheme: "PMEGP (Prime Minister's Employment Generation Programme)",
+                          loanYears: 7,
+                          bankName: "State Bank of India",
+                          bankBranch: "Model Town Branch"
+                        },
+                        projectCost: {
+                          machineryItems: [
+                            {
+                              id: "1",
+                              particulars: "Display Refrigerator for Cold Drinks",
+                              rate: 35000,
+                              qty: 2,
+                              amount: 70000
+                            },
+                            {
+                              id: "2", 
+                              particulars: "Air Conditioner (Split AC 1.5 Ton)",
+                              rate: 45000,
+                              qty: 3,
+                              amount: 135000
+                            }
+                          ],
+                          workingCapitalItems: [
+                            {
+                              id: "1",
+                              particulars: "Electronics Inventory",
+                              rate: 800000,
+                              qty: 1,
+                              amount: 800000,
+                              gstAmount: 144000
+                            }
+                          ],
+                          totalFixedInvestment: 205000,
+                          totalWorkingCapital: 944000,
+                          totalProjectCost: 1149000
+                        },
+                        financialProjections: {
+                          monthlyExpenses: {
+                            rawMaterials: 450000,
+                            salaryWages: 75000,
+                            transportation: 10000,
+                            electricity: 12000,
+                            printingStationary: 5000,
+                            telephone: 3000,
+                            repairs: 8000,
+                            advertisement: 15000,
+                            miscellaneous: 8000,
+                            interestBankCharges: 25000,
+                            depreciation: 15000,
+                            gstPaid: 45000,
+                            cessPaid: 2000,
+                            auditFee: 5000,
+                            rent: 35000
+                          },
+                          salesProjections: {
+                            printingChargesStickers: { rate: 50, qty: 1500, amount: 75000 },
+                            printingChargesVinyl: { rate: 150, qty: 800, amount: 120000 },
+                            designingCharges: { rate: 500, qty: 200, amount: 100000 },
+                            momentos: { rate: 80, qty: 500, amount: 40000 }
+                          }
+                        }
+                      };
+                      
+                      localStorage.setItem('loanApplicationProjectData', JSON.stringify(sampleData));
+                      localStorage.setItem('loanApplicationCurrentStep', '3');
+                      navigate("/new-project");
+                    }}
+                    variant="outline"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Load Sample Project
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
