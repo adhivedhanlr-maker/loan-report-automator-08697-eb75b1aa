@@ -1,50 +1,54 @@
-// Automation mapping types based on the JSON structure
+// Auto-generated automation types for loan application processing
+
+// Settings schema for automation mapping
 export interface SettingsSchema {
   id: string;
   label: string;
   type: 'number' | 'boolean' | 'string';
   default: any;
   ui: 'number_input' | 'toggle' | 'text_input' | 'select';
-  options?: string[];
 }
 
+// Table mapping configuration
 export interface TableMapping {
   id: string;
   label: string;
   sheet: string;
   anchor: string;
   header_row: number;
-  columns: any[];
+  columns: string[];
   row_rule: string;
   is_variable_length: boolean;
   sample_rows: any[][];
 }
 
+// Derived field calculations
 export interface DerivedField {
   id: string;
-  description: string;
-  excel_formula: string;
-  normalized_js: string;
-  depends_on: string[];
-  is_example: boolean;
+  label: string;
+  formula: string;
+  description?: string;
 }
 
+// Scheme-specific validation rules
 export interface SchemeRule {
   id: string;
-  label: string;
   condition: string;
-  action: string;
-  priority: number;
+  message: string;
+  severity: 'error' | 'warning' | 'info';
 }
 
+// Test case definitions
 export interface TestCase {
   id: string;
+  name: string;
   description: string;
-  input: Record<string, any>;
-  expected: Record<string, any>;
-  tolerance?: number;
+  test_function: string;
+  expected_outcome: any;
+  severity: 'critical' | 'major' | 'minor';
 }
 
+// Main automation mapping structure
 export interface AutomationMapping {
   meta: {
     file_analyzed: string;
@@ -56,12 +60,11 @@ export interface AutomationMapping {
   inputs: any[];
   tables: TableMapping[];
   derived_fields: DerivedField[];
-  scheme_rules: Record<string, any>;
-  calculation_graph: any;
-  tests: TestCase[];
-  raw_analysis_reference: string;
+  scheme_rules: SchemeRule[];
+  test_cases: TestCase[];
 }
 
+// Parsed Excel data types
 export interface ParsedExcelData {
   sheets: Record<string, any[][]>;
   businessInfo: BusinessInfo;
@@ -73,38 +76,38 @@ export interface ParsedExcelData {
 
 export interface BusinessInfo {
   shopName: string;
-  buildingLandmark: string;
-  buildingNo: string;
-  gstNo: string;
-  monthlyRent: number;
-  village: string;
-  municipality: string;
-  postOffice: string;
-  taluk: string;
-  block: string;
+  buildingLandmark?: string;
+  buildingNo?: string;
+  gstNo?: string;
+  monthlyRent?: number;
+  village?: string;
+  municipality?: string;
+  postOffice?: string;
+  taluk?: string;
+  block?: string;
   district: string;
   pinCode: string;
-  gender: string;
+  gender?: string;
   proprietorName: string;
-  fatherName: string;
-  houseName: string;
+  fatherName?: string;
+  houseName?: string;
   contactNumber: string;
-  dateOfBirth: string;
-  panNo: string;
-  aadhaarNo: string;
-  lineOfActivity: string;
-  unitStatus: string;
-  qualification: string;
-  experience: number;
+  dateOfBirth?: string;
+  panNo?: string;
+  aadhaarNo?: string;
+  lineOfActivity?: string;
+  unitStatus?: string;
+  qualification?: string;
+  experience?: number;
   proposedBusiness: string;
-  loanScheme: string;
-  loanYears: number;
-  bankName: string;
-  bankBranch: string;
+  loanScheme?: string;
+  loanYears?: number;
+  bankName?: string;
+  bankBranch?: string;
 }
 
 export interface MachineryItem {
-  id: string;
+  id?: string;
   particulars: string;
   rate: number;
   qty: number;
@@ -112,16 +115,16 @@ export interface MachineryItem {
 }
 
 export interface WorkingCapitalItem {
-  id: string;
+  id?: string;
   particulars: string;
   rate: number;
   qty: number;
   amount: number;
-  gstAmount: number;
+  gstAmount?: number;
 }
 
 export interface SalesProjection {
-  id: string;
+  id?: string;
   particulars: string;
   rate: number;
   qty: number;
@@ -140,21 +143,40 @@ export interface FinancialSummary {
   dscr: number;
 }
 
-export interface ProcessedProjectData {
-  businessInfo: BusinessInfo;
+// Project cost structure
+export interface ProjectCost {
   machineryItems: MachineryItem[];
   workingCapitalItems: WorkingCapitalItem[];
-  salesProjections: SalesProjection[];
-  financialSummary: FinancialSummary;
-  settings: Record<string, any>;
-  testResults: TestResult[];
+  totalFixedInvestment: number;
+  totalWorkingCapital: number;
+  totalProjectCost: number;
 }
 
+// Financial projections structure
+export interface FinancialProjections {
+  monthlyExpenses: {
+    rent?: number;
+    salaries?: number;
+    utilities?: number;
+    maintenance?: number;
+    other?: number;
+    total: number;
+  };
+  monthlySales: SalesProjection[];
+  totalMonthlySales: number;
+  monthlyProfit: number;
+}
+
+// Processed project data types
 export interface TestResult {
-  id: string;
-  status: 'PASS' | 'FAIL';
-  trace: Record<string, any>;
-  inputs: Record<string, any>;
-  expectedOutputs: Record<string, any>;
-  actualOutputs: Record<string, any>;
+  testName: string;
+  passed: boolean;
+  message: string;
+  value?: any;
+}
+
+export interface ProcessedProjectData {
+  businessInfo: BusinessInfo;
+  projectCost: ProjectCost;
+  financialProjections: FinancialProjections;
 }
