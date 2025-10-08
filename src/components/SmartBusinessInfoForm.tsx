@@ -369,8 +369,8 @@ export const SmartBusinessInfoForm = ({
             <h3 className="text-lg font-semibold border-b pb-2">Loan Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="schemeOfLoan">Loan Scheme</Label>
-                <Select value={formData.schemeOfLoan} onValueChange={(value) => handleInputChange('schemeOfLoan', value)}>
+                <Label htmlFor="loanScheme">Loan Scheme</Label>
+                <Select value={formData.loanScheme} onValueChange={(value) => handleInputChange('loanScheme', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

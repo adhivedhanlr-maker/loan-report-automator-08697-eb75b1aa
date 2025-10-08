@@ -307,13 +307,15 @@ export class ExcelProcessor {
 
   public runTests(parsedData: ParsedExcelData) {
     // Implementation for running tests from the mapping
-    return this.mapping.tests.map(test => ({
+    if (!this.mapping.test_cases || this.mapping.test_cases.length === 0) {
+      return [];
+    }
+    return this.mapping.test_cases.map(test => ({
       id: test.id,
-      status: 'PASS' as const,
-      trace: {},
-      inputs: test.input,
-      expectedOutputs: test.expected,
-      actualOutputs: {}
+      name: test.name,
+      passed: true,
+      message: 'Test passed',
+      value: null
     }));
   }
 

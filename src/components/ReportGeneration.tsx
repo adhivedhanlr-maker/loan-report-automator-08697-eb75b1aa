@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, FileText, Download, Calculator, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
-import { ProjectData } from "@/types/LegacyTypes";
+import { ProcessedProjectData } from "@/types/AutomationTypes";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
 interface ReportGenerationProps {
-  projectData: ProjectData;
+  projectData: ProcessedProjectData;
   onBack: () => void;
 }
 
@@ -21,10 +21,9 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Calculate key financial metrics
-  const totalMonthlyExpenses = Object.values(projectData.financialProjections.monthlyExpenses).reduce((sum, expense) => sum + expense, 0);
-  const totalSalesAmount = Object.values(projectData.financialProjections.salesProjections).reduce((sum, item) => sum + item.amount, 0);
-  const monthlySales = totalSalesAmount; // This is already the total monthly sales
-  const monthlyProfit = monthlySales - totalMonthlyExpenses;
+  const totalMonthlyExpenses = projectData.financialProjections.monthlyExpenses.total;
+  const monthlySales = projectData.financialProjections.totalMonthlySales;
+  const monthlyProfit = projectData.financialProjections.monthlyProfit;
   const annualProfit = monthlyProfit * 12;
   
   // Loan calculations
@@ -156,7 +155,7 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
               <p><span className="font-medium">Business:</span> {projectData.businessInfo.proposedBusiness}</p>
               <p><span className="font-medium">Location:</span> {projectData.businessInfo.village}, {projectData.businessInfo.district}</p>
               <p><span className="font-medium">Experience:</span> {projectData.businessInfo.experience} years</p>
-              <p><span className="font-medium">Loan Scheme:</span> {projectData.businessInfo.loanScheme}</p>
+              <p><span className="font-medium">Loan Scheme:</span> {projectData.businessInfo.loanScheme || 'MUDRA'}</p>
             </div>
           </div>
           
@@ -277,7 +276,7 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
                 <TableCell className="text-right">25%</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Bank Loan ({projectData.businessInfo.bankName})</TableCell>
+                <TableCell className="font-medium">Bank Loan ({projectData.businessInfo.bankName || 'Bank'})</TableCell>
                 <TableCell className="text-right">₹{Math.round(loanAmount).toLocaleString()}</TableCell>
                 <TableCell className="text-right">75%</TableCell>
               </TableRow>

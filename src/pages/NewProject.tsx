@@ -5,7 +5,7 @@ import { SmartBusinessInfoForm } from "@/components/SmartBusinessInfoForm";
 import { SmartProjectCostForm } from "@/components/SmartProjectCostForm";
 import { FinancialProjectionsForm } from "@/components/forms/FinancialProjectionsForm";
 import { ReportGeneration } from "@/components/ReportGeneration";
-import { BusinessInfo, ProjectCost, FinancialProjections } from "@/types/AutomationTypes";
+import { BusinessInfo, ProjectCost, FinancialProjections, ProcessedProjectData } from "@/types/AutomationTypes";
 import { BusinessTemplate } from "@/data/business-templates";
 
 type ProjectStep = 'detection' | 'business' | 'cost' | 'projections' | 'report';
@@ -57,7 +57,7 @@ const NewProject = () => {
     setCurrentStep('projections');
   };
 
-  const getProjectData = () => {
+  const getProjectData = (): ProcessedProjectData | null => {
     if (!businessInfo || !projectCost || !financialProjections) {
       return null;
     }
@@ -101,7 +101,7 @@ const NewProject = () => {
         {currentStep === 'projections' && (
           <FinancialProjectionsForm
             data={financialProjections}
-            onUpdate={setFinancialProjections}
+            onUpdate={(data) => setFinancialProjections(data)}
             onNext={handleFinancialProjectionsNext}
             onBack={handleBackFromProjections}
           />

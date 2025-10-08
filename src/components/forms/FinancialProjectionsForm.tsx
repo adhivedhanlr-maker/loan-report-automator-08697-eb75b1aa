@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, DollarSign, TrendingUp, Calculator } from "lucide-react";
-import { FinancialProjections } from "@/types/LegacyTypes";
+import { FinancialProjections } from "@/types/AutomationTypes";
 import { useToast } from "@/hooks/use-toast";
 
 interface FinancialProjectionsFormProps {
@@ -18,83 +18,91 @@ export const FinancialProjectionsForm = ({ data, onUpdate, onNext, onBack }: Fin
   const { toast } = useToast();
   
   const [monthlyExpenses, setMonthlyExpenses] = useState({
-    rawMaterials: 46610,
-    salaryWages: 32000,
-    transportation: 900,
-    electricity: 400,
-    printingStationary: 100,
-    telephone: 100,
-    repairs: 500,
-    advertisement: 600,
-    miscellaneous: 1000,
-    interestBankCharges: 5563,
-    depreciation: 6508,
-    gstPaid: 16140,
-    cessPaid: 161,
-    auditFee: 500,
-    rent: 5500
+    rent: data?.monthlyExpenses.rent ?? 5500,
+    salaries: data?.monthlyExpenses.salaries ?? 32000,
+    utilities: data?.monthlyExpenses.utilities ?? 1400,
+    maintenance: data?.monthlyExpenses.maintenance ?? 500,
+    other: data?.monthlyExpenses.other ?? 46610,
+    total: data?.monthlyExpenses.total ?? 0
   });
 
-  const [salesProjections, setSalesProjections] = useState({
-    printingChargesStickers: { rate: 15, qty: 15000, amount: 225000 },
-    printingChargesVinyl: { rate: 25, qty: 2500, amount: 62500 },
-    designingCharges: { rate: 250, qty: 300, amount: 75000 },
-    momentos: { rate: 500, qty: 50, amount: 25000 }
-  });
+  const [salesProjections, setSalesProjections] = useState(
+    data?.monthlySales ?? [
+      { id: '1', particulars: 'PRINTING CHARGES (STICKERS)', rate: 15, qty: 15000, amount: 225000 },
+      { id: '2', particulars: 'PRINTING CHARGES (VINYL)', rate: 25, qty: 2500, amount: 62500 },
+      { id: '3', particulars: 'DESIGNING CHARGES', rate: 250, qty: 300, amount: 75000 },
+      { id: '4', particulars: 'MOMENTOS', rate: 500, qty: 50, amount: 25000 }
+    ]
+  );
 
   useEffect(() => {
     if (data) {
-      setMonthlyExpenses(data.monthlyExpenses);
-      setSalesProjections(data.salesProjections);
+      setMonthlyExpenses({
+        rent: data.monthlyExpenses.rent ?? 0,
+        salaries: data.monthlyExpenses.salaries ?? 0,
+        utilities: data.monthlyExpenses.utilities ?? 0,
+        maintenance: data.monthlyExpenses.maintenance ?? 0,
+        other: data.monthlyExpenses.other ?? 0,
+        total: data.monthlyExpenses.total
+      });
+      setSalesProjections(data.monthlySales.map((item, index) => ({
+        ...item,
+        id: item.id || String(index + 1)
+      })));
     }
   }, [data]);
 
   useEffect(() => {
-    // Auto-calculate amounts for sales projections when user changes values
-    const updatedSales = { ...salesProjections };
-    Object.keys(updatedSales).forEach(key => {
-      const item = updatedSales[key as keyof typeof updatedSales];
-      item.amount = item.rate * item.qty;
-    });
+    // Calculate total expenses
+    const total = (monthlyExpenses.rent || 0) + 
+                  (monthlyExpenses.salaries || 0) + 
+                  (monthlyExpenses.utilities || 0) + 
+                  (monthlyExpenses.maintenance || 0) + 
+                  (monthlyExpenses.other || 0);
     
-    setSalesProjections(updatedSales);
-  }, [monthlyExpenses]); // Remove onUpdate from here to prevent infinite loop
+    setMonthlyExpenses(prev => ({ ...prev, total }));
+  }, [monthlyExpenses.rent, monthlyExpenses.salaries, monthlyExpenses.utilities, monthlyExpenses.maintenance, monthlyExpenses.other]);
 
   const handleExpenseChange = (field: keyof typeof monthlyExpenses, value: number) => {
     const updatedExpenses = { ...monthlyExpenses, [field]: value };
     setMonthlyExpenses(updatedExpenses);
     
-    // Update parent with new data
+    const totalSales = salesProjections.reduce((sum, item) => sum + item.amount, 0);
+    const totalExpenses = updatedExpenses.total;
+    
     const projections: FinancialProjections = {
       monthlyExpenses: updatedExpenses,
-      salesProjections
+      monthlySales: salesProjections,
+      totalMonthlySales: totalSales,
+      monthlyProfit: totalSales - totalExpenses
     };
     onUpdate(projections);
   };
 
-  const handleSalesChange = (category: keyof typeof salesProjections, field: 'rate' | 'qty', value: number) => {
-    const updatedSales = {
-      ...salesProjections,
-      [category]: {
-        ...salesProjections[category],
-        [field]: value,
-        amount: field === 'rate' ? value * salesProjections[category].qty : salesProjections[category].rate * value
-      }
+  const handleSalesChange = (index: number, field: 'rate' | 'qty', value: number) => {
+    const updatedSales = [...salesProjections];
+    updatedSales[index] = {
+      ...updatedSales[index],
+      [field]: value,
+      amount: field === 'rate' ? value * updatedSales[index].qty : updatedSales[index].rate * value
     };
     setSalesProjections(updatedSales);
     
-    // Update parent with new data
+    const totalSales = updatedSales.reduce((sum, item) => sum + item.amount, 0);
+    const totalExpenses = monthlyExpenses.total;
+    
     const projections: FinancialProjections = {
       monthlyExpenses,
-      salesProjections: updatedSales
+      monthlySales: updatedSales,
+      totalMonthlySales: totalSales,
+      monthlyProfit: totalSales - totalExpenses
     };
     onUpdate(projections);
   };
 
-  const totalMonthlyExpenses = Object.values(monthlyExpenses).reduce((sum, expense) => sum + expense, 0);
-  const totalQuarterlySales = Object.values(salesProjections).reduce((sum, item) => sum + item.amount, 0);
-  const monthlySales = totalQuarterlySales / 3; // Quarterly to monthly
-  const monthlyProfit = monthlySales - totalMonthlyExpenses;
+  const totalMonthlyExpenses = monthlyExpenses.total;
+  const totalMonthlySales = salesProjections.reduce((sum, item) => sum + item.amount, 0);
+  const monthlyProfit = totalMonthlySales - totalMonthlyExpenses;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,160 +133,6 @@ export const FinancialProjectionsForm = ({ data, onUpdate, onNext, onBack }: Fin
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="rawMaterials">Raw Materials (₹)</Label>
-            <Input
-              id="rawMaterials"
-              type="number"
-              value={monthlyExpenses.rawMaterials}
-              onChange={(e) => handleExpenseChange('rawMaterials', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="salaryWages">Salary & Wages (₹)</Label>
-            <Input
-              id="salaryWages"
-              type="number"
-              value={monthlyExpenses.salaryWages}
-              onChange={(e) => handleExpenseChange('salaryWages', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="transportation">Transportation (₹)</Label>
-            <Input
-              id="transportation"
-              type="number"
-              value={monthlyExpenses.transportation}
-              onChange={(e) => handleExpenseChange('transportation', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="electricity">Electricity (₹)</Label>
-            <Input
-              id="electricity"
-              type="number"
-              value={monthlyExpenses.electricity}
-              onChange={(e) => handleExpenseChange('electricity', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="printingStationary">Printing & Stationery (₹)</Label>
-            <Input
-              id="printingStationary"
-              type="number"
-              value={monthlyExpenses.printingStationary}
-              onChange={(e) => handleExpenseChange('printingStationary', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="telephone">Telephone & Internet (₹)</Label>
-            <Input
-              id="telephone"
-              type="number"
-              value={monthlyExpenses.telephone}
-              onChange={(e) => handleExpenseChange('telephone', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="repairs">Repairs & Maintenance (₹)</Label>
-            <Input
-              id="repairs"
-              type="number"
-              value={monthlyExpenses.repairs}
-              onChange={(e) => handleExpenseChange('repairs', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="advertisement">Advertisement (₹)</Label>
-            <Input
-              id="advertisement"
-              type="number"
-              value={monthlyExpenses.advertisement}
-              onChange={(e) => handleExpenseChange('advertisement', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="miscellaneous">Miscellaneous (₹)</Label>
-            <Input
-              id="miscellaneous"
-              type="number"
-              value={monthlyExpenses.miscellaneous}
-              onChange={(e) => handleExpenseChange('miscellaneous', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="interestBankCharges">Interest & Bank Charges (₹)</Label>
-            <Input
-              id="interestBankCharges"
-              type="number"
-              value={monthlyExpenses.interestBankCharges}
-              onChange={(e) => handleExpenseChange('interestBankCharges', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="depreciation">Depreciation (₹)</Label>
-            <Input
-              id="depreciation"
-              type="number"
-              value={monthlyExpenses.depreciation}
-              onChange={(e) => handleExpenseChange('depreciation', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="gstPaid">GST Paid (₹)</Label>
-            <Input
-              id="gstPaid"
-              type="number"
-              value={monthlyExpenses.gstPaid}
-              onChange={(e) => handleExpenseChange('gstPaid', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cessPaid">Cess Paid (₹)</Label>
-            <Input
-              id="cessPaid"
-              type="number"
-              value={monthlyExpenses.cessPaid}
-              onChange={(e) => handleExpenseChange('cessPaid', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="auditFee">Audit Fee & Legal Charges (₹)</Label>
-            <Input
-              id="auditFee"
-              type="number"
-              value={monthlyExpenses.auditFee}
-              onChange={(e) => handleExpenseChange('auditFee', parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="rent">Rent (₹)</Label>
             <Input
               id="rent"
@@ -287,6 +141,57 @@ export const FinancialProjectionsForm = ({ data, onUpdate, onNext, onBack }: Fin
               onChange={(e) => handleExpenseChange('rent', parseInt(e.target.value) || 0)}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="salaries">Salaries & Wages (₹)</Label>
+            <Input
+              id="salaries"
+              type="number"
+              value={monthlyExpenses.salaries}
+              onChange={(e) => handleExpenseChange('salaries', parseInt(e.target.value) || 0)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="utilities">Utilities (Electricity, Water, etc.) (₹)</Label>
+            <Input
+              id="utilities"
+              type="number"
+              value={monthlyExpenses.utilities}
+              onChange={(e) => handleExpenseChange('utilities', parseInt(e.target.value) || 0)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="maintenance">Maintenance & Repairs (₹)</Label>
+            <Input
+              id="maintenance"
+              type="number"
+              value={monthlyExpenses.maintenance}
+              onChange={(e) => handleExpenseChange('maintenance', parseInt(e.target.value) || 0)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="other">Other Expenses (₹)</Label>
+            <Input
+              id="other"
+              type="number"
+              value={monthlyExpenses.other}
+              onChange={(e) => handleExpenseChange('other', parseInt(e.target.value) || 0)}
+              required
+            />
+          </div>
+          
+          <div className="space-y-2 bg-muted/50 p-3 rounded-lg">
+            <Label>Total Monthly Expenses</Label>
+            <div className="text-2xl font-bold text-error">
+              ₹{totalMonthlyExpenses.toLocaleString()}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -303,121 +208,42 @@ export const FinancialProjectionsForm = ({ data, onUpdate, onNext, onBack }: Fin
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
-            <div>
-              <Label htmlFor="stickersRate">Printing (Stickers) - Rate per unit (₹)</Label>
-              <Input
-                id="stickersRate"
-                type="number"
-                value={salesProjections.printingChargesStickers.rate}
-                onChange={(e) => handleSalesChange('printingChargesStickers', 'rate', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="stickersQty">Quantity (units)</Label>
-              <Input
-                id="stickersQty"
-                type="number"
-                value={salesProjections.printingChargesStickers.qty}
-                onChange={(e) => handleSalesChange('printingChargesStickers', 'qty', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label>Amount (₹)</Label>
-              <div className="p-2 bg-background rounded border font-medium">
-                ₹{salesProjections.printingChargesStickers.amount.toLocaleString()}
+          {salesProjections.map((item, index) => (
+            <div key={item.id} className="grid md:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
+              <div>
+                <Label>Service/Product</Label>
+                <div className="p-2 bg-background rounded border font-medium">
+                  {item.particulars}
+                </div>
+              </div>
+              <div>
+                <Label htmlFor={`rate-${index}`}>Rate (₹)</Label>
+                <Input
+                  id={`rate-${index}`}
+                  type="number"
+                  value={item.rate}
+                  onChange={(e) => handleSalesChange(index, 'rate', parseInt(e.target.value) || 0)}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor={`qty-${index}`}>Quantity</Label>
+                <Input
+                  id={`qty-${index}`}
+                  type="number"
+                  value={item.qty}
+                  onChange={(e) => handleSalesChange(index, 'qty', parseInt(e.target.value) || 0)}
+                  required
+                />
+              </div>
+              <div>
+                <Label>Amount (₹)</Label>
+                <div className="p-2 bg-background rounded border font-medium">
+                  ₹{item.amount.toLocaleString()}
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
-            <div>
-              <Label htmlFor="vinylRate">Printing (Vinyl) - Rate per unit (₹)</Label>
-              <Input
-                id="vinylRate"
-                type="number"
-                value={salesProjections.printingChargesVinyl.rate}
-                onChange={(e) => handleSalesChange('printingChargesVinyl', 'rate', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="vinylQty">Quantity (units)</Label>
-              <Input
-                id="vinylQty"
-                type="number"
-                value={salesProjections.printingChargesVinyl.qty}
-                onChange={(e) => handleSalesChange('printingChargesVinyl', 'qty', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label>Amount (₹)</Label>
-              <div className="p-2 bg-background rounded border font-medium">
-                ₹{salesProjections.printingChargesVinyl.amount.toLocaleString()}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
-            <div>
-              <Label htmlFor="designRate">Designing - Rate per design (₹)</Label>
-              <Input
-                id="designRate"
-                type="number"
-                value={salesProjections.designingCharges.rate}
-                onChange={(e) => handleSalesChange('designingCharges', 'rate', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="designQty">Quantity (designs)</Label>
-              <Input
-                id="designQty"
-                type="number"
-                value={salesProjections.designingCharges.qty}
-                onChange={(e) => handleSalesChange('designingCharges', 'qty', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label>Amount (₹)</Label>
-              <div className="p-2 bg-background rounded border font-medium">
-                ₹{salesProjections.designingCharges.amount.toLocaleString()}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
-            <div>
-              <Label htmlFor="momentosRate">Momentos with Printing - Rate per piece (₹)</Label>
-              <Input
-                id="momentosRate"
-                type="number"
-                value={salesProjections.momentos.rate}
-                onChange={(e) => handleSalesChange('momentos', 'rate', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="momentosQty">Quantity (pieces)</Label>
-              <Input
-                id="momentosQty"
-                type="number"
-                value={salesProjections.momentos.qty}
-                onChange={(e) => handleSalesChange('momentos', 'qty', parseInt(e.target.value) || 0)}
-                required
-              />
-            </div>
-            <div>
-              <Label>Amount (₹)</Label>
-              <div className="p-2 bg-background rounded border font-medium">
-                ₹{salesProjections.momentos.amount.toLocaleString()}
-              </div>
-            </div>
-          </div>
+          ))}
         </CardContent>
       </Card>
 
@@ -430,18 +256,14 @@ export const FinancialProjectionsForm = ({ data, onUpdate, onNext, onBack }: Fin
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-4 gap-4 text-center">
+          <div className="grid md:grid-cols-3 gap-4 text-center">
             <div className="p-4 bg-background/50 rounded-lg">
               <div className="text-sm text-muted-foreground">Total Monthly Expenses</div>
               <div className="text-xl font-bold text-error">₹{totalMonthlyExpenses.toLocaleString()}</div>
             </div>
             <div className="p-4 bg-background/50 rounded-lg">
-              <div className="text-sm text-muted-foreground">Quarterly Sales</div>
-              <div className="text-xl font-bold text-primary">₹{totalQuarterlySales.toLocaleString()}</div>
-            </div>
-            <div className="p-4 bg-background/50 rounded-lg">
-              <div className="text-sm text-muted-foreground">Monthly Sales</div>
-              <div className="text-xl font-bold text-success">₹{Math.round(monthlySales).toLocaleString()}</div>
+              <div className="text-sm text-muted-foreground">Total Monthly Sales</div>
+              <div className="text-xl font-bold text-success">₹{totalMonthlySales.toLocaleString()}</div>
             </div>
             <div className={`p-4 bg-background/50 rounded-lg border-2 ${monthlyProfit > 0 ? 'border-success/20' : 'border-error/20'}`}>
               <div className="text-sm text-muted-foreground">Monthly Profit</div>

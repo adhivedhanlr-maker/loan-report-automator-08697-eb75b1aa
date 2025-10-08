@@ -31,7 +31,7 @@ export const ExcelImportWorkflow = ({ onProjectCreated, onBack }: ExcelImportWor
   const [progress, setProgress] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   
-  const automationMapping = automationMappingData as AutomationMapping;
+  const automationMapping = automationMappingData as unknown as AutomationMapping;
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

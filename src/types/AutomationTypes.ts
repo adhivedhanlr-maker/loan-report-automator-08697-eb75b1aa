@@ -7,6 +7,7 @@ export interface SettingsSchema {
   type: 'number' | 'boolean' | 'string';
   default: any;
   ui: 'number_input' | 'toggle' | 'text_input' | 'select';
+  options?: string[];
 }
 
 // Table mapping configuration
@@ -61,7 +62,7 @@ export interface AutomationMapping {
   tables: TableMapping[];
   derived_fields: DerivedField[];
   scheme_rules: SchemeRule[];
-  test_cases: TestCase[];
+  test_cases?: TestCase[];
 }
 
 // Parsed Excel data types
