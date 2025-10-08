@@ -1,14 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BusinessTypeDetection } from "@/components/BusinessTypeDetection";
 import { SmartBusinessInfoForm } from "@/components/SmartBusinessInfoForm";
-import { SmartProjectCostForm } from "@/components/SmartProjectCostForm";
-import { FinancialProjectionsForm } from "@/components/forms/FinancialProjectionsForm";
+import { FinanceDataForm } from "@/components/FinanceDataForm";
+import { DepreciationScheduleView } from "@/components/DepreciationScheduleView";
+import { LoanAmortizationView } from "@/components/LoanAmortizationView";
+import { ProfitLossStatementView } from "@/components/ProfitLossStatementView";
+import { ReportIntroductionForm } from "@/components/ReportIntroductionForm";
 import { ReportGeneration } from "@/components/ReportGeneration";
-import { BusinessInfo, ProjectCost, FinancialProjections, ProcessedProjectData } from "@/types/AutomationTypes";
+import { 
+  BusinessInfo, 
+  FinanceData,
+  DepreciationSchedule,
+  LoanAmortizationSchedule,
+  ProfitAndLossStatement,
+  ReportIntroduction,
+  CompleteProjectData
+} from "@/types/AutomationTypes";
 import { BusinessTemplate } from "@/data/business-templates";
+import { generateDepreciationSchedule } from "@/utils/depreciationCalculations";
+import { generateLoanAmortization, getLoanSchemeDetails } from "@/utils/loanCalculations";
+import { generateProfitAndLossStatement } from "@/utils/plCalculations";
 
-type ProjectStep = 'detection' | 'business' | 'cost' | 'projections' | 'report';
+type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan' | 'pl' | 'introduction' | 'report';
 
 const NewProject = () => {
   const navigate = useNavigate();
@@ -16,8 +30,31 @@ const NewProject = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<BusinessTemplate | null>(null);
   const [customBusiness, setCustomBusiness] = useState<string>("");
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo | undefined>();
-  const [projectCost, setProjectCost] = useState<ProjectCost | undefined>();
-  const [financialProjections, setFinancialProjections] = useState<FinancialProjections | undefined>();
+  const [financeData, setFinanceData] = useState<FinanceData | undefined>();
+  const [depreciationSchedule, setDepreciationSchedule] = useState<DepreciationSchedule | undefined>();
+  const [loanAmortization, setLoanAmortization] = useState<LoanAmortizationSchedule | undefined>();
+  const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossStatement | undefined>();
+  const [reportIntroduction, setReportIntroduction] = useState<ReportIntroduction | undefined>();
+
+  // Auto-generate schedules when finance data changes
+  useEffect(() => {
+    if (financeData) {
+      const depSchedule = generateDepreciationSchedule(financeData.fixedAssets);
+      setDepreciationSchedule(depSchedule);
+      
+      const loanScheme = getLoanSchemeDetails('MUDRA');
+      const loanSched = generateLoanAmortization(financeData.loanAmount, loanScheme);
+      setLoanAmortization(loanSched);
+    }
+  }, [financeData]);
+
+  // Auto-generate P&L when all required data is available
+  useEffect(() => {
+    if (financeData && loanAmortization && depreciationSchedule) {
+      const pl = generateProfitAndLossStatement(financeData, loanAmortization, depreciationSchedule);
+      setProfitAndLoss(pl);
+    }
+  }, [financeData, loanAmortization, depreciationSchedule]);
 
   const handleBusinessTypeSelected = (template: BusinessTemplate | null, customBusinessName?: string) => {
     setSelectedTemplate(template);
@@ -25,46 +62,36 @@ const NewProject = () => {
     setCurrentStep('business');
   };
 
-  const handleBusinessInfoNext = () => {
-    setCurrentStep('cost');
-  };
-
-  const handleProjectCostNext = () => {
-    setCurrentStep('projections');
-  };
-
-  const handleFinancialProjectionsNext = () => {
-    setCurrentStep('report');
-  };
+  const handleBusinessInfoNext = () => setCurrentStep('finance');
+  const handleFinanceNext = () => setCurrentStep('depreciation');
+  const handleDepreciationNext = () => setCurrentStep('loan');
+  const handleLoanNext = () => setCurrentStep('pl');
+  const handlePLNext = () => setCurrentStep('introduction');
+  const handleIntroductionNext = () => setCurrentStep('report');
 
   const handleBackToDashboard = () => {
     navigate('/');
   };
 
-  const handleBackFromBusiness = () => {
-    setCurrentStep('detection');
-  };
+  const handleBackFromBusiness = () => setCurrentStep('detection');
+  const handleBackFromFinance = () => setCurrentStep('business');
+  const handleBackFromDepreciation = () => setCurrentStep('finance');
+  const handleBackFromLoan = () => setCurrentStep('depreciation');
+  const handleBackFromPL = () => setCurrentStep('loan');
+  const handleBackFromIntroduction = () => setCurrentStep('pl');
+  const handleBackFromReport = () => setCurrentStep('introduction');
 
-  const handleBackFromCost = () => {
-    setCurrentStep('business');
-  };
-
-  const handleBackFromProjections = () => {
-    setCurrentStep('cost');
-  };
-
-  const handleBackFromReport = () => {
-    setCurrentStep('projections');
-  };
-
-  const getProjectData = (): ProcessedProjectData | null => {
-    if (!businessInfo || !projectCost || !financialProjections) {
+  const getCompleteProjectData = (): CompleteProjectData | null => {
+    if (!businessInfo || !financeData || !depreciationSchedule || !loanAmortization || !profitAndLoss || !reportIntroduction) {
       return null;
     }
     return {
       businessInfo,
-      projectCost,
-      financialProjections
+      financeData,
+      depreciationSchedule,
+      loanAmortization,
+      profitAndLoss,
+      reportIntroduction
     };
   };
 
@@ -88,28 +115,54 @@ const NewProject = () => {
           />
         )}
         
-        {currentStep === 'cost' && (
-          <SmartProjectCostForm
-            selectedTemplate={selectedTemplate}
-            data={projectCost}
-            onUpdate={setProjectCost}
-            onNext={handleProjectCostNext}
-            onBack={handleBackFromCost}
+        {currentStep === 'finance' && (
+          <FinanceDataForm
+            data={financeData}
+            onUpdate={setFinanceData}
+            onNext={handleFinanceNext}
+            onBack={handleBackFromFinance}
           />
         )}
         
-        {currentStep === 'projections' && (
-          <FinancialProjectionsForm
-            data={financialProjections}
-            onUpdate={(data) => setFinancialProjections(data)}
-            onNext={handleFinancialProjectionsNext}
-            onBack={handleBackFromProjections}
+        {currentStep === 'depreciation' && depreciationSchedule && (
+          <DepreciationScheduleView
+            schedule={depreciationSchedule}
+            onNext={handleDepreciationNext}
+            onBack={handleBackFromDepreciation}
           />
         )}
         
-        {currentStep === 'report' && getProjectData() && (
+        {currentStep === 'loan' && financeData && (
+          <LoanAmortizationView
+            loanAmount={financeData.loanAmount}
+            initialSchedule={loanAmortization}
+            onUpdate={setLoanAmortization}
+            onNext={handleLoanNext}
+            onBack={handleBackFromLoan}
+          />
+        )}
+        
+        {currentStep === 'pl' && profitAndLoss && (
+          <ProfitLossStatementView
+            statement={profitAndLoss}
+            onNext={handlePLNext}
+            onBack={handleBackFromPL}
+          />
+        )}
+        
+        {currentStep === 'introduction' && businessInfo && (
+          <ReportIntroductionForm
+            businessName={businessInfo.shopName}
+            data={reportIntroduction}
+            onUpdate={setReportIntroduction}
+            onNext={handleIntroductionNext}
+            onBack={handleBackFromIntroduction}
+          />
+        )}
+        
+        {currentStep === 'report' && getCompleteProjectData() && (
           <ReportGeneration
-            projectData={getProjectData()!}
+            projectData={getCompleteProjectData()!}
             onBack={handleBackFromReport}
           />
         )}
