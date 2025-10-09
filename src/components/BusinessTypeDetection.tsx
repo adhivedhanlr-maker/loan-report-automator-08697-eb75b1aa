@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { detectBusinessType, businessTemplates, BusinessTemplate } from "@/data/business-templates";
 import { Building, Search, Sparkles, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface BusinessTypeDetectionProps {
   onBusinessTypeSelected: (template: BusinessTemplate | null, customBusiness?: string) => void;
@@ -179,7 +180,12 @@ export const BusinessTypeDetection = ({ onBusinessTypeSelected }: BusinessTypeDe
               onClick={handleNext} 
               size="lg"
               disabled={!proposedBusiness.trim()}
-              className="min-w-32"
+              className={cn(
+                "min-w-32 transition-all duration-300",
+                proposedBusiness.trim() 
+                  ? "bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary shadow-md hover:shadow-lg scale-100 hover:scale-105" 
+                  : ""
+              )}
             >
               Continue
               <ArrowRight className="ml-2 h-4 w-4" />

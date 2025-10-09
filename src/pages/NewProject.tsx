@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ProjectProgressStepper } from "@/components/ProjectProgressStepper";
 import { BusinessTypeDetection } from "@/components/BusinessTypeDetection";
 import { SmartBusinessInfoForm } from "@/components/SmartBusinessInfoForm";
 import { FinanceDataForm } from "@/components/FinanceDataForm";
@@ -97,6 +98,7 @@ const NewProject = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-accent/10">
+      <ProjectProgressStepper currentStep={currentStep} />
       <div className="container mx-auto px-4 py-8">
         {currentStep === 'detection' && (
           <BusinessTypeDetection

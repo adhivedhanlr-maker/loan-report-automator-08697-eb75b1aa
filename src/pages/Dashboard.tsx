@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ProjectData } from "@/types/LegacyTypes";
+import { CompleteProjectData } from "@/types/AutomationTypes";
+import { generateSampleProjectData } from "@/utils/sampleDataGenerator";
 
 // localStorage utility for saved projects
 const SAVED_PROJECTS_KEY = 'savedLoanProjects';
@@ -11,7 +12,7 @@ const SAVED_PROJECTS_KEY = 'savedLoanProjects';
 interface SavedProject {
   id: string;
   name: string;
-  data: ProjectData;
+  data: CompleteProjectData;
   createdAt: string;
   updatedAt: string;
 }
@@ -148,99 +149,11 @@ const Dashboard = () => {
                   </Button>
                   <Button
                     onClick={() => {
-                      // Load sample project and navigate to new project page
-                      const sampleData = {
-                        businessInfo: {
-                          shopName: "Modern Electronics & Appliances",
-                          buildingLandmark: "Near City Mall",
-                          buildingNo: "A-123",
-                          gstNo: "03ABCDE1234F1Z5",
-                          monthlyRent: 35000,
-                          village: "Model Town",
-                          municipality: "Ludhiana Municipal Corporation",
-                          postOffice: "Model Town",
-                          taluk: "Ludhiana",
-                          block: "Ludhiana-I",
-                          district: "Ludhiana",
-                          pinCode: "141001",
-                          gender: "Male",
-                          proprietorName: "Rajesh Kumar Sharma",
-                          fatherName: "Ramesh Kumar Sharma",
-                          houseName: "Sharma House",
-                          contactNumber: "9876543210",
-                          dateOfBirth: "1985-03-15",
-                          panNo: "ABCDE1234F",
-                          aadhaarNo: "123456789012",
-                          lineOfActivity: "Electronics & Electrical Appliances Retail",
-                          unitStatus: "New",
-                          qualification: "B.Com",
-                          experience: 8,
-                          proposedBusiness: "Electronics & Electrical Appliances Retail Store",
-                          loanScheme: "PMEGP (Prime Minister's Employment Generation Programme)",
-                          loanYears: 7,
-                          bankName: "State Bank of India",
-                          bankBranch: "Model Town Branch"
-                        },
-                        projectCost: {
-                          machineryItems: [
-                            {
-                              id: "1",
-                              particulars: "Display Refrigerator for Cold Drinks",
-                              rate: 35000,
-                              qty: 2,
-                              amount: 70000
-                            },
-                            {
-                              id: "2", 
-                              particulars: "Air Conditioner (Split AC 1.5 Ton)",
-                              rate: 45000,
-                              qty: 3,
-                              amount: 135000
-                            }
-                          ],
-                          workingCapitalItems: [
-                            {
-                              id: "1",
-                              particulars: "Electronics Inventory",
-                              rate: 800000,
-                              qty: 1,
-                              amount: 800000,
-                              gstAmount: 144000
-                            }
-                          ],
-                          totalFixedInvestment: 205000,
-                          totalWorkingCapital: 944000,
-                          totalProjectCost: 1149000
-                        },
-                        financialProjections: {
-                          monthlyExpenses: {
-                            rawMaterials: 450000,
-                            salaryWages: 75000,
-                            transportation: 10000,
-                            electricity: 12000,
-                            printingStationary: 5000,
-                            telephone: 3000,
-                            repairs: 8000,
-                            advertisement: 15000,
-                            miscellaneous: 8000,
-                            interestBankCharges: 25000,
-                            depreciation: 15000,
-                            gstPaid: 45000,
-                            cessPaid: 2000,
-                            auditFee: 5000,
-                            rent: 35000
-                          },
-                          salesProjections: {
-                            printingChargesStickers: { rate: 50, qty: 1500, amount: 75000 },
-                            printingChargesVinyl: { rate: 150, qty: 800, amount: 120000 },
-                            designingCharges: { rate: 500, qty: 200, amount: 100000 },
-                            momentos: { rate: 80, qty: 500, amount: 40000 }
-                          }
-                        }
-                      };
+                      const sampleData = generateSampleProjectData();
                       
-                      localStorage.setItem('loanApplicationProjectData', JSON.stringify(sampleData));
-                      localStorage.setItem('loanApplicationCurrentStep', '3');
+                      // Save to localStorage for new workflow
+                      localStorage.setItem('sampleProjectLoaded', 'true');
+                      localStorage.setItem('sampleProjectData', JSON.stringify(sampleData));
                       navigate("/new-project");
                     }}
                     variant="outline"
@@ -261,7 +174,7 @@ const Dashboard = () => {
                           <Calendar className="h-3 w-3" />
                           {new Date(project.createdAt).toLocaleDateString()}
                         </span>
-                        <span>Total Project Cost: ₹{project.data.projectCost?.totalProjectCost?.toLocaleString() || '0'}</span>
+                        <span>Total Project Cost: ₹{(project.data.financeData?.loanAmount + project.data.financeData?.equity)?.toLocaleString() || '0'}</span>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -269,9 +182,8 @@ const Dashboard = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => {
-                          // Load project data and navigate to continue editing
-                          localStorage.setItem('loanApplicationProjectData', JSON.stringify(project.data));
-                          localStorage.setItem('loanApplicationCurrentStep', '4'); // Go to report generation
+                          // Load project data and navigate to report view
+                          localStorage.setItem('savedProjectData', JSON.stringify(project.data));
                           navigate('/new-project');
                         }}
                       >
