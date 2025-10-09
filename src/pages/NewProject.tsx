@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProjectProgressStepper } from "@/components/ProjectProgressStepper";
 import { BusinessTypeDetection } from "@/components/BusinessTypeDetection";
 import { SmartBusinessInfoForm } from "@/components/SmartBusinessInfoForm";
 import { FinanceDataForm } from "@/components/FinanceDataForm";
@@ -36,6 +35,31 @@ const NewProject = () => {
   const [loanAmortization, setLoanAmortization] = useState<LoanAmortizationSchedule | undefined>();
   const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossStatement | undefined>();
   const [reportIntroduction, setReportIntroduction] = useState<ReportIntroduction | undefined>();
+
+  // Load sample project data if available
+  useEffect(() => {
+    const sampleProjectLoaded = localStorage.getItem('sampleProjectLoaded');
+    const sampleProjectData = localStorage.getItem('sampleProjectData');
+    
+    if (sampleProjectLoaded === 'true' && sampleProjectData) {
+      try {
+        const data: CompleteProjectData = JSON.parse(sampleProjectData);
+        setBusinessInfo(data.businessInfo);
+        setFinanceData(data.financeData);
+        setDepreciationSchedule(data.depreciationSchedule);
+        setLoanAmortization(data.loanAmortization);
+        setProfitAndLoss(data.profitAndLoss);
+        setReportIntroduction(data.reportIntroduction);
+        setCurrentStep('report'); // Go directly to report
+        
+        // Clear the flags
+        localStorage.removeItem('sampleProjectLoaded');
+        localStorage.removeItem('sampleProjectData');
+      } catch (error) {
+        console.error('Failed to load sample project:', error);
+      }
+    }
+  }, []);
 
   // Auto-generate schedules when finance data changes
   useEffect(() => {
@@ -98,7 +122,6 @@ const NewProject = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-accent/10">
-      <ProjectProgressStepper currentStep={currentStep} />
       <div className="container mx-auto px-4 py-8">
         {currentStep === 'detection' && (
           <BusinessTypeDetection
