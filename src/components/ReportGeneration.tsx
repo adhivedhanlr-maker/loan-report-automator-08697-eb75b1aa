@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, FileText, Download, Calculator, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
-import { ProcessedProjectData } from "@/types/AutomationTypes";
+import { CompleteProjectData } from "@/types/AutomationTypes";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
 interface ReportGenerationProps {
-  projectData: ProcessedProjectData;
+  projectData: CompleteProjectData;
   onBack: () => void;
 }
 
@@ -20,21 +20,22 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Calculate key financial metrics
-  const totalMonthlyExpenses = projectData.financialProjections.monthlyExpenses.total;
-  const monthlySales = projectData.financialProjections.totalMonthlySales;
-  const monthlyProfit = projectData.financialProjections.monthlyProfit;
-  const annualProfit = monthlyProfit * 12;
+  // Calculate key financial metrics from the new data structure
+  const totalProjectCost = projectData.financeData.loanAmount + projectData.financeData.equity;
+  const loanAmount = projectData.financeData.loanAmount;
+  const ownContribution = projectData.financeData.equity;
   
-  // Loan calculations
-  const loanAmount = projectData.projectCost.totalProjectCost * 0.75; // 75% financing
-  const ownContribution = projectData.projectCost.totalProjectCost * 0.25; // 25% own fund
+  // Get first year P&L data
+  const firstYearPL = projectData.profitAndLoss.years[0];
+  const monthlySales = firstYearPL.salesRevenue / 12;
+  const monthlyProfit = firstYearPL.netProfit / 12;
+  const totalMonthlyExpenses = (firstYearPL.totalOPEX + firstYearPL.rawMaterialCost) / 12;
   
   // Financial ratios
-  const profitMargin = (monthlyProfit / monthlySales) * 100;
+  const profitMargin = (firstYearPL.netProfit / firstYearPL.salesRevenue) * 100;
   const breakEvenSales = totalMonthlyExpenses;
-  const currentRatio = 2.5; // Example ratio
-  const debtEquityRatio = 0.8; // Example ratio
+  const debtEquityRatio = loanAmount / ownContribution;
+  const currentRatio = 2.5; // Placeholder - would need current assets/liabilities data
 
   const handleGenerateReport = async () => {
     setIsGenerating(true);
@@ -164,20 +165,20 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span>Total Project Cost:</span>
-                <span className="font-medium">₹{projectData.projectCost.totalProjectCost.toLocaleString()}</span>
+                <span className="font-medium">₹{totalProjectCost.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span>Loan Amount Required:</span>
-                <span className="font-medium">₹{Math.round(loanAmount).toLocaleString()}</span>
+                <span className="font-medium">₹{loanAmount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span>Own Contribution:</span>
-                <span className="font-medium">₹{Math.round(ownContribution).toLocaleString()}</span>
+                <span className="font-medium">₹{ownContribution.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span>Monthly Profit:</span>
-                <span className={`font-medium ${monthlyProfit > 0 ? 'text-success' : 'text-error'}`}>
-                  ₹{Math.round(monthlyProfit).toLocaleString()}
+                <span>5-Year Total Net Profit:</span>
+                <span className={`font-medium ${projectData.profitAndLoss.summary.totalNetProfit > 0 ? 'text-success' : 'text-error'}`}>
+                  ₹{Math.round(projectData.profitAndLoss.summary.totalNetProfit).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -232,22 +233,26 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">Fixed Assets & Machinery</TableCell>
-                <TableCell className="text-right">₹{projectData.projectCost.totalFixedInvestment.toLocaleString()}</TableCell>
+                <TableCell className="font-medium">Fixed Assets</TableCell>
                 <TableCell className="text-right">
-                  {((projectData.projectCost.totalFixedInvestment / projectData.projectCost.totalProjectCost) * 100).toFixed(1)}%
+                  ₹{projectData.financeData.fixedAssets.reduce((sum, asset) => sum + asset.cost, 0).toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">
+                  {((projectData.financeData.fixedAssets.reduce((sum, asset) => sum + asset.cost, 0) / totalProjectCost) * 100).toFixed(1)}%
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Working Capital</TableCell>
-                <TableCell className="text-right">₹{Math.round(projectData.projectCost.totalWorkingCapital).toLocaleString()}</TableCell>
+                <TableCell className="font-medium">Initial Working Capital</TableCell>
                 <TableCell className="text-right">
-                  {((projectData.projectCost.totalWorkingCapital / projectData.projectCost.totalProjectCost) * 100).toFixed(1)}%
+                  ₹{(totalProjectCost - projectData.financeData.fixedAssets.reduce((sum, asset) => sum + asset.cost, 0)).toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">
+                  {(((totalProjectCost - projectData.financeData.fixedAssets.reduce((sum, asset) => sum + asset.cost, 0)) / totalProjectCost) * 100).toFixed(1)}%
                 </TableCell>
               </TableRow>
               <TableRow className="border-t-2">
                 <TableCell className="font-bold">Total Project Cost</TableCell>
-                <TableCell className="text-right font-bold">₹{projectData.projectCost.totalProjectCost.toLocaleString()}</TableCell>
+                <TableCell className="text-right font-bold">₹{totalProjectCost.toLocaleString()}</TableCell>
                 <TableCell className="text-right font-bold">100%</TableCell>
               </TableRow>
             </TableBody>
@@ -271,18 +276,18 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">Own Funds</TableCell>
-                <TableCell className="text-right">₹{Math.round(ownContribution).toLocaleString()}</TableCell>
-                <TableCell className="text-right">25%</TableCell>
+                <TableCell className="font-medium">Own Funds (Equity)</TableCell>
+                <TableCell className="text-right">₹{ownContribution.toLocaleString()}</TableCell>
+                <TableCell className="text-right">{((ownContribution / totalProjectCost) * 100).toFixed(1)}%</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Bank Loan ({projectData.businessInfo.bankName || 'Bank'})</TableCell>
-                <TableCell className="text-right">₹{Math.round(loanAmount).toLocaleString()}</TableCell>
-                <TableCell className="text-right">75%</TableCell>
+                <TableCell className="font-medium">Bank Loan ({projectData.loanAmortization.loanScheme.scheme})</TableCell>
+                <TableCell className="text-right">₹{loanAmount.toLocaleString()}</TableCell>
+                <TableCell className="text-right">{((loanAmount / totalProjectCost) * 100).toFixed(1)}%</TableCell>
               </TableRow>
               <TableRow className="border-t-2">
                 <TableCell className="font-bold">Total Financing</TableCell>
-                <TableCell className="text-right font-bold">₹{projectData.projectCost.totalProjectCost.toLocaleString()}</TableCell>
+                <TableCell className="text-right font-bold">₹{totalProjectCost.toLocaleString()}</TableCell>
                 <TableCell className="text-right font-bold">100%</TableCell>
               </TableRow>
             </TableBody>
