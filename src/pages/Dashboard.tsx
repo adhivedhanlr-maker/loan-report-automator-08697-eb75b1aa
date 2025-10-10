@@ -182,8 +182,9 @@ const Dashboard = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => {
-                          // Load project data and navigate to report view
-                          localStorage.setItem('savedProjectData', JSON.stringify(project.data));
+                          // Load project data and navigate to report view in new workflow
+                          localStorage.setItem('sampleProjectLoaded', 'true');
+                          localStorage.setItem('sampleProjectData', JSON.stringify(project.data));
                           navigate('/new-project');
                         }}
                       >

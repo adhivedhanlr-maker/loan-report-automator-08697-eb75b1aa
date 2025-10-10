@@ -11,13 +11,15 @@ import { cn } from "@/lib/utils";
 
 interface BusinessTypeDetectionProps {
   onBusinessTypeSelected: (template: BusinessTemplate | null, customBusiness?: string) => void;
+  onBack?: () => void;
 }
 
-export const BusinessTypeDetection = ({ onBusinessTypeSelected }: BusinessTypeDetectionProps) => {
+export const BusinessTypeDetection = ({ onBusinessTypeSelected, onBack }: BusinessTypeDetectionProps) => {
   const [proposedBusiness, setProposedBusiness] = useState("");
   const [detectedTemplate, setDetectedTemplate] = useState<BusinessTemplate | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<BusinessTemplate | null>(null);
   const [showAllTemplates, setShowAllTemplates] = useState(false);
+  const [customSelected, setCustomSelected] = useState(false);
 
   const handleBusinessChange = (value: string) => {
     setProposedBusiness(value);
@@ -29,8 +31,9 @@ export const BusinessTypeDetection = ({ onBusinessTypeSelected }: BusinessTypeDe
     }
   };
 
-  const handleTemplateSelect = (template: BusinessTemplate | null) => {
+const handleTemplateSelect = (template: BusinessTemplate | null) => {
     setSelectedTemplate(template);
+    setCustomSelected(false);
   };
 
   const handleNext = () => {
@@ -161,10 +164,10 @@ export const BusinessTypeDetection = ({ onBusinessTypeSelected }: BusinessTypeDe
 
             <Card className="border-dashed">
               <CardContent className="p-4">
-                <Button
+<Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => handleTemplateSelect(null)}
+                  onClick={() => { setCustomSelected(true); setSelectedTemplate(null); }}
                 >
                   <div className="text-center">
                     <p className="font-medium">Custom Business Type</p>
@@ -175,14 +178,19 @@ export const BusinessTypeDetection = ({ onBusinessTypeSelected }: BusinessTypeDe
             </Card>
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-between items-center pt-4">
+            {onBack && (
+              <Button variant="outline" onClick={onBack}>
+                Back
+              </Button>
+            )}
             <Button 
               onClick={handleNext} 
               size="lg"
-              disabled={!proposedBusiness.trim()}
+              disabled={!(proposedBusiness.trim() || selectedTemplate || customSelected)}
               className={cn(
                 "min-w-32 transition-all duration-300",
-                proposedBusiness.trim() 
+                (proposedBusiness.trim() || selectedTemplate || customSelected)
                   ? "bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary shadow-md hover:shadow-lg scale-100 hover:scale-105" 
                   : ""
               )}

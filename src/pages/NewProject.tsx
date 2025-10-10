@@ -126,6 +126,7 @@ const NewProject = () => {
         {currentStep === 'detection' && (
           <BusinessTypeDetection
             onBusinessTypeSelected={handleBusinessTypeSelected}
+            onBack={handleBackToDashboard}
           />
         )}
         
