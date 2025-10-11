@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ export const SmartBusinessInfoForm = ({
   onBack
 }: SmartBusinessInfoFormProps) => {
   const { toast } = useToast();
+  const toastShownRef = useRef(false);
   
   const [formData, setFormData] = useState<BusinessInfo>({
     shopName: "",
@@ -73,17 +74,20 @@ export const SmartBusinessInfoForm = ({
         loanYears: selectedTemplate.defaultBusinessInfo.loanYears || 5,
       }));
       
-      toast({
-        title: "Smart Pre-fill Active",
-        description: `Form pre-populated with ${selectedTemplate.name} template data`,
-      });
+      if (!toastShownRef.current) {
+        toast({
+          title: "Smart Pre-fill Active",
+          description: `Form pre-populated with ${selectedTemplate.name} template data`,
+        });
+        toastShownRef.current = true;
+      }
     } else if (customBusiness) {
       setFormData(prev => ({
         ...prev,
         proposedBusiness: customBusiness
       }));
     }
-  }, [selectedTemplate, customBusiness, toast]);
+  }, [selectedTemplate, customBusiness]);
 
   // Update parent component when form data changes
   useEffect(() => {

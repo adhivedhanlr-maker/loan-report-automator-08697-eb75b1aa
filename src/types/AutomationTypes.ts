@@ -210,15 +210,12 @@ export interface MaterialInput {
 }
 
 // Fixed OPEX structure
-export interface FixedOPEX {
-  rent: number;
-  salaries: number;
-  utilities: number;
-  maintenance: number;
-  marketing: number;
-  insurance: number;
-  other: number;
+export interface FixedOPEXItem {
+  label: string;
+  amount: number;
 }
+
+export type FixedOPEX = FixedOPEXItem[];
 
 // Finance Data (Step 2)
 export interface FinanceData {

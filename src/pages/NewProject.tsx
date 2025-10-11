@@ -27,6 +27,11 @@ type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan
 const NewProject = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<ProjectStep>('detection');
+  
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentStep]);
   const [selectedTemplate, setSelectedTemplate] = useState<BusinessTemplate | null>(null);
   const [customBusiness, setCustomBusiness] = useState<string>("");
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo | undefined>();

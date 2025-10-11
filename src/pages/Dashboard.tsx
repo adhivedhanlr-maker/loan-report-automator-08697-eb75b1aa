@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CompleteProjectData } from "@/types/AutomationTypes";
 import { generateSampleProjectData } from "@/utils/sampleDataGenerator";
+import { useToast } from "@/hooks/use-toast";
 
 // localStorage utility for saved projects
 const SAVED_PROJECTS_KEY = 'savedLoanProjects';
@@ -41,6 +42,7 @@ const deleteProject = (projectId: string): SavedProject[] => {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
 
   useEffect(() => {
@@ -174,7 +176,7 @@ const Dashboard = () => {
                           <Calendar className="h-3 w-3" />
                           {new Date(project.createdAt).toLocaleDateString()}
                         </span>
-                        <span>Total Project Cost: ₹{(project.data.financeData?.loanAmount + project.data.financeData?.equity)?.toLocaleString() || '0'}</span>
+                        <span>Total Project Cost: ₹{((project.data?.financeData?.loanAmount || 0) + (project.data?.financeData?.equity || 0)).toLocaleString()}</span>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -182,10 +184,28 @@ const Dashboard = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => {
-                          // Load project data and navigate to report view in new workflow
-                          localStorage.setItem('sampleProjectLoaded', 'true');
-                          localStorage.setItem('sampleProjectData', JSON.stringify(project.data));
-                          navigate('/new-project');
+                          try {
+                            // Validate project data structure
+                            if (!project.data || typeof project.data !== 'object') {
+                              toast({
+                                title: "Invalid Project Data",
+                                description: "This project's data is corrupted or incompatible.",
+                                variant: "destructive",
+                              });
+                              return;
+                            }
+                            
+                            // Load project data and navigate to report view in new workflow
+                            localStorage.setItem('sampleProjectLoaded', 'true');
+                            localStorage.setItem('sampleProjectData', JSON.stringify(project.data));
+                            navigate('/new-project');
+                          } catch (error) {
+                            toast({
+                              title: "Error Loading Project",
+                              description: "Unable to load this project. It may be corrupted.",
+                              variant: "destructive",
+                            });
+                          }
                         }}
                       >
                         View Report

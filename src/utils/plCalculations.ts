@@ -28,14 +28,11 @@ export function generateProfitAndLossStatement(
   );
   
   // Fixed OPEX (annual)
-  const annualFixedOPEX = 
-    financeData.fixedOPEX.rent * 12 +
-    financeData.fixedOPEX.salaries * 12 +
-    financeData.fixedOPEX.utilities * 12 +
-    financeData.fixedOPEX.maintenance * 12 +
-    financeData.fixedOPEX.marketing * 12 +
-    financeData.fixedOPEX.insurance * 12 +
-    financeData.fixedOPEX.other * 12;
+  const monthlyFixedOPEX = financeData.fixedOPEX.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
+  const annualFixedOPEX = monthlyFixedOPEX * 12;
 
   const growthMultiplier = 1 + financeData.growthRate / 100;
 

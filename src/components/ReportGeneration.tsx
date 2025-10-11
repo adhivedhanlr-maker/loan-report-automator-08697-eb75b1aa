@@ -97,7 +97,22 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   };
 
   const handleSaveAndContinue = () => {
-    // Save project to localStorage
+    // Check if we're viewing an existing project (loaded from dashboard)
+    const isViewingExisting = localStorage.getItem('sampleProjectLoaded') === 'true';
+    
+    if (isViewingExisting) {
+      // Just clear flags and navigate back - don't save duplicate
+      localStorage.removeItem('sampleProjectLoaded');
+      localStorage.removeItem('sampleProjectData');
+      navigate('/');
+      toast({
+        title: "Returning to Dashboard",
+        description: "Your project is already saved.",
+      });
+      return;
+    }
+    
+    // Save new project to localStorage
     const savedProject = {
       id: Date.now().toString(),
       name: projectData.businessInfo?.shopName || 'Untitled Project',
@@ -114,6 +129,8 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
       // Clear the current project data since it's now saved
       localStorage.removeItem('loanApplicationProjectData');
       localStorage.removeItem('loanApplicationCurrentStep');
+      localStorage.removeItem('sampleProjectLoaded');
+      localStorage.removeItem('sampleProjectData');
       
       navigate('/');
       toast({

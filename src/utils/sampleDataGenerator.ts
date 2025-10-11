@@ -83,15 +83,15 @@ export const generateSampleProjectData = (): CompleteProjectData => {
         { id: "3", material: "T-Shirts (Bulk)", units: 1, rate: 60000, monthlyCost: 60000 },
         { id: "4", material: "Packaging Materials", units: 1, rate: 15000, monthlyCost: 15000 }
       ],
-      fixedOPEX: {
-        rent: 35000,
-        salaries: 75000,
-        utilities: 12000,
-        marketing: 15000,
-        maintenance: 8000,
-        insurance: 5000,
-        other: 8000
-      },
+      fixedOPEX: [
+        { label: "Rent", amount: 35000 },
+        { label: "Salaries", amount: 75000 },
+        { label: "Utilities", amount: 12000 },
+        { label: "Marketing", amount: 15000 },
+        { label: "Maintenance", amount: 8000 },
+        { label: "Insurance", amount: 5000 },
+        { label: "Other", amount: 8000 }
+      ],
       loanAmount: 900000,
       equity: 300000,
       growthRate: 10

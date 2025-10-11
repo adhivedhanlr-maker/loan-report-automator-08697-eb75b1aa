@@ -19,38 +19,35 @@ interface FinanceDataFormProps {
 export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataFormProps) => {
   const { toast } = useToast();
 
-  const [loanAmount, setLoanAmount] = useState(data?.loanAmount || 500000);
-  const [equity, setEquity] = useState(data?.equity || 100000);
-  const [growthRate, setGrowthRate] = useState(data?.growthRate || 10);
+  const [loanAmount, setLoanAmount] = useState(data?.loanAmount ?? 0);
+  const [equity, setEquity] = useState(data?.equity ?? 0);
+  const [growthRate, setGrowthRate] = useState(data?.growthRate ?? 0);
   
   const [fixedAssets, setFixedAssets] = useState<FixedAsset[]>(
     data?.fixedAssets || [
-      { name: "Machinery", cost: 300000, depreciationRate: 15, annualDepreciation: 45000 }
+      { name: "", cost: 0, depreciationRate: 10, annualDepreciation: 0 }
     ]
   );
   
   const [salesMix, setSalesMix] = useState<SalesMixItem[]>(
     data?.salesMix || [
-      { product: "Product A", units: 100, rate: 500, monthlyRevenue: 50000 }
+      { product: "", units: 0, rate: 0, monthlyRevenue: 0 }
     ]
   );
   
   const [materials, setMaterials] = useState<MaterialInput[]>(
     data?.materials || [
-      { material: "Raw Material", units: 100, rate: 200, monthlyCost: 20000 }
+      { material: "", units: 0, rate: 0, monthlyCost: 0 }
     ]
   );
   
-  const [fixedOPEX, setFixedOPEX] = useState(
-    data?.fixedOPEX || {
-      rent: 5000,
-      salaries: 20000,
-      utilities: 3000,
-      maintenance: 2000,
-      marketing: 5000,
-      insurance: 2000,
-      other: 3000,
-    }
+  const [fixedOPEX, setFixedOPEX] = useState<Array<{ label: string; amount: number }>>(
+    data?.fixedOPEX || [
+      { label: "Rent", amount: 0 },
+      { label: "Salaries", amount: 0 },
+      { label: "Utilities", amount: 0 },
+      { label: "Maintenance", amount: 0 },
+    ]
   );
 
   // Update parent on changes
@@ -160,11 +157,26 @@ export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataF
     onNext();
   };
 
+  // Fixed OPEX handlers
+  const updateFixedOPEX = (index: number, field: 'label' | 'amount', value: any) => {
+    const updated = [...fixedOPEX];
+    updated[index] = { ...updated[index], [field]: value };
+    setFixedOPEX(updated);
+  };
+
+  const addFixedOPEX = () => {
+    setFixedOPEX([...fixedOPEX, { label: "", amount: 0 }]);
+  };
+
+  const removeFixedOPEX = (index: number) => {
+    setFixedOPEX(fixedOPEX.filter((_, i) => i !== index));
+  };
+
   // Calculate totals
   const totalFixedAssets = fixedAssets.reduce((sum, asset) => sum + asset.cost, 0);
   const totalMonthlyRevenue = salesMix.reduce((sum, item) => sum + item.monthlyRevenue, 0);
   const totalMonthlyCOGS = materials.reduce((sum, item) => sum + item.monthlyCost, 0);
-  const totalMonthlyOPEX = Object.values(fixedOPEX).reduce((sum, val) => sum + val, 0);
+  const totalMonthlyOPEX = fixedOPEX.reduce((sum, item) => sum + item.amount, 0);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -181,7 +193,7 @@ export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataF
                 id="loanAmount"
                 type="number"
                 value={loanAmount}
-                onChange={(e) => setLoanAmount(Number(e.target.value))}
+                onChange={(e) => setLoanAmount(e.target.value === '' ? 0 : Number(e.target.value))}
               />
             </div>
             <div>
@@ -190,7 +202,7 @@ export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataF
                 id="equity"
                 type="number"
                 value={equity}
-                onChange={(e) => setEquity(Number(e.target.value))}
+                onChange={(e) => setEquity(e.target.value === '' ? 0 : Number(e.target.value))}
               />
             </div>
             <div>
@@ -199,7 +211,7 @@ export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataF
                 id="growthRate"
                 type="number"
                 value={growthRate}
-                onChange={(e) => setGrowthRate(Number(e.target.value))}
+                onChange={(e) => setGrowthRate(e.target.value === '' ? 0 : Number(e.target.value))}
               />
             </div>
           </div>
@@ -416,70 +428,59 @@ export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataF
 
           {/* Fixed OPEX */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Fixed Operating Expenses (Monthly)</h3>
-            <div className="grid md:grid-cols-4 gap-4">
-              <div>
-                <Label>Rent (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.rent}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, rent: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Salaries (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.salaries}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, salaries: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Utilities (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.utilities}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, utilities: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Maintenance (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.maintenance}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, maintenance: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Marketing (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.marketing}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, marketing: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Insurance (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.insurance}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, insurance: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>Other (₹)</Label>
-                <Input
-                  type="number"
-                  value={fixedOPEX.other}
-                  onChange={(e) => setFixedOPEX({ ...fixedOPEX, other: Number(e.target.value) })}
-                />
-              </div>
-              <div className="flex items-end">
-                <div className="w-full p-3 bg-muted rounded-lg">
-                  <div className="text-sm text-muted-foreground">Total Monthly OPEX</div>
-                  <div className="text-lg font-bold">₹{totalMonthlyOPEX.toLocaleString()}</div>
-                </div>
-              </div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Fixed Operating Expenses (Monthly)</h3>
+              <Button onClick={addFixedOPEX} size="sm" variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Expense
+              </Button>
+            </div>
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="p-3 text-left">Expense Type</th>
+                    <th className="p-3 text-left">Monthly Amount (₹)</th>
+                    <th className="p-3 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fixedOPEX.map((item, index) => (
+                    <tr key={index} className="border-t">
+                      <td className="p-2">
+                        <Input
+                          value={item.label}
+                          onChange={(e) => updateFixedOPEX(index, 'label', e.target.value)}
+                          placeholder="Expense type"
+                        />
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          type="number"
+                          value={item.amount}
+                          onChange={(e) => updateFixedOPEX(index, 'amount', Number(e.target.value))}
+                        />
+                      </td>
+                      <td className="p-2 text-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFixedOPEX(index)}
+                          disabled={fixedOPEX.length === 1}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-muted/50">
+                  <tr>
+                    <td className="p-3 text-right font-semibold">Total Monthly OPEX:</td>
+                    <td colSpan={2} className="p-3 font-bold">₹{totalMonthlyOPEX.toLocaleString()}</td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           </div>
 
