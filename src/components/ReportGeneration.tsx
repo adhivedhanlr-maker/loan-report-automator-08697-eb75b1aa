@@ -13,9 +13,10 @@ import html2canvas from "html2canvas";
 interface ReportGenerationProps {
   projectData: CompleteProjectData;
   onBack: () => void;
+  isViewingExisting?: boolean;
 }
 
-export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps) => {
+export const ReportGeneration = ({ projectData, onBack, isViewingExisting = false }: ReportGenerationProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -97,13 +98,8 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
   };
 
   const handleSaveAndContinue = () => {
-    // Check if we're viewing an existing project (loaded from dashboard)
-    const isViewingExisting = localStorage.getItem('sampleProjectLoaded') === 'true';
-    
     if (isViewingExisting) {
-      // Just clear flags and navigate back - don't save duplicate
-      localStorage.removeItem('sampleProjectLoaded');
-      localStorage.removeItem('sampleProjectData');
+      // Just navigate back - don't save duplicate
       navigate('/');
       toast({
         title: "Returning to Dashboard",
@@ -372,7 +368,7 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
       <div className="flex justify-between">
         <Button variant="outline" onClick={onBack}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Projections
+          {isViewingExisting ? 'Back to Dashboard' : 'Back to Projections'}
         </Button>
         
         <div className="space-x-3">
@@ -400,7 +396,7 @@ export const ReportGeneration = ({ projectData, onBack }: ReportGenerationProps)
             className="bg-gradient-to-r from-success to-success-light hover:from-success-light hover:to-success"
           >
             <CheckCircle className="h-4 w-4 mr-2" />
-            Save & Complete
+            {isViewingExisting ? 'Back to Dashboard' : 'Save & Complete'}
           </Button>
         </div>
       </div>

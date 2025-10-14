@@ -27,6 +27,7 @@ type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan
 const NewProject = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<ProjectStep>('detection');
+  const [isViewingExisting, setIsViewingExisting] = useState(false);
   
   // Scroll to top when step changes
   useEffect(() => {
@@ -56,14 +57,21 @@ const NewProject = () => {
         setProfitAndLoss(data.profitAndLoss);
         setReportIntroduction(data.reportIntroduction);
         setCurrentStep('report'); // Go directly to report
+        setIsViewingExisting(true); // Mark as viewing existing project
         
-        // Clear the flags
-        localStorage.removeItem('sampleProjectLoaded');
-        localStorage.removeItem('sampleProjectData');
+        // DON'T clear the flags here - wait until component unmounts or user navigates back
       } catch (error) {
         console.error('Failed to load sample project:', error);
       }
     }
+  }, []);
+
+  // Cleanup: Clear localStorage flags when component unmounts
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('sampleProjectLoaded');
+      localStorage.removeItem('sampleProjectData');
+    };
   }, []);
 
   // Auto-generate schedules when finance data changes
@@ -109,7 +117,16 @@ const NewProject = () => {
   const handleBackFromLoan = () => setCurrentStep('depreciation');
   const handleBackFromPL = () => setCurrentStep('loan');
   const handleBackFromIntroduction = () => setCurrentStep('pl');
-  const handleBackFromReport = () => setCurrentStep('introduction');
+  const handleBackFromReport = () => {
+    if (isViewingExisting) {
+      // Clear flags and navigate to dashboard
+      localStorage.removeItem('sampleProjectLoaded');
+      localStorage.removeItem('sampleProjectData');
+      navigate('/');
+    } else {
+      setCurrentStep('introduction');
+    }
+  };
 
   const getCompleteProjectData = (): CompleteProjectData | null => {
     if (!businessInfo || !financeData || !depreciationSchedule || !loanAmortization || !profitAndLoss || !reportIntroduction) {
@@ -195,6 +212,7 @@ const NewProject = () => {
           <ReportGeneration
             projectData={getCompleteProjectData()!}
             onBack={handleBackFromReport}
+            isViewingExisting={isViewingExisting}
           />
         )}
       </div>
