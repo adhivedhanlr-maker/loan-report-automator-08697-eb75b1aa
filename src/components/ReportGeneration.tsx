@@ -396,7 +396,7 @@ export const ReportGeneration = ({ projectData, onBack, isViewingExisting = fals
             className="bg-gradient-to-r from-success to-success-light hover:from-success-light hover:to-success"
           >
             <CheckCircle className="h-4 w-4 mr-2" />
-            Save & Complete
+            {isViewingExisting ? 'Done' : 'Save & Complete'}
           </Button>
         </div>
       </div>
