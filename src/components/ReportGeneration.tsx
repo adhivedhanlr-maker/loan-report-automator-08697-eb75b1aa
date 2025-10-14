@@ -100,6 +100,13 @@ export const ReportGeneration = ({ projectData, onBack, isViewingExisting = fals
   const handleSaveAndContinue = () => {
     if (isViewingExisting) {
       // Just navigate back - don't save duplicate
+      try {
+        localStorage.removeItem('sampleProjectLoaded');
+        localStorage.removeItem('sampleProjectData');
+        console.log('[ReportGeneration] Existing project: cleared view flags and returning to dashboard');
+      } catch (e) {
+        console.warn('[ReportGeneration] Failed clearing view flags', e);
+      }
       navigate('/');
       toast({
         title: "Returning to Dashboard",

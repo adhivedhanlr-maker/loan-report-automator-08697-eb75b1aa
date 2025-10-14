@@ -49,6 +49,17 @@ const Dashboard = () => {
     setSavedProjects(getSavedProjects());
   }, []);
 
+  // Refresh list when window regains focus or localStorage changes (saves from other routes)
+  useEffect(() => {
+    const refresh = () => setSavedProjects(getSavedProjects());
+    window.addEventListener('focus', refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
+
   const handleDeleteProject = (projectId: string) => {
     const updatedProjects = deleteProject(projectId);
     setSavedProjects(updatedProjects);
