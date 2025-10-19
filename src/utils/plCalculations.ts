@@ -17,24 +17,36 @@ export function generateProfitAndLossStatement(
 ): ProfitAndLossStatement {
   const years = [];
   
-  // Base monthly values
-  const baseMonthlyRevenue = financeData.salesMix.reduce(
-    (sum, item) => sum + item.monthlyRevenue,
+  // Normalize arrays to prevent runtime errors from unexpected shapes
+  const salesMixArr = Array.isArray(financeData.salesMix) ? financeData.salesMix : [];
+  const materialsArr = Array.isArray(financeData.materials) ? financeData.materials : [];
+  const fixedOpexArr = Array.isArray(financeData.fixedOPEX)
+    ? financeData.fixedOPEX
+    : (financeData.fixedOPEX && typeof financeData.fixedOPEX === 'object'
+        ? Object.entries(financeData.fixedOPEX as any)
+            .filter(([, v]) => typeof v === 'number' && !Number.isNaN(v as number))
+            .map(([label, amount]) => ({ label, amount: amount as number }))
+        : []);
+
+  // Base monthly values (defensive defaults)
+  const baseMonthlyRevenue = salesMixArr.reduce(
+    (sum, item) => sum + (Number(item.monthlyRevenue) || 0),
     0
   );
-  const baseMonthlyCOGS = financeData.materials.reduce(
-    (sum, item) => sum + item.monthlyCost,
+  const baseMonthlyCOGS = materialsArr.reduce(
+    (sum, item) => sum + (Number(item.monthlyCost) || 0),
     0
   );
   
   // Fixed OPEX (annual)
-  const monthlyFixedOPEX = financeData.fixedOPEX.reduce(
-    (sum, item) => sum + item.amount,
+  const monthlyFixedOPEX = fixedOpexArr.reduce(
+    (sum, item) => sum + (Number(item.amount) || 0),
     0
   );
   const annualFixedOPEX = monthlyFixedOPEX * 12;
 
-  const growthMultiplier = 1 + financeData.growthRate / 100;
+  const growthRateNum = Number(financeData.growthRate) || 0;
+  const growthMultiplier = 1 + growthRateNum / 100;
 
   for (let year = 1; year <= 5; year++) {
     // Compound growth
