@@ -32,7 +32,6 @@ import { useToast } from "@/hooks/use-toast";
 interface CalculationSettings {
   defaultMargin: number;
   defaultTaxRate: number;
-  defaultDiscountRate: number;
   currency: string;
   includeTaxInCalculations: boolean;
 }
@@ -47,7 +46,6 @@ const Settings = () => {
     return saved ? JSON.parse(saved) : {
       defaultMargin: 20,
       defaultTaxRate: 18,
-      defaultDiscountRate: 5,
       currency: 'INR',
       includeTaxInCalculations: true
     };
@@ -220,20 +218,6 @@ const Settings = () => {
                         setCalculationSettings(prev => ({
                           ...prev,
                           defaultTaxRate: Number(e.target.value)
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="default-discount">Default Discount Rate (%)</Label>
-                    <Input
-                      id="default-discount"
-                      type="number"
-                      value={calculationSettings.defaultDiscountRate}
-                      onChange={(e) =>
-                        setCalculationSettings(prev => ({
-                          ...prev,
-                          defaultDiscountRate: Number(e.target.value)
                         }))
                       }
                     />
