@@ -36,6 +36,11 @@ interface CalculationSettings {
   includeTaxInCalculations: boolean;
 }
 
+interface AccountSettings {
+  firmName: string;
+  logoUrl: string;
+}
+
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -48,6 +53,14 @@ const Settings = () => {
       defaultTaxRate: 18,
       currency: 'INR',
       includeTaxInCalculations: true
+    };
+  });
+
+  const [accountSettings, setAccountSettings] = useState<AccountSettings>(() => {
+    const saved = localStorage.getItem('accountSettings');
+    return saved ? JSON.parse(saved) : {
+      firmName: '',
+      logoUrl: ''
     };
   });
 
@@ -64,6 +77,37 @@ const Settings = () => {
       title: "Settings Saved",
       description: "Calculation settings have been updated successfully.",
     });
+  };
+
+  const saveAccountSettings = () => {
+    localStorage.setItem('accountSettings', JSON.stringify(accountSettings));
+    toast({
+      title: "Account Settings Saved",
+      description: "Your firm details have been updated successfully.",
+    });
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload an image smaller than 2MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAccountSettings(prev => ({
+          ...prev,
+          logoUrl: reader.result as string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const exportData = () => {
@@ -124,14 +168,86 @@ const Settings = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="general" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+        <Tabs defaultValue="account" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="calculations">Calculations</TabsTrigger>
             <TabsTrigger value="theme">Theme</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="data">Data</TabsTrigger>
           </TabsList>
+
+          {/* Account Settings */}
+          <TabsContent value="account" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Firm Details
+                </CardTitle>
+                <CardDescription>
+                  Configure your organization's branding and information
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="firm-name">Firm / Organization Name</Label>
+                  <Input
+                    id="firm-name"
+                    value={accountSettings.firmName}
+                    onChange={(e) =>
+                      setAccountSettings(prev => ({
+                        ...prev,
+                        firmName: e.target.value
+                      }))
+                    }
+                    placeholder="Enter your firm name"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="logo-upload">Firm Logo</Label>
+                  <div className="flex items-center gap-4">
+                    {accountSettings.logoUrl && (
+                      <div className="w-24 h-24 border rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                        <img 
+                          src={accountSettings.logoUrl} 
+                          alt="Firm Logo" 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <Input
+                        id="logo-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="cursor-pointer"
+                      />
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Upload your firm logo (Max 2MB, PNG, JPG, or SVG)
+                      </p>
+                    </div>
+                  </div>
+                  {accountSettings.logoUrl && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setAccountSettings(prev => ({ ...prev, logoUrl: '' }))}
+                    >
+                      Remove Logo
+                    </Button>
+                  )}
+                </div>
+
+                <Button onClick={saveAccountSettings} className="w-full">
+                  Save Account Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* General Settings */}
           <TabsContent value="general" className="space-y-6">

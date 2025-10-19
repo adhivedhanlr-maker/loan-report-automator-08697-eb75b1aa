@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { CompleteProjectData } from "@/types/AutomationTypes";
 import { generateSampleProjectData } from "@/utils/sampleDataGenerator";
 import { useToast } from "@/hooks/use-toast";
+import { FirmHeader } from "@/components/FirmHeader";
 
 // localStorage utility for saved projects
 const SAVED_PROJECTS_KEY = 'savedLoanProjects';
@@ -70,25 +71,18 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
-          <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-foreground mb-2">
-              Loan Application System
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Professional project reports for loan approval requests
-            </p>
+          <FirmHeader />
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={() => navigate('/settings')}
+              variant="outline"
+              size="sm"
+              className="text-sm"
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
           </div>
-        <div className="flex items-center space-x-4">
-          <Button
-            onClick={() => navigate('/settings')}
-            variant="outline"
-            size="sm"
-            className="text-sm"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
-        </div>
         </div>
 
         {/* Quick Actions */}
