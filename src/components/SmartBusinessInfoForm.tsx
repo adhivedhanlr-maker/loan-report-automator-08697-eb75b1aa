@@ -441,10 +441,14 @@ export const SmartBusinessInfoForm = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="NORKA">NORKA</SelectItem>
+                    <SelectItem value="MSME">MSME</SelectItem>
+                    <SelectItem value="PMEGP">PMEGP</SelectItem>
+                    <SelectItem value="KLDB">KLDB</SelectItem>
                     <SelectItem value="MUDRA">MUDRA</SelectItem>
                     <SelectItem value="PMMY">PMMY</SelectItem>
-                    <SelectItem value="STAND UP INDIA">Stand Up India</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="MEME">MEME</SelectItem>
+                    <SelectItem value="OTHERS">OTHERS</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
