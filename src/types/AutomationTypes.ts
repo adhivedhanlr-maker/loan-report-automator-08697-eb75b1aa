@@ -91,6 +91,8 @@ export interface BusinessInfo {
   gender?: string;
   proprietorName: string;
   fatherName?: string;
+  motherName?: string;
+  spouseName?: string;
   houseName?: string;
   contactNumber: string;
   dateOfBirth?: string;

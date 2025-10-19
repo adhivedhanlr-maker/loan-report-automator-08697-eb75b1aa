@@ -30,6 +30,24 @@ export const SmartBusinessInfoForm = ({
   const { toast } = useToast();
   const toastShownRef = useRef(false);
   
+  // Kerala Districts
+  const keralaDistricts = [
+    "Thiruvananthapuram",
+    "Kollam",
+    "Pathanamthitta",
+    "Alappuzha",
+    "Kottayam",
+    "Idukki",
+    "Ernakulam",
+    "Thrissur",
+    "Palakkad",
+    "Malappuram",
+    "Kozhikode",
+    "Wayanad",
+    "Kannur",
+    "Kasaragod"
+  ];
+
   const [formData, setFormData] = useState<BusinessInfo>({
     shopName: "",
     buildingLandmark: "",
@@ -45,6 +63,8 @@ export const SmartBusinessInfoForm = ({
     pinCode: "",
     proprietorName: "",
     fatherName: "",
+    spouseName: "",
+    motherName: "",
     houseName: "",
     contactNumber: "",
     dateOfBirth: "",
@@ -62,6 +82,9 @@ export const SmartBusinessInfoForm = ({
     bankBranch: "",
     ...data
   });
+
+  // State for dynamic family member fields
+  const [familyMembers, setFamilyMembers] = useState<Array<{ relation: string; name: string }>>([]);
 
   // Auto-populate from template when it changes
   useEffect(() => {
@@ -229,6 +252,24 @@ export const SmartBusinessInfoForm = ({
                 />
               </div>
               <div>
+                <Label htmlFor="motherName">Mother's Name</Label>
+                <Input
+                  id="motherName"
+                  value={formData.motherName || ""}
+                  onChange={(e) => handleInputChange('motherName', e.target.value)}
+                  placeholder="Mother's full name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="spouseName">Spouse Name</Label>
+                <Input
+                  id="spouseName"
+                  value={formData.spouseName || ""}
+                  onChange={(e) => handleInputChange('spouseName', e.target.value)}
+                  placeholder="Spouse's full name (if applicable)"
+                />
+              </div>
+              <div>
                 <Label htmlFor="gender">Gender</Label>
                 <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
                   <SelectTrigger>
@@ -305,12 +346,25 @@ export const SmartBusinessInfoForm = ({
                 />
               </div>
               <div>
-                <Label htmlFor="village">Village</Label>
+                <Label htmlFor="village">
+                  Village <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="village"
                   value={formData.village}
                   onChange={(e) => handleInputChange('village', e.target.value)}
                   placeholder="Village name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="municipality">
+                  Panchayath/Municipality <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="municipality"
+                  value={formData.municipality}
+                  onChange={(e) => handleInputChange('municipality', e.target.value)}
+                  placeholder="Panchayath or Municipality"
                 />
               </div>
               <div>
@@ -323,13 +377,21 @@ export const SmartBusinessInfoForm = ({
                 />
               </div>
               <div>
-                <Label htmlFor="district">District *</Label>
-                <Input
-                  id="district"
-                  value={formData.district}
-                  onChange={(e) => handleInputChange('district', e.target.value)}
-                  placeholder="District name"
-                />
+                <Label htmlFor="district">
+                  District <span className="text-destructive">*</span>
+                </Label>
+                <Select value={formData.district} onValueChange={(value) => handleInputChange('district', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select District" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    {keralaDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label htmlFor="pinCode">PIN Code *</Label>
