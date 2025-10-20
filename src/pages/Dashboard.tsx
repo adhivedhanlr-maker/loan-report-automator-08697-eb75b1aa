@@ -1,12 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings } from "lucide-react";
+import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings, LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CompleteProjectData } from "@/types/AutomationTypes";
 import { generateSampleProjectData } from "@/utils/sampleDataGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { FirmHeader } from "@/components/FirmHeader";
+import { useAuth } from "@/hooks/useAuth";
+import { Badge } from "@/components/ui/badge";
 
 // localStorage utility for saved projects
 const SAVED_PROJECTS_KEY = 'savedLoanProjects';
@@ -44,6 +46,7 @@ const deleteProject = (projectId: string): SavedProject[] => {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, role, canDelete, signOut } = useAuth();
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
 
   useEffect(() => {
@@ -73,14 +76,28 @@ const Dashboard = () => {
         <div className="mb-8 flex items-center justify-between">
           <FirmHeader />
           <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">{user?.email}</span>
+              <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="ml-2">
+                {role}
+              </Badge>
+            </div>
             <Button
               onClick={() => navigate('/settings')}
               variant="outline"
               size="sm"
-              className="text-sm"
             >
               <Settings className="h-4 w-4 mr-2" />
               Settings
+            </Button>
+            <Button
+              onClick={signOut}
+              variant="outline"
+              size="sm"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
@@ -216,19 +233,21 @@ const Dashboard = () => {
                         View Report
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm('Are you sure you want to delete this project?')) {
-                            handleDeleteProject(project.id);
-                          }
-                        }}
-                        className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                      {canDelete && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm('Are you sure you want to delete this project?')) {
+                              handleDeleteProject(project.id);
+                            }
+                          }}
+                          className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
