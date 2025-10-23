@@ -9,10 +9,11 @@ import { Separator } from '@/components/ui/separator';
 import { Chrome } from 'lucide-react';
 
 const Login = () => {
-  const { user, loading, signInWithGoogle, signInWithEmail } = useAuth();
+  const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
     if (user && !loading) {
@@ -35,9 +36,14 @@ const Login = () => {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Welcome</CardTitle>
+          <CardTitle className="text-3xl font-bold">
+            {isSignUp ? 'Create Account' : 'Welcome'}
+          </CardTitle>
           <CardDescription>
-            Sign in to access the Loan Application System
+            {isSignUp 
+              ? 'Sign up to access the Loan Application System'
+              : 'Sign in to access the Loan Application System'
+            }
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -83,16 +89,28 @@ const Login = () => {
               />
             </div>
             <Button
-              onClick={() => signInWithEmail(email, password)}
+              onClick={() => isSignUp ? signUpWithEmail(email, password) : signInWithEmail(email, password)}
               className="w-full"
               size="lg"
             >
-              Sign in with Email
+              {isSignUp ? 'Create Account' : 'Sign in with Email'}
             </Button>
           </div>
 
+          <div className="text-center">
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-primary hover:underline"
+            >
+              {isSignUp 
+                ? 'Already have an account? Sign in'
+                : "Don't have an account? Sign up"
+              }
+            </button>
+          </div>
+
           <p className="text-center text-sm text-muted-foreground">
-            By signing in, you agree to our terms of service
+            By continuing, you agree to our terms of service
           </p>
         </CardContent>
       </Card>
