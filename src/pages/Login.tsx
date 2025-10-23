@@ -9,11 +9,12 @@ import { Separator } from '@/components/ui/separator';
 import { Chrome } from 'lucide-react';
 
 const Login = () => {
-  const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   useEffect(() => {
     if (user && !loading) {
@@ -37,36 +38,42 @@ const Login = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold">
-            {isSignUp ? 'Create Account' : 'Welcome'}
+            {isForgotPassword ? 'Reset Password' : isSignUp ? 'Create Account' : 'Welcome'}
           </CardTitle>
           <CardDescription>
-            {isSignUp 
-              ? 'Sign up to access the Loan Application System'
-              : 'Sign in to access the Loan Application System'
+            {isForgotPassword
+              ? 'Enter your email to receive a password reset link'
+              : isSignUp 
+                ? 'Sign up to access the Loan Application System'
+                : 'Sign in to access the Loan Application System'
             }
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
-            onClick={signInWithGoogle}
-            className="w-full"
-            size="lg"
-            variant="outline"
-          >
-            <Chrome className="mr-2 h-5 w-5" />
-            Sign in with Google
-          </Button>
-          
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
+          {!isForgotPassword && (
+            <>
+              <Button
+                onClick={signInWithGoogle}
+                className="w-full"
+                size="lg"
+                variant="outline"
+              >
+                <Chrome className="mr-2 h-5 w-5" />
+                Sign in with Google
+              </Button>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="space-y-4">
             <div className="space-y-2">
@@ -79,34 +86,63 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            )}
             <Button
-              onClick={() => isSignUp ? signUpWithEmail(email, password) : signInWithEmail(email, password)}
+              onClick={() => {
+                if (isForgotPassword) {
+                  resetPassword(email);
+                  setIsForgotPassword(false);
+                } else if (isSignUp) {
+                  signUpWithEmail(email, password);
+                } else {
+                  signInWithEmail(email, password);
+                }
+              }}
               className="w-full"
               size="lg"
             >
-              {isSignUp ? 'Create Account' : 'Sign in with Email'}
+              {isForgotPassword ? 'Send Reset Link' : isSignUp ? 'Create Account' : 'Sign in with Email'}
             </Button>
           </div>
 
-          <div className="text-center">
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-primary hover:underline"
-            >
-              {isSignUp 
-                ? 'Already have an account? Sign in'
-                : "Don't have an account? Sign up"
-              }
-            </button>
+          <div className="text-center space-y-2">
+            {!isForgotPassword && (
+              <>
+                <button
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-sm text-primary hover:underline block w-full"
+                >
+                  {isSignUp 
+                    ? 'Already have an account? Sign in'
+                    : "Don't have an account? Sign up"
+                  }
+                </button>
+                <button
+                  onClick={() => setIsForgotPassword(true)}
+                  className="text-sm text-primary hover:underline block w-full"
+                >
+                  Forgot password?
+                </button>
+              </>
+            )}
+            {isForgotPassword && (
+              <button
+                onClick={() => setIsForgotPassword(false)}
+                className="text-sm text-primary hover:underline block w-full"
+              >
+                Back to sign in
+              </button>
+            )}
           </div>
 
           <p className="text-center text-sm text-muted-foreground">
