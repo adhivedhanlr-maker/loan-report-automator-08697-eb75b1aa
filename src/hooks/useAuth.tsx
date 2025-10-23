@@ -11,6 +11,8 @@ interface AuthContextType {
   role: UserRole | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isManager: boolean;
   canModify: boolean;
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
@@ -39,7 +41,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) throw error;
       setRole(data?.role as UserRole || 'user');
     } catch (error) {
-      console.error('Error fetching user role:', error);
       setRole('user');
     }
   };
@@ -96,6 +97,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Welcome back!',
+        description: 'You have been successfully signed in',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Login Failed',
+        description: error.message || 'Failed to sign in with email',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const signUpWithEmail = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Account Created',
+        description: 'You have been successfully signed up',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Signup Failed',
+        description: error.message || 'Failed to sign up with email',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -126,6 +174,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         role,
         loading,
         signInWithGoogle,
+        signInWithEmail,
+        signUpWithEmail,
         signOut,
         isManager,
         canModify,
