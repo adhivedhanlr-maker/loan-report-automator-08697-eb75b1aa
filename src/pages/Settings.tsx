@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/components/ThemeProvider";
 import { 
   ArrowLeft, 
   Users, 
@@ -44,6 +45,7 @@ interface AccountSettings {
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   
   // Load settings from localStorage
   const [calculationSettings, setCalculationSettings] = useState<CalculationSettings>(() => {
@@ -64,7 +66,6 @@ const Settings = () => {
     };
   });
 
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -393,9 +394,7 @@ const Settings = () => {
                         key={themeOption}
                         variant={theme === themeOption ? "default" : "outline"}
                         onClick={() => {
-                          setTheme(themeOption);
-                          localStorage.setItem('theme', themeOption);
-                          // Apply theme change logic here
+                          setTheme(themeOption as "light" | "dark" | "system");
                           toast({
                             title: "Theme Updated",
                             description: `Theme changed to ${themeOption}`,
