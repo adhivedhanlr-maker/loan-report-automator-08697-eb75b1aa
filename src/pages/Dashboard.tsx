@@ -49,13 +49,13 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <FirmHeader />
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{user?.email}</span>
-              <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="ml-2">
+        <div className="mb-8 relative">
+          {/* User controls - positioned absolutely on larger screens */}
+          <div className="flex flex-wrap items-center justify-end gap-2 mb-4 lg:absolute lg:right-0 lg:top-0 lg:mb-0">
+            <div className="flex items-center gap-2 px-2 md:px-3 py-1.5 md:py-2 bg-muted rounded-lg text-xs md:text-sm">
+              <User className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+              <span className="font-medium hidden sm:inline truncate max-w-[120px] md:max-w-none">{user?.email}</span>
+              <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
                 {role}
               </Badge>
             </div>
@@ -63,18 +63,25 @@ const Dashboard = () => {
               onClick={() => navigate('/settings')}
               variant="outline"
               size="sm"
+              className="h-8 md:h-9"
             >
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
+              <Settings className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
+              <span className="hidden md:inline">Settings</span>
             </Button>
             <Button
               onClick={signOut}
               variant="outline"
               size="sm"
+              className="h-8 md:h-9"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              <LogOut className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
+              <span className="hidden md:inline">Logout</span>
             </Button>
+          </div>
+          
+          {/* Centered Firm Header */}
+          <div className="flex justify-center">
+            <FirmHeader />
           </div>
         </div>
 
