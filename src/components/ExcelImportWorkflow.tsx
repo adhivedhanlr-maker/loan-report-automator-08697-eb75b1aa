@@ -85,7 +85,6 @@ export const ExcelImportWorkflow = ({ onProjectCreated, onBack }: ExcelImportWor
         description: "Excel data has been parsed and validated",
       });
     } catch (error) {
-      console.error('Processing error:', error);
       toast({
         title: "Processing Error",
         description: "Failed to process the Excel file. Please check the format.",

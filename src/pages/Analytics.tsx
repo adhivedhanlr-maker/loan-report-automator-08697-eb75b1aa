@@ -22,7 +22,7 @@ const AnalyticsPage = () => {
       const projects = localStorage.getItem('savedLoanProjects');
       setSavedProjects(projects ? JSON.parse(projects) : []);
     } catch (error) {
-      console.error('Failed to load projects:', error);
+      // Silently handle load errors - display empty state
     }
   }, []);
 

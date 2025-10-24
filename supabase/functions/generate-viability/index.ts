@@ -69,8 +69,6 @@ Provide:
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI Gateway error:', response.status, errorText);
       throw new Error(`AI Gateway error: ${response.status}`);
     }
 
@@ -81,8 +79,6 @@ Provide:
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error:', error);
-    
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify({ error: 'Invalid input data', details: error.errors }), {

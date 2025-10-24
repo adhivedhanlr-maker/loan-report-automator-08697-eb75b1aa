@@ -61,7 +61,7 @@ const NewProject = () => {
         
         // DON'T clear the flags here - wait until component unmounts or user navigates back
       } catch (error) {
-        console.error('Failed to load sample project:', error);
+        // Silently handle load errors - continue with empty state
       }
     }
   }, []);

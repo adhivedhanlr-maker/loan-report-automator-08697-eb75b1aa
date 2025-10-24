@@ -25,7 +25,7 @@ const ReportsPage = () => {
         const projects = localStorage.getItem('savedLoanProjects');
         setSavedProjects(projects ? JSON.parse(projects) : []);
       } catch (error) {
-        console.error('Failed to load projects:', error);
+        // Silently handle load errors - display empty state
       }
     };
     loadProjects();
@@ -38,7 +38,7 @@ const ReportsPage = () => {
         localStorage.setItem('savedLoanProjects', JSON.stringify(updatedProjects));
         setSavedProjects(updatedProjects);
       } catch (error) {
-        console.error('Failed to delete project:', error);
+        // Silently handle delete errors
       }
     }
   };

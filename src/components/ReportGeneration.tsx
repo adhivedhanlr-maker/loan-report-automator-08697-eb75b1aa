@@ -86,7 +86,6 @@ export const ReportGeneration = ({ projectData, onBack, isViewingExisting = fals
         description: "Your loan application report has been downloaded.",
       });
     } catch (error) {
-      console.error('PDF generation failed:', error);
       toast({
         title: "PDF Generation Failed",
         description: "There was an error generating the PDF. Please try again.",
@@ -103,9 +102,8 @@ export const ReportGeneration = ({ projectData, onBack, isViewingExisting = fals
       try {
         localStorage.removeItem('sampleProjectLoaded');
         localStorage.removeItem('sampleProjectData');
-        console.log('[ReportGeneration] Existing project: cleared view flags and returning to dashboard');
       } catch (e) {
-        console.warn('[ReportGeneration] Failed clearing view flags', e);
+        // Silently handle cleanup errors
       }
       navigate('/');
       toast({

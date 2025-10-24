@@ -26,7 +26,6 @@ const getSavedProjects = (): SavedProject[] => {
     const projects = localStorage.getItem(SAVED_PROJECTS_KEY);
     return projects ? JSON.parse(projects) : [];
   } catch (error) {
-    console.error('Failed to load saved projects:', error);
     return [];
   }
 };
@@ -38,7 +37,6 @@ const deleteProject = (projectId: string): SavedProject[] => {
     localStorage.setItem(SAVED_PROJECTS_KEY, JSON.stringify(updatedProjects));
     return updatedProjects;
   } catch (error) {
-    console.error('Failed to delete project:', error);
     return getSavedProjects();
   }
 };
