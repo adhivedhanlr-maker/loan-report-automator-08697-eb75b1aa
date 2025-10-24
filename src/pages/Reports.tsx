@@ -1,58 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, FileText, Search, Calendar, Download, Eye, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Search, Calendar, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ProjectData } from "@/types/LegacyTypes";
-
-interface SavedProject {
-  id: string;
-  name: string;
-  data: ProjectData;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useLoanProjects } from "@/hooks/useLoanProjects";
+import { useToast } from "@/hooks/use-toast";
 
 const ReportsPage = () => {
   const navigate = useNavigate();
-  const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
+  const { projects, loading, deleteProject, getProjectDetails } = useLoanProjects();
   const [searchTerm, setSearchTerm] = useState('');
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const loadProjects = () => {
-      try {
-        const projects = localStorage.getItem('savedLoanProjects');
-        setSavedProjects(projects ? JSON.parse(projects) : []);
-      } catch (error) {
-        // Silently handle load errors - display empty state
-      }
-    };
-    loadProjects();
-  }, []);
-
-  const handleDeleteProject = (projectId: string) => {
+  const handleDeleteProject = async (projectId: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      try {
-        const updatedProjects = savedProjects.filter(p => p.id !== projectId);
-        localStorage.setItem('savedLoanProjects', JSON.stringify(updatedProjects));
-        setSavedProjects(updatedProjects);
-      } catch (error) {
-        // Silently handle delete errors
+      const success = await deleteProject(projectId);
+      if (success) {
+        toast({
+          title: "Project Deleted",
+          description: "The project has been successfully deleted.",
+        });
+      } else {
+        toast({
+          title: "Delete Failed",
+          description: "There was an error deleting the project.",
+          variant: "destructive",
+        });
       }
     }
   };
 
-  const handleViewReport = (project: SavedProject) => {
-    localStorage.setItem('loanApplicationProjectData', JSON.stringify(project.data));
-    localStorage.setItem('loanApplicationCurrentStep', '4');
-    navigate('/new-project');
+  const handleViewReport = async (projectId: string) => {
+    const projectData = await getProjectDetails(projectId);
+    if (projectData) {
+      localStorage.setItem('viewingProjectId', projectId);
+      localStorage.setItem('viewingProjectData', JSON.stringify(projectData));
+      navigate('/new-project');
+    } else {
+      toast({
+        title: "Error Loading Project",
+        description: "Could not load project details.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const filteredProjects = savedProjects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.data.businessInfo?.proprietorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.data.businessInfo?.proposedBusiness?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProjects = projects.filter(project =>
+    project.project_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.business_info?.proprietor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.business_info?.proposed_business?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -90,7 +87,13 @@ const ReportsPage = () => {
           </CardContent>
         </Card>
 
-        {filteredProjects.length === 0 ? (
+        {loading ? (
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-muted-foreground">Loading projects...</p>
+            </CardContent>
+          </Card>
+        ) : filteredProjects.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
               <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
@@ -112,73 +115,76 @@ const ReportsPage = () => {
           </Card>
         ) : (
           <div className="grid gap-4">
-            {filteredProjects.map((project) => (
-              <Card key={project.id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">{project.name}</CardTitle>
-                       <CardDescription>
-                         <div className="space-y-1 mt-2">
-                           <div><span className="font-medium">Proprietor:</span> {project.data.businessInfo?.proprietorName || 'N/A'}</div>
-                           <div><span className="font-medium">Business:</span> {project.data.businessInfo?.proposedBusiness || 'N/A'}</div>
-                           <div className="flex items-center gap-1">
-                             <Calendar className="h-3 w-3" />
-                             Created: {new Date(project.createdAt).toLocaleDateString()}
-                           </div>
-                         </div>
-                       </CardDescription>
+            {filteredProjects.map((project) => {
+              const totalCost = (project.finance_data?.loan_amount || 0) + (project.finance_data?.equity || 0);
+              return (
+                <Card key={project.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg">{project.project_name}</CardTitle>
+                        <CardDescription>
+                          <div className="space-y-1 mt-2">
+                            <div><span className="font-medium">Proprietor:</span> {project.business_info?.proprietor_name || 'N/A'}</div>
+                            <div><span className="font-medium">Business:</span> {project.business_info?.proposed_business || 'N/A'}</div>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              Created: {new Date(project.created_at).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewReport(project.id)}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteProject(project.id)}
+                          className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewReport(project)}
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteProject(project.id)}
-                        className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-3 gap-4 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Total Cost:</span>
+                        <span className="font-medium">
+                          ₹{totalCost.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Location:</span>
+                        <span className="font-medium">
+                          {project.business_info?.village ? 
+                            `${project.business_info.village}, ${project.business_info.district}` : 
+                            'N/A'
+                          }
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Experience:</span>
+                        <span className="font-medium">
+                          {project.business_info?.experience ? 
+                            `${project.business_info.experience} years` : 
+                            'N/A'
+                          }
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-4 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Total Cost:</span>
-                      <span className="font-medium">
-                        ₹{project.data.projectCost?.totalProjectCost?.toLocaleString() || '0'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Location:</span>
-                      <span className="font-medium">
-                        {project.data.businessInfo?.village ? 
-                          `${project.data.businessInfo.village}, ${project.data.businessInfo.district}` : 
-                          'N/A'
-                        }
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Experience:</span>
-                      <span className="font-medium">
-                        {project.data.businessInfo?.experience ? 
-                          `${project.data.businessInfo.experience} years` : 
-                          'N/A'
-                        }
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

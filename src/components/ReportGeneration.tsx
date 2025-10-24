@@ -9,17 +9,21 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { useLoanProjects } from "@/hooks/useLoanProjects";
 
 interface ReportGenerationProps {
   projectData: CompleteProjectData;
   onBack: () => void;
   isViewingExisting?: boolean;
+  projectId?: string;
 }
 
-export const ReportGeneration = ({ projectData, onBack, isViewingExisting = false }: ReportGenerationProps) => {
+export const ReportGeneration = ({ projectData, onBack, isViewingExisting = false, projectId }: ReportGenerationProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { createProject, updateProject } = useLoanProjects();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Calculate key financial metrics from the new data structure
   const totalProjectCost = projectData.financeData.loanAmount + projectData.financeData.equity;
@@ -96,54 +100,84 @@ export const ReportGeneration = ({ projectData, onBack, isViewingExisting = fals
     }
   };
 
-  const handleSaveAndContinue = () => {
-    if (isViewingExisting) {
-      // Just navigate back - don't save duplicate
+  const handleSaveAndContinue = async () => {
+    if (isViewingExisting && projectId) {
+      // Update existing project
+      setIsSaving(true);
       try {
-        localStorage.removeItem('sampleProjectLoaded');
-        localStorage.removeItem('sampleProjectData');
-      } catch (e) {
-        // Silently handle cleanup errors
+        const success = await updateProject(
+          projectId,
+          projectData.businessInfo,
+          projectData.financeData,
+          projectData.depreciationSchedule,
+          projectData.loanAmortization,
+          projectData.profitAndLoss
+        );
+        
+        if (success) {
+          localStorage.removeItem('viewingProjectId');
+          localStorage.removeItem('viewingProjectData');
+          navigate('/');
+          toast({
+            title: "Project Updated!",
+            description: "Your changes have been saved successfully.",
+          });
+        } else {
+          throw new Error('Update failed');
+        }
+      } catch (error) {
+        toast({
+          title: "Update Failed",
+          description: "There was an error updating your project.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSaving(false);
       }
-      navigate('/');
-      toast({
-        title: "Returning to Dashboard",
-        description: "Your project is already saved.",
-      });
       return;
     }
     
-    // Save new project to localStorage
-    const savedProject = {
-      id: Date.now().toString(),
-      name: projectData.businessInfo?.shopName || 'Untitled Project',
-      data: projectData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
+    // Save new project to database
+    setIsSaving(true);
     try {
-      const existingProjects = JSON.parse(localStorage.getItem('savedLoanProjects') || '[]');
-      const updatedProjects = [savedProject, ...existingProjects];
-      localStorage.setItem('savedLoanProjects', JSON.stringify(updatedProjects));
+      const projectName = projectData.businessInfo?.shopName || 'Untitled Project';
+      const projectId = await createProject(
+        projectName,
+        projectData.businessInfo,
+        projectData.financeData
+      );
       
-      // Clear the current project data since it's now saved
-      localStorage.removeItem('loanApplicationProjectData');
-      localStorage.removeItem('loanApplicationCurrentStep');
-      localStorage.removeItem('sampleProjectLoaded');
-      localStorage.removeItem('sampleProjectData');
-      
-      navigate('/');
-      toast({
-        title: "Project Saved Successfully!",
-        description: "Your loan application project has been saved and can be accessed from the dashboard.",
-      });
+      if (projectId) {
+        // Update with schedules
+        await updateProject(
+          projectId,
+          projectData.businessInfo,
+          projectData.financeData,
+          projectData.depreciationSchedule,
+          projectData.loanAmortization,
+          projectData.profitAndLoss
+        );
+        
+        // Clear any temporary data
+        localStorage.removeItem('loanApplicationProjectData');
+        localStorage.removeItem('loanApplicationCurrentStep');
+        
+        navigate('/');
+        toast({
+          title: "Project Saved Successfully!",
+          description: "Your loan application project has been saved to the database.",
+        });
+      } else {
+        throw new Error('Save failed');
+      }
     } catch (error) {
       toast({
         title: "Save Failed",
         description: "There was an error saving your project. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -398,10 +432,20 @@ export const ReportGeneration = ({ projectData, onBack, isViewingExisting = fals
           
           <Button
             onClick={handleSaveAndContinue}
+            disabled={isSaving}
             className="bg-gradient-to-r from-success to-success-light hover:from-success-light hover:to-success"
           >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            {isViewingExisting ? 'Done' : 'Save & Complete'}
+            {isSaving ? (
+              <>
+                <Calculator className="h-4 w-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                {isViewingExisting ? 'Save Changes' : 'Save & Complete'}
+              </>
+            )}
           </Button>
         </div>
       </div>

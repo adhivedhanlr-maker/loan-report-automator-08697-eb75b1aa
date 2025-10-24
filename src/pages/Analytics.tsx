@@ -1,47 +1,30 @@
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BarChart3, TrendingUp, DollarSign, FileText, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ProjectData } from "@/types/LegacyTypes";
-
-interface SavedProject {
-  id: string;
-  name: string;
-  data: ProjectData;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useLoanProjects } from "@/hooks/useLoanProjects";
 
 const AnalyticsPage = () => {
   const navigate = useNavigate();
-  const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
-
-  useEffect(() => {
-    try {
-      const projects = localStorage.getItem('savedLoanProjects');
-      setSavedProjects(projects ? JSON.parse(projects) : []);
-    } catch (error) {
-      // Silently handle load errors - display empty state
-    }
-  }, []);
+  const { projects, loading } = useLoanProjects();
 
   // Calculate analytics
-  const totalProjects = savedProjects.length;
-  const totalProjectValue = savedProjects.reduce((sum, project) => 
-    sum + (project.data.projectCost?.totalProjectCost || 0), 0
-  );
+  const totalProjects = projects.length;
+  const totalProjectValue = projects.reduce((sum, project) => {
+    const totalCost = (project.finance_data?.loan_amount || 0) + (project.finance_data?.equity || 0);
+    return sum + totalCost;
+  }, 0);
   
   const avgProjectValue = totalProjects > 0 ? totalProjectValue / totalProjects : 0;
   
-  const businessTypes = savedProjects.reduce((acc, project) => {
-    const business = project.data.businessInfo?.proposedBusiness || 'Unknown';
+  const businessTypes = projects.reduce((acc, project) => {
+    const business = project.business_info?.proposed_business || 'Unknown';
     acc[business] = (acc[business] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
   
-  const projectsByMonth = savedProjects.reduce((acc, project) => {
-    const month = new Date(project.createdAt).toLocaleDateString('en-US', { 
+  const projectsByMonth = projects.reduce((acc, project) => {
+    const month = new Date(project.created_at).toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short' 
     });
@@ -49,13 +32,16 @@ const AnalyticsPage = () => {
     return acc;
   }, {} as Record<string, number>);
 
-  const recentActivity = savedProjects
+  const recentActivity = projects
     .slice(0, 5)
-    .map(project => ({
-      name: project.name,
-      date: new Date(project.createdAt).toLocaleDateString(),
-      value: project.data.projectCost?.totalProjectCost || 0
-    }));
+    .map(project => {
+      const totalCost = (project.finance_data?.loan_amount || 0) + (project.finance_data?.equity || 0);
+      return {
+        name: project.project_name,
+        date: new Date(project.created_at).toLocaleDateString(),
+        value: totalCost
+      };
+    });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
@@ -75,6 +61,14 @@ const AnalyticsPage = () => {
           </div>
         </div>
 
+        {loading ? (
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-muted-foreground">Loading analytics...</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -244,8 +238,8 @@ const AnalyticsPage = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Highest Project Value:</span>
                   <span className="font-medium">
-                    ₹{savedProjects.length > 0 ? 
-                      Math.max(...savedProjects.map(p => p.data.projectCost?.totalProjectCost || 0)).toLocaleString() : 
+                    ₹{projects.length > 0 ? 
+                      Math.max(...projects.map(p => (p.finance_data?.loan_amount || 0) + (p.finance_data?.equity || 0))).toLocaleString() : 
                       '0'
                     }
                   </span>
@@ -253,8 +247,8 @@ const AnalyticsPage = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Lowest Project Value:</span>
                   <span className="font-medium">
-                    ₹{savedProjects.length > 0 ? 
-                      Math.min(...savedProjects.map(p => p.data.projectCost?.totalProjectCost || 0)).toLocaleString() : 
+                    ₹{projects.length > 0 ? 
+                      Math.min(...projects.map(p => (p.finance_data?.loan_amount || 0) + (p.finance_data?.equity || 0))).toLocaleString() : 
                       '0'
                     }
                   </span>
@@ -272,6 +266,8 @@ const AnalyticsPage = () => {
             </CardContent>
           </Card>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

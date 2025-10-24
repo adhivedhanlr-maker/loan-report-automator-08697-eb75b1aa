@@ -42,35 +42,36 @@ const NewProject = () => {
   const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossStatement | undefined>();
   const [reportIntroduction, setReportIntroduction] = useState<ReportIntroduction | undefined>();
 
-  // Load sample project data if available
+  const [viewingProjectId, setViewingProjectId] = useState<string | undefined>();
+
+  // Load existing project data if viewing
   useEffect(() => {
-    const sampleProjectLoaded = localStorage.getItem('sampleProjectLoaded');
-    const sampleProjectData = localStorage.getItem('sampleProjectData');
+    const viewingId = localStorage.getItem('viewingProjectId');
+    const viewingData = localStorage.getItem('viewingProjectData');
     
-    if (sampleProjectLoaded === 'true' && sampleProjectData) {
+    if (viewingId && viewingData) {
       try {
-        const data: CompleteProjectData = JSON.parse(sampleProjectData);
+        const data: CompleteProjectData = JSON.parse(viewingData);
         setBusinessInfo(data.businessInfo);
         setFinanceData(data.financeData);
         setDepreciationSchedule(data.depreciationSchedule);
         setLoanAmortization(data.loanAmortization);
         setProfitAndLoss(data.profitAndLoss);
         setReportIntroduction(data.reportIntroduction);
-        setCurrentStep('report'); // Go directly to report
-        setIsViewingExisting(true); // Mark as viewing existing project
-        
-        // DON'T clear the flags here - wait until component unmounts or user navigates back
+        setCurrentStep('report');
+        setIsViewingExisting(true);
+        setViewingProjectId(viewingId);
       } catch (error) {
-        // Silently handle load errors - continue with empty state
+        // Silently handle load errors
       }
     }
   }, []);
 
-  // Cleanup: Clear localStorage flags when component unmounts
+  // Cleanup when component unmounts
   useEffect(() => {
     return () => {
-      localStorage.removeItem('sampleProjectLoaded');
-      localStorage.removeItem('sampleProjectData');
+      localStorage.removeItem('viewingProjectId');
+      localStorage.removeItem('viewingProjectData');
     };
   }, []);
 
@@ -119,9 +120,8 @@ const NewProject = () => {
   const handleBackFromIntroduction = () => setCurrentStep('pl');
   const handleBackFromReport = () => {
     if (isViewingExisting) {
-      // Clear flags and navigate to dashboard
-      localStorage.removeItem('sampleProjectLoaded');
-      localStorage.removeItem('sampleProjectData');
+      localStorage.removeItem('viewingProjectId');
+      localStorage.removeItem('viewingProjectData');
       navigate('/');
     } else {
       setCurrentStep('introduction');
@@ -213,6 +213,7 @@ const NewProject = () => {
             projectData={getCompleteProjectData()!}
             onBack={handleBackFromReport}
             isViewingExisting={isViewingExisting}
+            projectId={viewingProjectId}
           />
         )}
       </div>
