@@ -6,13 +6,37 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const RequestSchema = z.object({
-  businessName: z.string().min(1).max(200),
-  totalProjectCost: z.number().positive().finite(),
-  totalNetProfit: z.number().finite(),
-  loanAmount: z.number().positive().finite(),
-  averageNetProfit: z.number().finite()
+// Comprehensive validation schemas matching client-side rules
+const BusinessInfoSchema = z.object({
+  shopName: z.string().trim().min(1, "Shop Name is required").max(200),
+  proprietorName: z.string().trim().min(1, "Proprietor Name is required").max(200),
+  contactNumber: z.string().regex(/^\d{10}$/, "Contact Number must be 10 digits"),
+  district: z.string().trim().min(1, "District is required").max(100),
+  pinCode: z.string().regex(/^\d{6}$/, "Pin Code must be 6 digits"),
+  proposedBusiness: z.string().trim().min(1, "Proposed Business is required").max(500),
+  panNo: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Invalid PAN format").optional().or(z.literal('')),
+  aadhaarNo: z.string().regex(/^\d{12}$/, "Aadhaar must be 12 digits").optional().or(z.literal('')),
 });
+
+const FinanceDataSchema = z.object({
+  loanAmount: z.number().positive("Loan Amount must be greater than 0").finite(),
+  equity: z.number().min(0, "Equity cannot be negative").finite(),
+  growthRate: z.number().min(0).max(100, "Growth Rate must be between 0 and 100").finite(),
+  totalProjectCost: z.number().positive().finite(),
+});
+
+const RequestSchema = z.object({
+  businessInfo: BusinessInfoSchema,
+  financeData: FinanceDataSchema,
+  totalNetProfit: z.number().finite(),
+  averageNetProfit: z.number().finite(),
+}).refine(
+  (data) => data.financeData.loanAmount <= data.financeData.totalProjectCost,
+  {
+    message: "Loan Amount cannot exceed Total Project Cost",
+    path: ["financeData", "loanAmount"],
+  }
+);
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -29,10 +53,10 @@ serve(async (req) => {
       });
     }
 
-    // Parse and validate request body
+    // Parse and validate request body with comprehensive validation
     const body = await req.json();
     const validated = RequestSchema.parse(body);
-    const { businessName, totalProjectCost, totalNetProfit, loanAmount, averageNetProfit } = validated;
+    const { businessInfo, financeData, totalNetProfit, averageNetProfit } = validated;
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -41,9 +65,13 @@ serve(async (req) => {
 
     const prompt = `Analyze this business loan application and provide a concise viability assessment:
 
-Business: ${businessName}
-Total Project Cost: ₹${totalProjectCost.toLocaleString('en-IN')}
-Loan Amount: ₹${loanAmount.toLocaleString('en-IN')}
+Business: ${businessInfo.shopName}
+Proprietor: ${businessInfo.proprietorName}
+Proposed Business: ${businessInfo.proposedBusiness}
+District: ${businessInfo.district}
+Total Project Cost: ₹${financeData.totalProjectCost.toLocaleString('en-IN')}
+Loan Amount: ₹${financeData.loanAmount.toLocaleString('en-IN')}
+Equity: ₹${financeData.equity.toLocaleString('en-IN')}
 5-Year Total Net Profit: ₹${totalNetProfit.toLocaleString('en-IN')}
 Average Annual Net Profit: ₹${averageNetProfit.toLocaleString('en-IN')}
 

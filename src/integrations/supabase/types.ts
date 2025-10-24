@@ -14,16 +14,347 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      business_info: {
+        Row: {
+          aadhaar_no: string | null
+          bank_branch: string | null
+          bank_name: string | null
+          block: string | null
+          building_landmark: string | null
+          building_no: string | null
+          contact_number: string
+          created_at: string
+          date_of_birth: string | null
+          district: string
+          experience: number | null
+          father_name: string | null
+          gender: string | null
+          gst_no: string | null
+          house_name: string | null
+          id: string
+          line_of_activity: string | null
+          loan_scheme: string | null
+          loan_years: number | null
+          monthly_rent: number | null
+          municipality: string | null
+          pan_no: string | null
+          pin_code: string
+          post_office: string | null
+          project_id: string
+          proposed_business: string
+          proprietor_name: string
+          qualification: string | null
+          shop_name: string
+          taluk: string | null
+          unit_status: string | null
+          village: string | null
+        }
+        Insert: {
+          aadhaar_no?: string | null
+          bank_branch?: string | null
+          bank_name?: string | null
+          block?: string | null
+          building_landmark?: string | null
+          building_no?: string | null
+          contact_number: string
+          created_at?: string
+          date_of_birth?: string | null
+          district: string
+          experience?: number | null
+          father_name?: string | null
+          gender?: string | null
+          gst_no?: string | null
+          house_name?: string | null
+          id?: string
+          line_of_activity?: string | null
+          loan_scheme?: string | null
+          loan_years?: number | null
+          monthly_rent?: number | null
+          municipality?: string | null
+          pan_no?: string | null
+          pin_code: string
+          post_office?: string | null
+          project_id: string
+          proposed_business: string
+          proprietor_name: string
+          qualification?: string | null
+          shop_name: string
+          taluk?: string | null
+          unit_status?: string | null
+          village?: string | null
+        }
+        Update: {
+          aadhaar_no?: string | null
+          bank_branch?: string | null
+          bank_name?: string | null
+          block?: string | null
+          building_landmark?: string | null
+          building_no?: string | null
+          contact_number?: string
+          created_at?: string
+          date_of_birth?: string | null
+          district?: string
+          experience?: number | null
+          father_name?: string | null
+          gender?: string | null
+          gst_no?: string | null
+          house_name?: string | null
+          id?: string
+          line_of_activity?: string | null
+          loan_scheme?: string | null
+          loan_years?: number | null
+          monthly_rent?: number | null
+          municipality?: string | null
+          pan_no?: string | null
+          pin_code?: string
+          post_office?: string | null
+          project_id?: string
+          proposed_business?: string
+          proprietor_name?: string
+          qualification?: string | null
+          shop_name?: string
+          taluk?: string | null
+          unit_status?: string | null
+          village?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_info_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "loan_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      depreciation_schedules: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          schedule_data: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          schedule_data: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          schedule_data?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "depreciation_schedules_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "loan_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      finance_data: {
+        Row: {
+          created_at: string
+          equity: number
+          fixed_assets: Json
+          fixed_opex: Json
+          growth_rate: number
+          id: string
+          loan_amount: number
+          materials: Json
+          project_id: string
+          sales_mix: Json
+        }
+        Insert: {
+          created_at?: string
+          equity?: number
+          fixed_assets?: Json
+          fixed_opex?: Json
+          growth_rate?: number
+          id?: string
+          loan_amount: number
+          materials?: Json
+          project_id: string
+          sales_mix?: Json
+        }
+        Update: {
+          created_at?: string
+          equity?: number
+          fixed_assets?: Json
+          fixed_opex?: Json
+          growth_rate?: number
+          id?: string
+          loan_amount?: number
+          materials?: Json
+          project_id?: string
+          sales_mix?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_data_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "loan_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_amortizations: {
+        Row: {
+          amortization_data: Json
+          created_at: string
+          id: string
+          project_id: string
+        }
+        Insert: {
+          amortization_data: Json
+          created_at?: string
+          id?: string
+          project_id: string
+        }
+        Update: {
+          amortization_data?: Json
+          created_at?: string
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_amortizations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "loan_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_projects: {
+        Row: {
+          created_at: string
+          id: string
+          project_name: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_name: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profit_loss_statements: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          statement_data: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          statement_data: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          statement_data?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profit_loss_statements_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "loan_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "manager"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +481,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "manager"],
+    },
   },
 } as const

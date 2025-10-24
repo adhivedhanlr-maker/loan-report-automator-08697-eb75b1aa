@@ -9,62 +9,40 @@ import { useToast } from "@/hooks/use-toast";
 import { FirmHeader } from "@/components/FirmHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
+import { useLoanProjects } from "@/hooks/useLoanProjects";
+import { migrateLocalStorageToDatabase } from "@/utils/localStorageMigration";
 
-// localStorage utility for saved projects
-const SAVED_PROJECTS_KEY = 'savedLoanProjects';
-
-interface SavedProject {
-  id: string;
-  name: string;
-  data: CompleteProjectData;
-  createdAt: string;
-  updatedAt: string;
-}
-
-const getSavedProjects = (): SavedProject[] => {
-  try {
-    const projects = localStorage.getItem(SAVED_PROJECTS_KEY);
-    return projects ? JSON.parse(projects) : [];
-  } catch (error) {
-    return [];
-  }
-};
-
-const deleteProject = (projectId: string): SavedProject[] => {
-  try {
-    const projects = getSavedProjects();
-    const updatedProjects = projects.filter(p => p.id !== projectId);
-    localStorage.setItem(SAVED_PROJECTS_KEY, JSON.stringify(updatedProjects));
-    return updatedProjects;
-  } catch (error) {
-    return getSavedProjects();
-  }
-};
+// No longer using localStorage - all data now stored in secure database
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, role, canDelete, signOut } = useAuth();
-  const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
+  const { projects, loading, deleteProject: deleteProjectFromDb, fetchProjects } = useLoanProjects();
+  const [migrationComplete, setMigrationComplete] = useState(false);
 
+  // Migrate localStorage data to database on mount
   useEffect(() => {
-    setSavedProjects(getSavedProjects());
-  }, []);
-
-  // Refresh list when window regains focus or localStorage changes (saves from other routes)
-  useEffect(() => {
-    const refresh = () => setSavedProjects(getSavedProjects());
-    window.addEventListener('focus', refresh);
-    window.addEventListener('storage', refresh);
-    return () => {
-      window.removeEventListener('focus', refresh);
-      window.removeEventListener('storage', refresh);
+    const performMigration = async () => {
+      if (user && !migrationComplete) {
+        const result = await migrateLocalStorageToDatabase(user.id);
+        if (result.success && result.migrated > 0) {
+          toast({
+            title: 'Data Migration Complete',
+            description: `${result.migrated} project(s) migrated to secure database storage`,
+          });
+          await fetchProjects();
+        }
+        setMigrationComplete(true);
+      }
     };
-  }, []);
+    performMigration();
+  }, [user, migrationComplete]);
 
-  const handleDeleteProject = (projectId: string) => {
-    const updatedProjects = deleteProject(projectId);
-    setSavedProjects(updatedProjects);
+  const handleDeleteProject = async (projectId: string) => {
+    if (confirm('Are you sure you want to delete this project?')) {
+      await deleteProjectFromDb(projectId);
+    }
   };
 
   return (
@@ -159,7 +137,11 @@ const Dashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {savedProjects.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Loading projects...</p>
+              </div>
+            ) : projects.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p className="text-lg mb-2">No projects yet</p>
@@ -172,8 +154,6 @@ const Dashboard = () => {
                   <Button
                     onClick={() => {
                       const sampleData = generateSampleProjectData();
-                      
-                      // Save to localStorage for new workflow
                       localStorage.setItem('sampleProjectLoaded', 'true');
                       localStorage.setItem('sampleProjectData', JSON.stringify(sampleData));
                       navigate("/new-project");
@@ -187,48 +167,27 @@ const Dashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {savedProjects.slice(0, 5).map((project) => (
+                {projects.slice(0, 5).map((project) => (
                   <div key={project.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-foreground">{project.name}</h3>
+                      <h3 className="font-semibold text-foreground">{project.project_name}</h3>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {new Date(project.createdAt).toLocaleDateString()}
+                          {new Date(project.created_at).toLocaleDateString()}
                         </span>
-                        <span>Total Project Cost: ₹{((project.data?.financeData?.loanAmount || 0) + (project.data?.financeData?.equity || 0)).toLocaleString()}</span>
+                        <Badge variant={project.status === 'draft' ? 'secondary' : 'default'}>
+                          {project.status}
+                        </Badge>
                       </div>
                     </div>
                     <div className="flex gap-2">
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => {
-                          try {
-                            // Validate project data structure
-                            if (!project.data || typeof project.data !== 'object') {
-                              toast({
-                                title: "Invalid Project Data",
-                                description: "This project's data is corrupted or incompatible.",
-                                variant: "destructive",
-                              });
-                              return;
-                            }
-                            
-                            // Load project data and navigate to report view in new workflow
-                            localStorage.setItem('sampleProjectLoaded', 'true');
-                            localStorage.setItem('sampleProjectData', JSON.stringify(project.data));
-                            navigate('/new-project');
-                          } catch (error) {
-                            toast({
-                              title: "Error Loading Project",
-                              description: "Unable to load this project. It may be corrupted.",
-                              variant: "destructive",
-                            });
-                          }
-                        }}
+                        onClick={() => navigate(`/project/${project.id}`)}
                       >
-                        View Report
+                        View Project
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </Button>
                       {canDelete && (
@@ -237,9 +196,7 @@ const Dashboard = () => {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm('Are you sure you want to delete this project?')) {
-                              handleDeleteProject(project.id);
-                            }
+                            handleDeleteProject(project.id);
                           }}
                           className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
                         >
@@ -250,10 +207,10 @@ const Dashboard = () => {
                   </div>
                 ))}
                 
-                {savedProjects.length > 5 && (
+                {projects.length > 5 && (
                   <div className="text-center pt-4">
-                    <Button variant="outline" onClick={() => {/* TODO: Navigate to full reports page */}}>
-                      View All Projects ({savedProjects.length})
+                    <Button variant="outline" onClick={() => navigate('/reports')}>
+                      View All Projects ({projects.length})
                     </Button>
                   </div>
                 )}
