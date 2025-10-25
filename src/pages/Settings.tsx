@@ -51,7 +51,11 @@ const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  
+  // User management state
+  const [users, setUsers] = useState<any[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
   
   // Profile state
   const [username, setUsername] = useState('');
@@ -91,6 +95,32 @@ const Settings = () => {
       console.error('Error loading profile:', error);
     } finally {
       setProfileLoading(false);
+    }
+  };
+
+  const loadUsers = async () => {
+    if (role !== 'manager') return;
+    
+    setUsersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          email,
+          username,
+          full_name,
+          created_at,
+          user_roles (role)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setUsersLoading(false);
     }
   };
 
@@ -628,22 +658,76 @@ const Settings = () => {
                   User Management
                 </CardTitle>
                 <CardDescription>
-                  Manage users and authentication settings
+                  {role === 'manager' 
+                    ? 'View and manage all users in the system'
+                    : 'View your account role and permissions'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Alert>
-                  <Shield className="h-4 w-4" />
-                  <AlertDescription>
-                    User management and authentication features require a backend connection. 
-                    Connect to Supabase to enable user registration, login, and role management.
-                  </AlertDescription>
-                </Alert>
-                <div className="mt-4 space-y-2 opacity-50">
-                  <Button disabled className="w-full">Add New User</Button>
-                  <Button disabled variant="outline" className="w-full">Manage Roles</Button>
-                  <Button disabled variant="outline" className="w-full">Authentication Settings</Button>
+                {/* Current User Info */}
+                <div className="mb-6 p-4 bg-muted rounded-lg">
+                  <h3 className="font-semibold mb-2">Your Account</h3>
+                  <div className="space-y-1 text-sm">
+                    <p><span className="text-muted-foreground">Email:</span> {user?.email}</p>
+                    <p><span className="text-muted-foreground">Username:</span> {username || 'Not set'}</p>
+                    <p><span className="text-muted-foreground">Role:</span> <span className="capitalize font-medium">{role}</span></p>
+                  </div>
                 </div>
+
+                {role === 'manager' ? (
+                  <>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-semibold">All Users</h3>
+                      <Button onClick={loadUsers} variant="outline" size="sm">
+                        Refresh
+                      </Button>
+                    </div>
+                    
+                    {usersLoading ? (
+                      <div className="text-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">Loading users...</p>
+                      </div>
+                    ) : users.length > 0 ? (
+                      <div className="space-y-2">
+                        {users.map((u) => (
+                          <div key={u.id} className="p-3 border rounded-lg">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium">{u.username || u.email}</p>
+                                <p className="text-sm text-muted-foreground">{u.email}</p>
+                                {u.full_name && (
+                                  <p className="text-sm text-muted-foreground">{u.full_name}</p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-primary/10 text-primary capitalize">
+                                  {u.user_roles?.[0]?.role || 'user'}
+                                </span>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Joined {new Date(u.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Users className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-muted-foreground">Click Refresh to load users</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Alert>
+                    <Shield className="h-4 w-4" />
+                    <AlertDescription>
+                      You have <span className="font-semibold capitalize">{role}</span> permissions. 
+                      Contact a manager to modify user roles or access advanced user management features.
+                    </AlertDescription>
+                  </Alert>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
