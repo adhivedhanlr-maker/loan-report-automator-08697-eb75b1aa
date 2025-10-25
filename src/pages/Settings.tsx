@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/components/ThemeProvider";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, 
   Users, 
@@ -11,7 +13,9 @@ import {
   Download,
   Upload,
   Trash2,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  User as UserIcon,
+  Camera
 } from "lucide-react";
 import {
   Card,
@@ -29,6 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { ImageCropModal } from "@/components/ImageCropModal";
 
 interface CalculationSettings {
   defaultMargin: number;
@@ -46,6 +51,103 @@ const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
+  
+  // Profile state
+  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [tempAvatarSrc, setTempAvatarSrc] = useState('');
+  const [showAvatarCrop, setShowAvatarCrop] = useState(false);
+  const [tempLogoSrc, setTempLogoSrc] = useState('');
+  const [showLogoCrop, setShowLogoCrop] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
+  
+  // Load profile data
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+    }
+  }, [user]);
+
+  const loadProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username, full_name, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setUsername(data.username || '');
+        setFullName(data.full_name || '');
+        setAvatarUrl(data.avatar_url || '');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  const updateProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username: username || null,
+          full_name: fullName || null,
+          avatar_url: avatarUrl || null,
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update profile",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload an image smaller than 2MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTempAvatarSrc(reader.result as string);
+        setShowAvatarCrop(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAvatarCropComplete = (croppedImage: string) => {
+    setAvatarUrl(croppedImage);
+    setTempAvatarSrc('');
+  };
+  
   
   // Load settings from localStorage
   const [calculationSettings, setCalculationSettings] = useState<CalculationSettings>(() => {
@@ -102,13 +204,19 @@ const Settings = () => {
       
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAccountSettings(prev => ({
-          ...prev,
-          logoUrl: reader.result as string
-        }));
+        setTempLogoSrc(reader.result as string);
+        setShowLogoCrop(true);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleLogoCropComplete = (croppedImage: string) => {
+    setAccountSettings(prev => ({
+      ...prev,
+      logoUrl: croppedImage
+    }));
+    setTempLogoSrc('');
   };
 
   const exportData = () => {
@@ -181,6 +289,106 @@ const Settings = () => {
 
           {/* Account Settings */}
           <TabsContent value="account" className="space-y-6">
+            {/* Profile Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserIcon className="h-5 w-5" />
+                  Profile
+                </CardTitle>
+                <CardDescription>
+                  Manage your personal account information
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {profileLoading ? (
+                  <div className="text-center py-4">Loading profile...</div>
+                ) : (
+                  <>
+                    {/* Avatar */}
+                    <div className="flex items-center gap-6">
+                      <div className="relative">
+                        <div className="h-24 w-24 rounded-full overflow-hidden border-2 border-primary/20 bg-muted flex items-center justify-center">
+                          {avatarUrl ? (
+                            <img 
+                              src={avatarUrl} 
+                              alt="Profile Avatar" 
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <UserIcon className="h-12 w-12 text-muted-foreground" />
+                          )}
+                        </div>
+                        <label 
+                          htmlFor="avatar-upload"
+                          className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center cursor-pointer hover:bg-primary/90 transition-colors"
+                        >
+                          <Camera className="h-4 w-4" />
+                          <input
+                            id="avatar-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1">Profile Picture</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Click the camera icon to upload a new avatar (Max 2MB)
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Username */}
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      <Input
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="johndoe"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        3-30 characters, letters, numbers, underscore, or hyphen
+                      </p>
+                    </div>
+
+                    {/* Full Name */}
+                    <div className="space-y-2">
+                      <Label htmlFor="full-name">Full Name</Label>
+                      <Input
+                        id="full-name"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="John Doe"
+                      />
+                    </div>
+
+                    {/* Email (read-only) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        value={user?.email || ''}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Email cannot be changed
+                      </p>
+                    </div>
+
+                    <Button onClick={updateProfile} className="w-full">
+                      Save Profile
+                    </Button>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Firm Details Section */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -211,11 +419,11 @@ const Settings = () => {
                   <Label htmlFor="logo-upload">Firm Logo</Label>
                   <div className="flex items-center gap-4">
                     {accountSettings.logoUrl && (
-                      <div className="w-24 h-24 border rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                      <div className="w-24 h-24 border rounded-full overflow-hidden bg-muted flex items-center justify-center">
                         <img 
                           src={accountSettings.logoUrl} 
                           alt="Firm Logo" 
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     )}
@@ -228,7 +436,7 @@ const Settings = () => {
                         className="cursor-pointer"
                       />
                       <p className="text-xs text-muted-foreground mt-2">
-                        Upload your firm logo (Max 2MB, PNG, JPG, or SVG)
+                        Upload your firm logo (Max 2MB, will be cropped to circle)
                       </p>
                     </div>
                   </div>
@@ -244,7 +452,7 @@ const Settings = () => {
                 </div>
 
                 <Button onClick={saveAccountSettings} className="w-full">
-                  Save Account Settings
+                  Save Firm Settings
                 </Button>
               </CardContent>
             </Card>
@@ -485,6 +693,31 @@ const Settings = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Crop Modals */}
+        <ImageCropModal
+          open={showAvatarCrop}
+          onClose={() => {
+            setShowAvatarCrop(false);
+            setTempAvatarSrc('');
+          }}
+          imageSrc={tempAvatarSrc}
+          onCropComplete={handleAvatarCropComplete}
+          aspectRatio={1}
+          title="Crop Profile Picture"
+        />
+
+        <ImageCropModal
+          open={showLogoCrop}
+          onClose={() => {
+            setShowLogoCrop(false);
+            setTempLogoSrc('');
+          }}
+          imageSrc={tempLogoSrc}
+          onCropComplete={handleLogoCropComplete}
+          aspectRatio={1}
+          title="Crop Firm Logo"
+        />
       </div>
     </div>
   );

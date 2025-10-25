@@ -52,13 +52,20 @@ const Dashboard = () => {
         <div className="mb-8 relative">
           {/* User controls - positioned absolutely on larger screens */}
           <div className="flex flex-wrap items-center justify-end gap-2 mb-4 lg:absolute lg:right-0 lg:top-0 lg:mb-0">
-            <div className="flex items-center gap-2 px-2 md:px-3 py-1.5 md:py-2 bg-muted rounded-lg text-xs md:text-sm">
-              <User className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
-              <span className="font-medium hidden sm:inline truncate max-w-[120px] md:max-w-none">{user?.email}</span>
+            <Button
+              onClick={() => navigate('/settings')}
+              variant="ghost"
+              size="sm"
+              className="h-8 md:h-9 gap-2"
+            >
+              <User className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline truncate max-w-[120px] md:max-w-none">
+                {user?.user_metadata?.username || user?.email?.split('@')[0] || 'User'}
+              </span>
               <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
                 {role}
               </Badge>
-            </div>
+            </Button>
             <Button
               onClick={() => navigate('/settings')}
               variant="outline"
