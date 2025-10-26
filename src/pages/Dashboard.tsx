@@ -11,13 +11,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { useLoanProjects } from "@/hooks/useLoanProjects";
 import { migrateLocalStorageToDatabase } from "@/utils/localStorageMigration";
+import { usePermissions } from "@/hooks/usePermissions";
 
 // No longer using localStorage - all data now stored in secure database
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, role, canDelete, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
+  const { hasPermission } = usePermissions();
   const { projects, loading, deleteProject: deleteProjectFromDb, fetchProjects } = useLoanProjects();
   const [migrationComplete, setMigrationComplete] = useState(false);
 
@@ -204,7 +206,7 @@ const Dashboard = () => {
                         View Project
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </Button>
-                      {canDelete && (
+                      {hasPermission('delete_projects') && (
                         <Button 
                           variant="outline" 
                           size="sm"

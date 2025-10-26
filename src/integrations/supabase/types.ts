@@ -318,6 +318,30 @@ export type Database = {
           },
         ]
       }
+      user_permissions: {
+        Row: {
+          created_at: string | null
+          granted_by: string | null
+          id: string
+          permission: Database["public"]["Enums"]["permission_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          granted_by?: string | null
+          id?: string
+          permission: Database["public"]["Enums"]["permission_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          granted_by?: string | null
+          id?: string
+          permission?: Database["public"]["Enums"]["permission_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -348,6 +372,13 @@ export type Database = {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      has_permission: {
+        Args: {
+          _permission: Database["public"]["Enums"]["permission_type"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -358,6 +389,13 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "manager"
+      permission_type:
+        | "view_firm_details"
+        | "view_general_settings"
+        | "view_calculations_settings"
+        | "view_users_tab"
+        | "view_data_tab"
+        | "delete_projects"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -486,6 +524,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "manager"],
+      permission_type: [
+        "view_firm_details",
+        "view_general_settings",
+        "view_calculations_settings",
+        "view_users_tab",
+        "view_data_tab",
+        "delete_projects",
+      ],
     },
   },
 } as const

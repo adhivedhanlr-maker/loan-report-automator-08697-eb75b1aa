@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
+import { usePermissions, PermissionType } from "@/hooks/usePermissions";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, 
@@ -15,7 +16,9 @@ import {
   Trash2,
   Settings as SettingsIcon,
   User as UserIcon,
-  Camera
+  Camera,
+  Check,
+  X
 } from "lucide-react";
 import {
   Card,
@@ -52,10 +55,13 @@ const Settings = () => {
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
   const { user, role } = useAuth();
+  const { permissions, hasPermission, grantPermission, revokePermission, getUserPermissions } = usePermissions();
   
   // User management state
   const [users, setUsers] = useState<any[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [userPermissions, setUserPermissions] = useState<PermissionType[]>([]);
   
   // Profile state
   const [username, setUsername] = useState('');
@@ -123,6 +129,37 @@ const Settings = () => {
       setUsersLoading(false);
     }
   };
+
+  const loadUserPermissions = async (userId: string) => {
+    const perms = await getUserPermissions(userId);
+    setUserPermissions(perms);
+  };
+
+  const handlePermissionToggle = async (userId: string, permission: PermissionType, currentlyHas: boolean) => {
+    const success = currentlyHas 
+      ? await revokePermission(userId, permission)
+      : await grantPermission(userId, permission);
+
+    if (success) {
+      toast({
+        title: currentlyHas ? "Permission Revoked" : "Permission Granted",
+        description: `Permission ${permission.replace(/_/g, ' ')} has been ${currentlyHas ? 'revoked' : 'granted'}.`,
+      });
+      loadUserPermissions(userId);
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to update permission",
+        variant: "destructive",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (selectedUser) {
+      loadUserPermissions(selectedUser);
+    }
+  }, [selectedUser]);
 
   const updateProfile = async () => {
     if (!user) return;
@@ -308,13 +345,13 @@ const Settings = () => {
         </div>
 
         <Tabs defaultValue="account" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${2 + (hasPermission('view_general_settings') ? 1 : 0) + (hasPermission('view_calculations_settings') ? 1 : 0) + (hasPermission('view_users_tab') ? 1 : 0) + (hasPermission('view_data_tab') ? 1 : 0)}, minmax(0, 1fr))` }}>
             <TabsTrigger value="account">Account</TabsTrigger>
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="calculations">Calculations</TabsTrigger>
+            {hasPermission('view_general_settings') && <TabsTrigger value="general">General</TabsTrigger>}
+            {hasPermission('view_calculations_settings') && <TabsTrigger value="calculations">Calculations</TabsTrigger>}
             <TabsTrigger value="theme">Theme</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="data">Data</TabsTrigger>
+            {hasPermission('view_users_tab') && <TabsTrigger value="users">Users</TabsTrigger>}
+            {hasPermission('view_data_tab') && <TabsTrigger value="data">Data</TabsTrigger>}
           </TabsList>
 
           {/* Account Settings */}
@@ -418,7 +455,8 @@ const Settings = () => {
               </CardContent>
             </Card>
 
-            {/* Firm Details Section */}
+            {/* Firm Details Section - Only for users with permission */}
+            {hasPermission('view_firm_details') && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -486,9 +524,11 @@ const Settings = () => {
                 </Button>
               </CardContent>
             </Card>
+            )}
           </TabsContent>
 
           {/* General Settings */}
+          {hasPermission('view_general_settings') && (
           <TabsContent value="general" className="space-y-6">
             <Card>
               <CardHeader>
@@ -534,8 +574,10 @@ const Settings = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Calculation Settings */}
+          {hasPermission('view_calculations_settings') && (
           <TabsContent value="calculations" className="space-y-6">
             <Card>
               <CardHeader>
@@ -610,6 +652,7 @@ const Settings = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Theme Settings */}
           <TabsContent value="theme" className="space-y-6">
@@ -650,6 +693,7 @@ const Settings = () => {
           </TabsContent>
 
           {/* User Management */}
+          {hasPermission('view_users_tab') && (
           <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
@@ -659,7 +703,7 @@ const Settings = () => {
                 </CardTitle>
                 <CardDescription>
                   {role === 'manager' 
-                    ? 'View and manage all users in the system'
+                    ? 'View and manage all users and their permissions in the system'
                     : 'View your account role and permissions'}
                 </CardDescription>
               </CardHeader>
@@ -689,28 +733,88 @@ const Settings = () => {
                         <p className="text-sm text-muted-foreground">Loading users...</p>
                       </div>
                     ) : users.length > 0 ? (
-                      <div className="space-y-2">
-                        {users.map((u) => (
-                          <div key={u.id} className="p-3 border rounded-lg">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <p className="font-medium">{u.username || u.email}</p>
-                                <p className="text-sm text-muted-foreground">{u.email}</p>
-                                {u.full_name && (
-                                  <p className="text-sm text-muted-foreground">{u.full_name}</p>
-                                )}
+                      <div className="space-y-3">
+                        {users.map((u) => {
+                          const userRole = u.user_roles?.[0]?.role || 'user';
+                          const isSelectedUser = selectedUser === u.id;
+                          
+                          return (
+                            <div key={u.id} className="p-4 border rounded-lg">
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <p className="font-medium">{u.username || u.email}</p>
+                                  <p className="text-sm text-muted-foreground">{u.email}</p>
+                                  {u.full_name && (
+                                    <p className="text-sm text-muted-foreground">{u.full_name}</p>
+                                  )}
+                                </div>
+                                <div className="text-right">
+                                  <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-primary/10 text-primary capitalize">
+                                    {userRole}
+                                  </span>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Joined {new Date(u.created_at).toLocaleDateString()}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="text-right">
-                                <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-primary/10 text-primary capitalize">
-                                  {u.user_roles?.[0]?.role || 'user'}
-                                </span>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Joined {new Date(u.created_at).toLocaleDateString()}
-                                </p>
-                              </div>
+                              
+                              {/* Permissions Management for non-manager users */}
+                              {userRole !== 'manager' && (
+                                <div className="mt-3 pt-3 border-t">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <h4 className="text-sm font-semibold">Permissions</h4>
+                                    {!isSelectedUser && (
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setSelectedUser(u.id)}
+                                      >
+                                        Manage
+                                      </Button>
+                                    )}
+                                    {isSelectedUser && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setSelectedUser(null)}
+                                      >
+                                        Close
+                                      </Button>
+                                    )}
+                                  </div>
+                                  
+                                  {isSelectedUser && (
+                                    <div className="space-y-2 mt-3">
+                                      {[
+                                        { key: 'view_firm_details', label: 'View Firm Details' },
+                                        { key: 'view_general_settings', label: 'View General Settings' },
+                                        { key: 'view_calculations_settings', label: 'View Calculations Settings' },
+                                        { key: 'view_users_tab', label: 'View Users Tab' },
+                                        { key: 'view_data_tab', label: 'View Data Tab' },
+                                        { key: 'delete_projects', label: 'Delete Projects' },
+                                      ].map((perm) => {
+                                        const hasIt = userPermissions.includes(perm.key as PermissionType);
+                                        return (
+                                          <div key={perm.key} className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                                            <span className="text-sm">{perm.label}</span>
+                                            <Button
+                                              size="sm"
+                                              variant={hasIt ? "default" : "outline"}
+                                              onClick={() => handlePermissionToggle(u.id, perm.key as PermissionType, hasIt)}
+                                            >
+                                              {hasIt ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
+                                              {hasIt ? 'Granted' : 'Revoked'}
+                                            </Button>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="text-center py-8">
@@ -731,8 +835,10 @@ const Settings = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Data Management */}
+          {hasPermission('view_data_tab') && (
           <TabsContent value="data" className="space-y-6">
             <Card>
               <CardHeader>
@@ -776,6 +882,7 @@ const Settings = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
         </Tabs>
 
         {/* Crop Modals */}

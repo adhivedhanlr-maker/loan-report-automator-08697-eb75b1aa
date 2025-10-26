@@ -1,17 +1,19 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, FileText, Search, Calendar, Eye, Trash2 } from "lucide-react";
+import { ArrowLeft, Search, Calendar, Trash2, Eye, FileText } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoanProjects } from "@/hooks/useLoanProjects";
 import { useToast } from "@/hooks/use-toast";
+import { usePermissions } from "@/hooks/usePermissions";
 
 const ReportsPage = () => {
   const navigate = useNavigate();
   const { projects, loading, deleteProject, getProjectDetails } = useLoanProjects();
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
+  const { hasPermission } = usePermissions();
 
   const handleDeleteProject = async (projectId: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
@@ -143,6 +145,7 @@ const ReportsPage = () => {
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </Button>
+                        {hasPermission('delete_projects') && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -151,6 +154,7 @@ const ReportsPage = () => {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
+                        )}
                       </div>
                     </div>
                   </CardHeader>
