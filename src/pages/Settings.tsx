@@ -64,7 +64,6 @@ const Settings = () => {
   const [userPermissions, setUserPermissions] = useState<PermissionType[]>([]);
   
   // Profile state
-  const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [tempAvatarSrc, setTempAvatarSrc] = useState('');
@@ -86,14 +85,13 @@ const Settings = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('username, full_name, avatar_url')
+        .select('full_name, avatar_url')
         .eq('id', user.id)
         .single();
 
       if (error) throw error;
 
       if (data) {
-        setUsername(data.username || '');
         setFullName(data.full_name || '');
         setAvatarUrl(data.avatar_url || '');
       }
@@ -114,7 +112,6 @@ const Settings = () => {
         .select(`
           id,
           email,
-          username,
           full_name,
           created_at,
           user_roles (role)
@@ -168,7 +165,6 @@ const Settings = () => {
       const { error } = await supabase
         .from('profiles')
         .update({
-          username: username || null,
           full_name: fullName || null,
           avatar_url: avatarUrl || null,
         })
@@ -406,20 +402,6 @@ const Settings = () => {
                           Click the camera icon to upload a new avatar (Max 2MB)
                         </p>
                       </div>
-                    </div>
-
-                    {/* Username */}
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="johndoe"
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        3-30 characters, letters, numbers, underscore, or hyphen
-                      </p>
                     </div>
 
                     {/* Full Name */}
@@ -713,7 +695,7 @@ const Settings = () => {
                   <h3 className="font-semibold mb-2">Your Account</h3>
                   <div className="space-y-1 text-sm">
                     <p><span className="text-muted-foreground">Email:</span> {user?.email}</p>
-                    <p><span className="text-muted-foreground">Username:</span> {username || 'Not set'}</p>
+                    <p><span className="text-muted-foreground">Full Name:</span> {fullName || 'Not set'}</p>
                     <p><span className="text-muted-foreground">Role:</span> <span className="capitalize font-medium">{role}</span></p>
                   </div>
                 </div>
@@ -742,11 +724,8 @@ const Settings = () => {
                             <div key={u.id} className="p-4 border rounded-lg">
                               <div className="flex justify-between items-start mb-2">
                                 <div>
-                                  <p className="font-medium">{u.username || u.email}</p>
+                                  <p className="font-medium">{u.full_name || u.email}</p>
                                   <p className="text-sm text-muted-foreground">{u.email}</p>
-                                  {u.full_name && (
-                                    <p className="text-sm text-muted-foreground">{u.full_name}</p>
-                                  )}
                                 </div>
                                 <div className="text-right">
                                   <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-primary/10 text-primary capitalize">

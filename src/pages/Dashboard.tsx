@@ -51,46 +51,48 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 relative">
-          {/* User controls - positioned absolutely on larger screens */}
-          <div className="flex flex-wrap items-center justify-end gap-2 mb-4 lg:absolute lg:right-0 lg:top-0 lg:mb-0">
-            <Button
-              onClick={() => navigate('/settings')}
-              variant="ghost"
-              size="sm"
-              className="h-8 md:h-9 gap-2"
-            >
-              <User className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="hidden sm:inline truncate max-w-[120px] md:max-w-none">
-                {user?.user_metadata?.username || user?.email?.split('@')[0] || 'User'}
-              </span>
-              <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
-                {role}
-              </Badge>
-            </Button>
+        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          {/* User button - top left */}
+          <Button
+            onClick={() => navigate('/settings')}
+            variant="ghost"
+            size="sm"
+            className="h-9 gap-2 self-start"
+          >
+            <User className="h-4 w-4" />
+            <span className="truncate">
+              Hi, {user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
+            </span>
+            <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
+              {role}
+            </Badge>
+          </Button>
+
+          {/* Centered Firm Header */}
+          <div className="flex-1 flex justify-center">
+            <FirmHeader />
+          </div>
+
+          {/* Right side controls */}
+          <div className="flex items-center gap-2 self-end lg:self-auto">
             <Button
               onClick={() => navigate('/settings')}
               variant="outline"
               size="sm"
-              className="h-8 md:h-9"
+              className="h-9"
             >
-              <Settings className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
+              <Settings className="h-4 w-4 md:mr-2" />
               <span className="hidden md:inline">Settings</span>
             </Button>
             <Button
               onClick={signOut}
               variant="outline"
               size="sm"
-              className="h-8 md:h-9"
+              className="h-9"
             >
-              <LogOut className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
+              <LogOut className="h-4 w-4 md:mr-2" />
               <span className="hidden md:inline">Logout</span>
             </Button>
-          </div>
-          
-          {/* Centered Firm Header */}
-          <div className="flex justify-center">
-            <FirmHeader />
           </div>
         </div>
 
