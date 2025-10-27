@@ -12,7 +12,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, username?: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, fullName?: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   isManager: boolean;
@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUpWithEmail = async (email: string, password: string, username?: string) => {
+  const signUpWithEmail = async (email: string, password: string, fullName?: string) => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
@@ -128,27 +128,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            username: username || email.split('@')[0], // Use username or email prefix
+            full_name: fullName || '',
           }
         },
       });
 
       if (error) throw error;
 
-      // Update profile with username after signup
-      if (username) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await supabase
-            .from('profiles')
-            .update({ username })
-            .eq('id', user.id);
-        }
-      }
-
       toast({
-        title: 'Account Created',
-        description: 'You have been successfully signed up',
+        title: 'Check Your Email',
+        description: 'We sent you a verification link. Please check your email to activate your account.',
       });
     } catch (error: any) {
       toast({

@@ -13,7 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -80,17 +80,14 @@ const Login = () => {
           <div className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
-                  id="username"
+                  id="fullName"
                   type="text"
-                  placeholder="johndoe"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">
-                  3-30 characters, letters, numbers, underscore, or hyphen
-                </p>
               </div>
             )}
             <div className="space-y-2">
@@ -134,7 +131,7 @@ const Login = () => {
                   resetPassword(email);
                   setIsForgotPassword(false);
                 } else if (isSignUp) {
-                  signUpWithEmail(email, password, username);
+                  signUpWithEmail(email, password, fullName);
                 } else {
                   signInWithEmail(email, password);
                 }
