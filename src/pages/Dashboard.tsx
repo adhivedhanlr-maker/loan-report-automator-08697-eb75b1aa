@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings, LogOut, User } from "lucide-react";
+import { Plus, Calculator, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Trash2, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CompleteProjectData } from "@/types/AutomationTypes";
@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { useLoanProjects } from "@/hooks/useLoanProjects";
 import { migrateLocalStorageToDatabase } from "@/utils/localStorageMigration";
 import { usePermissions } from "@/hooks/usePermissions";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
 // No longer using localStorage - all data now stored in secure database
 
@@ -22,6 +24,8 @@ const Dashboard = () => {
   const { hasPermission } = usePermissions();
   const { projects, loading, deleteProject: deleteProjectFromDb, fetchProjects } = useLoanProjects();
   const [migrationComplete, setMigrationComplete] = useState(false);
+  const [displayName, setDisplayName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
 
   // Migrate localStorage data to database on mount
   useEffect(() => {
@@ -41,6 +45,26 @@ const Dashboard = () => {
     performMigration();
   }, [user, migrationComplete]);
 
+  // Load profile for display name and avatar
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      const nameFromProfile = data?.full_name ? String(data.full_name).split(' ')[0] : undefined;
+      const nameFromMeta = user.user_metadata?.full_name ? String(user.user_metadata.full_name).split(' ')[0] : undefined;
+      const fallback = user.email?.split('@')[0] || 'User';
+
+      setDisplayName(nameFromProfile || nameFromMeta || fallback);
+      setAvatarUrl(data?.avatar_url || '');
+    };
+    loadProfile();
+  }, [user]);
+
   const handleDeleteProject = async (projectId: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
       await deleteProjectFromDb(projectId);
@@ -51,30 +75,35 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="mb-8 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
           {/* User button - top left */}
-          <Button
-            onClick={() => navigate('/settings')}
-            variant="ghost"
-            size="sm"
-            className="h-9 gap-2 self-start"
-          >
-            <User className="h-4 w-4" />
-            <span className="truncate">
-              Hi, {user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
-            </span>
-            <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
-              {role}
-            </Badge>
-          </Button>
+          <div className="justify-self-start">
+            <Button
+              onClick={() => navigate('/settings')}
+              variant="ghost"
+              size="sm"
+              className="h-9 gap-2"
+            >
+              <Avatar className="h-7 w-7">
+                <AvatarImage src={avatarUrl || ''} alt={`${displayName || 'User'} avatar`} />
+                <AvatarFallback>{(displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <span className="truncate">
+                Hi, {displayName || 'User'}
+              </span>
+              <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
+                {role}
+              </Badge>
+            </Button>
+          </div>
 
           {/* Centered Firm Header */}
-          <div className="flex-1 flex justify-center">
+          <div className="justify-self-center">
             <FirmHeader />
           </div>
 
           {/* Right side controls */}
-          <div className="flex items-center gap-2 self-end lg:self-auto">
+          <div className="justify-self-end flex items-center gap-2">
             <Button
               onClick={() => navigate('/settings')}
               variant="outline"
