@@ -73,128 +73,127 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
-          {/* User button - top left */}
-          <div className="justify-self-start">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl">
+        {/* Mobile Header */}
+        <div className="mb-6 space-y-4">
+          {/* Top Bar: User + Actions */}
+          <div className="flex items-center justify-between gap-2">
             <Button
               onClick={() => navigate('/settings')}
               variant="ghost"
               size="sm"
-              className="h-9 gap-2"
+              className="h-auto py-1.5 px-2 gap-2"
             >
-              <Avatar className="h-7 w-7">
+              <Avatar className="h-8 w-8">
                 <AvatarImage src={avatarUrl || ''} alt={`${displayName || 'User'} avatar`} />
-                <AvatarFallback>{(displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="text-xs">{(displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}</AvatarFallback>
               </Avatar>
-              <span className="truncate">
-                Hi, {displayName || 'User'}
-              </span>
-              <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
-                {role}
-              </Badge>
+              <div className="flex flex-col items-start gap-0.5">
+                <span className="text-sm font-medium leading-none">
+                  Hi, {displayName || 'User'}
+                </span>
+                <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-[10px] h-4 px-1.5">
+                  {role}
+                </Badge>
+              </div>
             </Button>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                onClick={() => navigate('/settings')}
+                variant="outline"
+                size="sm"
+                className="h-8 w-8 p-0"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+              <Button
+                onClick={signOut}
+                variant="outline"
+                size="sm"
+                className="h-8 w-8 p-0"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
-          {/* Centered Firm Header */}
-          <div className="justify-self-center">
+          {/* Firm Header - Centered */}
+          <div className="text-center">
             <FirmHeader />
-          </div>
-
-          {/* Right side controls */}
-          <div className="justify-self-end flex items-center gap-2">
-            <Button
-              onClick={() => navigate('/settings')}
-              variant="outline"
-              size="sm"
-              className="h-9"
-            >
-              <Settings className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Settings</span>
-            </Button>
-            <Button
-              onClick={signOut}
-              variant="outline"
-              size="sm"
-              className="h-9"
-            >
-              <LogOut className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Logout</span>
-            </Button>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/new-project')}>
-            <CardHeader className="text-center pb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <Plus className="h-6 w-6 text-primary-foreground" />
+            <CardHeader className="text-center p-3 sm:p-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-primary-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
               </div>
-              <CardTitle className="text-lg">New Project</CardTitle>
-              <CardDescription>Create a new loan application</CardDescription>
+              <CardTitle className="text-sm sm:text-base">New Project</CardTitle>
+              <CardDescription className="text-xs hidden sm:block">Create a new loan application</CardDescription>
             </CardHeader>
           </Card>
 
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/calculator')}>
-            <CardHeader className="text-center pb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-success to-success-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <Calculator className="h-6 w-6 text-success-foreground" />
+            <CardHeader className="text-center p-3 sm:p-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-success to-success-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                <Calculator className="h-5 w-5 sm:h-6 sm:w-6 text-success-foreground" />
               </div>
-              <CardTitle className="text-lg">Calculator</CardTitle>
-              <CardDescription>Financial calculations & ratios</CardDescription>
+              <CardTitle className="text-sm sm:text-base">Calculator</CardTitle>
+              <CardDescription className="text-xs hidden sm:block">Financial calculations</CardDescription>
             </CardHeader>
           </Card>
 
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/reports')}>
-            <CardHeader className="text-center pb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-warning to-amber-400 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <FileText className="h-6 w-6 text-warning-foreground" />
+            <CardHeader className="text-center p-3 sm:p-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-warning to-amber-400 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-warning-foreground" />
               </div>
-              <CardTitle className="text-lg">Reports</CardTitle>
-              <CardDescription>Generated project reports</CardDescription>
+              <CardTitle className="text-sm sm:text-base">Reports</CardTitle>
+              <CardDescription className="text-xs hidden sm:block">Generated reports</CardDescription>
             </CardHeader>
           </Card>
 
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/analytics')}>
-            <CardHeader className="text-center pb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <BarChart3 className="h-6 w-6 text-white" />
+            <CardHeader className="text-center p-3 sm:p-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
-              <CardTitle className="text-lg">Analytics</CardTitle>
-              <CardDescription>Project performance metrics</CardDescription>
+              <CardTitle className="text-sm sm:text-base">Analytics</CardTitle>
+              <CardDescription className="text-xs hidden sm:block">Performance metrics</CardDescription>
             </CardHeader>
           </Card>
         </div>
 
         {/* Recent Projects */}
         <Card className="shadow-soft">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
               Recent Projects
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs sm:text-sm">
               Your latest loan application projects
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             {loading ? (
               <div className="text-center py-8 text-muted-foreground">
-                <p>Loading projects...</p>
+                <p className="text-sm">Loading projects...</p>
               </div>
             ) : projects.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p className="text-lg mb-2">No projects yet</p>
-                <p className="mb-4">Create your first loan application project to get started</p>
-                <div className="flex gap-3 justify-center">
-                  <Button onClick={() => navigate('/new-project')} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground">
+              <div className="text-center py-6 sm:py-8 text-muted-foreground">
+                <FileText className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 opacity-50" />
+                <p className="text-base sm:text-lg mb-1 font-medium">No projects yet</p>
+                <p className="text-xs sm:text-sm mb-4">Create your first loan application project to get started</p>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
+                  <Button onClick={() => navigate('/new-project')} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground text-sm">
                     <Plus className="h-4 w-4 mr-2" />
                     Create New Project
                   </Button>
@@ -206,6 +205,7 @@ const Dashboard = () => {
                       navigate("/new-project");
                     }}
                     variant="outline"
+                    className="text-sm"
                   >
                     <FileText className="h-4 w-4 mr-2" />
                     Load Sample Project
@@ -213,28 +213,30 @@ const Dashboard = () => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {projects.slice(0, 5).map((project) => (
-                  <div key={project.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground">{project.project_name}</h3>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                  <div key={project.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm sm:text-base text-foreground truncate">{project.project_name}</h3>
+                      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mt-1 flex-wrap">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           {new Date(project.created_at).toLocaleDateString()}
                         </span>
-                        <Badge variant={project.status === 'draft' ? 'secondary' : 'default'}>
+                        <Badge variant={project.status === 'draft' ? 'secondary' : 'default'} className="text-[10px] sm:text-xs">
                           {project.status}
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 self-end sm:self-auto">
                       <Button 
                         variant="outline" 
                         size="sm"
                         onClick={() => navigate(`/project/${project.id}`)}
+                        className="text-xs sm:text-sm flex-1 sm:flex-initial"
                       >
-                        View Project
+                        <span className="sm:hidden">View</span>
+                        <span className="hidden sm:inline">View Project</span>
                         <ArrowRight className="h-3 w-3 ml-1" />
                       </Button>
                       {hasPermission('delete_projects') && (
@@ -245,7 +247,7 @@ const Dashboard = () => {
                             e.stopPropagation();
                             handleDeleteProject(project.id);
                           }}
-                          className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
+                          className="text-destructive hover:text-destructive-foreground hover:bg-destructive w-9 sm:w-auto p-0 sm:px-3"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -256,7 +258,7 @@ const Dashboard = () => {
                 
                 {projects.length > 5 && (
                   <div className="text-center pt-4">
-                    <Button variant="outline" onClick={() => navigate('/reports')}>
+                    <Button variant="outline" onClick={() => navigate('/reports')} className="text-sm">
                       View All Projects ({projects.length})
                     </Button>
                   </div>

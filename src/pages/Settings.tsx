@@ -335,33 +335,34 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-3 mb-4 sm:mb-6">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/")}
+            className="h-9 w-9"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <SettingsIcon className="h-8 w-8" />
+            <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-2">
+              <SettingsIcon className="h-5 w-5 sm:h-8 sm:w-8" />
               Settings
             </h1>
-            <p className="text-muted-foreground">Manage your application preferences and settings</p>
+            <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Manage your application preferences and settings</p>
           </div>
         </div>
 
-        <Tabs defaultValue="account" className="space-y-6">
-          <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${2 + (hasPermission('view_general_settings') ? 1 : 0) + (hasPermission('view_calculations_settings') ? 1 : 0) + (hasPermission('view_users_tab') ? 1 : 0) + (hasPermission('view_data_tab') ? 1 : 0)}, minmax(0, 1fr))` }}>
-            <TabsTrigger value="account">Account</TabsTrigger>
-            {hasPermission('view_general_settings') && <TabsTrigger value="general">General</TabsTrigger>}
-            {hasPermission('view_calculations_settings') && <TabsTrigger value="calculations">Calculations</TabsTrigger>}
-            <TabsTrigger value="theme">Theme</TabsTrigger>
-            {hasPermission('view_users_tab') && <TabsTrigger value="users">Users</TabsTrigger>}
-            {hasPermission('view_data_tab') && <TabsTrigger value="data">Data</TabsTrigger>}
+        <Tabs defaultValue="account" className="space-y-4 sm:space-y-6">
+          <TabsList className="w-full h-auto flex flex-wrap gap-1 bg-muted p-1">
+            <TabsTrigger value="account" className="flex-1 min-w-[80px] text-xs sm:text-sm">Account</TabsTrigger>
+            {hasPermission('view_general_settings') && <TabsTrigger value="general" className="flex-1 min-w-[80px] text-xs sm:text-sm">General</TabsTrigger>}
+            {hasPermission('view_calculations_settings') && <TabsTrigger value="calculations" className="flex-1 min-w-[90px] text-xs sm:text-sm">Calculations</TabsTrigger>}
+            <TabsTrigger value="theme" className="flex-1 min-w-[70px] text-xs sm:text-sm">Theme</TabsTrigger>
+            {hasPermission('view_users_tab') && <TabsTrigger value="users" className="flex-1 min-w-[70px] text-xs sm:text-sm">Users</TabsTrigger>}
+            {hasPermission('view_data_tab') && <TabsTrigger value="data" className="flex-1 min-w-[60px] text-xs sm:text-sm">Data</TabsTrigger>}
           </TabsList>
 
           {/* Account Settings */}

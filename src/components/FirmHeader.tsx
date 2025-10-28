@@ -30,10 +30,10 @@ export const FirmHeader = () => {
   if (!accountSettings.firmName) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-1">
+        <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-0.5 sm:mb-1">
           Loan Application System
         </h1>
-        <p className="text-sm md:text-lg text-muted-foreground hidden sm:block">
+        <p className="text-xs sm:text-sm md:text-base text-muted-foreground hidden sm:block">
           Professional project reports for loan approval requests
         </p>
       </div>
@@ -41,21 +41,21 @@ export const FirmHeader = () => {
   }
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4">
       {accountSettings.logoUrl && (
         <div className="flex-shrink-0">
           <img 
             src={accountSettings.logoUrl} 
             alt={`${accountSettings.firmName} Logo`}
-            className="h-12 w-12 md:h-16 md:w-16 object-cover rounded-full border-2 border-primary/20"
+            className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 object-cover rounded-full border-2 border-primary/20"
           />
         </div>
       )}
       <div className="text-center">
-        <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-1">
+        <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-0.5 sm:mb-1 truncate max-w-[200px] sm:max-w-none">
           {accountSettings.firmName}
         </h1>
-        <p className="text-sm md:text-lg text-muted-foreground hidden sm:block">
+        <p className="text-xs sm:text-sm md:text-base text-muted-foreground hidden sm:block">
           Professional project reports for loan approval requests
         </p>
       </div>
