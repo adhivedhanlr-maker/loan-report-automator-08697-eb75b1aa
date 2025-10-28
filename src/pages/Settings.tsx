@@ -152,6 +152,13 @@ const Settings = () => {
     }
   };
 
+  // Load users when component mounts if user is a manager
+  useEffect(() => {
+    if (role === 'manager') {
+      loadUsers();
+    }
+  }, [role]);
+
   useEffect(() => {
     if (selectedUser) {
       loadUserPermissions(selectedUser);
