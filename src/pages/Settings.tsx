@@ -107,19 +107,26 @@ const Settings = () => {
     
     setUsersLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          email,
-          full_name,
-          created_at,
-          user_roles (role)
-        `)
-        .order('created_at', { ascending: false });
+      const [{ data: profiles, error: profilesError }, { data: roles, error: rolesError }] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, email, full_name, avatar_url, created_at')
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('user_roles')
+          .select('user_id, role')
+      ]);
 
-      if (error) throw error;
-      setUsers(data || []);
+      if (profilesError) throw profilesError;
+      if (rolesError) throw rolesError;
+
+      const roleMap = new Map<string, string>((roles || []).map((r: any) => [r.user_id, r.role]));
+      const usersWithRoles = (profiles || []).map((p: any) => ({
+        ...p,
+        role: roleMap.get(p.id) || 'user',
+      }));
+
+      setUsers(usersWithRoles);
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {
@@ -724,7 +731,7 @@ const Settings = () => {
                     ) : users.length > 0 ? (
                       <div className="space-y-3">
                         {users.map((u) => {
-                          const userRole = u.user_roles?.[0]?.role || 'user';
+                          const userRole = u.role || 'user';
                           const isSelectedUser = selectedUser === u.id;
                           
                           return (
