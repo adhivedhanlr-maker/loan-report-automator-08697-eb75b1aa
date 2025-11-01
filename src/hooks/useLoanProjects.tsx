@@ -213,9 +213,16 @@ export const useLoanProjects = () => {
         .from('loan_projects')
         .select('*')
         .eq('id', projectId)
-        .single();
+        .maybeSingle();
 
       if (projectError) throw projectError;
+      if (!project) {
+        toast({
+          title: 'Project not found',
+          description: 'The requested report does not exist or was removed.',
+        });
+        return null;
+      }
 
       const { data: businessInfo } = await supabase
         .from('business_info')

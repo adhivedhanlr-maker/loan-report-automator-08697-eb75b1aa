@@ -38,7 +38,7 @@ const ReportsPage = () => {
     if (projectData) {
       localStorage.setItem('viewingProjectId', projectId);
       localStorage.setItem('viewingProjectData', JSON.stringify(projectData));
-      navigate('/new-project');
+      navigate(`/project/${projectId}`);
     } else {
       toast({
         title: "Error Loading Project",
