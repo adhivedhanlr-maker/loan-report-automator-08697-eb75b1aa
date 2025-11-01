@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BusinessTypeDetection } from "@/components/BusinessTypeDetection";
 import { SmartBusinessInfoForm } from "@/components/SmartBusinessInfoForm";
 import { FinanceDataForm } from "@/components/FinanceDataForm";
@@ -21,11 +21,14 @@ import { BusinessTemplate } from "@/data/business-templates";
 import { generateDepreciationSchedule } from "@/utils/depreciationCalculations";
 import { generateLoanAmortization, getLoanSchemeDetails } from "@/utils/loanCalculations";
 import { generateProfitAndLossStatement } from "@/utils/plCalculations";
+import { useLoanProjects } from "@/hooks/useLoanProjects";
 
 type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan' | 'pl' | 'introduction' | 'report';
 
 const NewProject = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { getProjectDetails } = useLoanProjects();
   const [currentStep, setCurrentStep] = useState<ProjectStep>('detection');
   const [isViewingExisting, setIsViewingExisting] = useState(false);
   
@@ -46,26 +49,57 @@ const NewProject = () => {
 
   // Load existing project data if viewing
   useEffect(() => {
-    const viewingId = localStorage.getItem('viewingProjectId');
-    const viewingData = localStorage.getItem('viewingProjectData');
-    
-    if (viewingId && viewingData) {
-      try {
-        const data: CompleteProjectData = JSON.parse(viewingData);
-        setBusinessInfo(data.businessInfo);
-        setFinanceData(data.financeData);
-        setDepreciationSchedule(data.depreciationSchedule);
-        setLoanAmortization(data.loanAmortization);
-        setProfitAndLoss(data.profitAndLoss);
-        setReportIntroduction(data.reportIntroduction);
-        setCurrentStep('report');
-        setIsViewingExisting(true);
-        setViewingProjectId(viewingId);
-      } catch (error) {
-        // Silently handle load errors
+    const loadProjectData = async () => {
+      // First check URL parameter
+      if (id) {
+        try {
+          const data = await getProjectDetails(id);
+          if (data) {
+            setBusinessInfo(data.business_info as unknown as BusinessInfo);
+            setFinanceData(data.finance_data as unknown as FinanceData);
+            setDepreciationSchedule(data.depreciation_schedule as unknown as DepreciationSchedule);
+            setLoanAmortization(data.loan_amortization as unknown as LoanAmortizationSchedule);
+            setProfitAndLoss(data.profit_loss as unknown as ProfitAndLossStatement);
+            // Set default report introduction if not available
+            setReportIntroduction({
+              businessName: data.business_info?.shop_name || '',
+              narrative: '',
+              objectives: []
+            });
+            setCurrentStep('report');
+            setIsViewingExisting(true);
+            setViewingProjectId(id);
+          }
+        } catch (error) {
+          console.error('Error loading project from URL:', error);
+        }
+        return;
       }
-    }
-  }, []);
+
+      // Otherwise check localStorage
+      const viewingId = localStorage.getItem('viewingProjectId');
+      const viewingData = localStorage.getItem('viewingProjectData');
+      
+      if (viewingId && viewingData) {
+        try {
+          const data: CompleteProjectData = JSON.parse(viewingData);
+          setBusinessInfo(data.businessInfo);
+          setFinanceData(data.financeData);
+          setDepreciationSchedule(data.depreciationSchedule);
+          setLoanAmortization(data.loanAmortization);
+          setProfitAndLoss(data.profitAndLoss);
+          setReportIntroduction(data.reportIntroduction);
+          setCurrentStep('report');
+          setIsViewingExisting(true);
+          setViewingProjectId(viewingId);
+        } catch (error) {
+          console.error('Error loading project from localStorage:', error);
+        }
+      }
+    };
+
+    loadProjectData();
+  }, [id, getProjectDetails]);
 
   // Cleanup when component unmounts
   useEffect(() => {
