@@ -73,116 +73,161 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-accent/20">
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl">
-        {/* Mobile Header */}
-        <div className="mb-6 space-y-4">
-          {/* Top Bar: User + Actions */}
-          <div className="flex items-center justify-between gap-2">
-            <Button
-              onClick={() => navigate('/settings')}
-              variant="ghost"
-              size="sm"
-              className="h-auto py-1.5 px-2 gap-2"
-            >
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={avatarUrl || ''} alt={`${displayName || 'User'} avatar`} />
-                <AvatarFallback className="text-xs">{(displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col items-start gap-0.5">
-                <span className="text-sm font-medium leading-none">
-                  Hi, {displayName || 'User'}
-                </span>
-                <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-[10px] h-4 px-1.5">
-                  {role}
-                </Badge>
-              </div>
-            </Button>
-
-            <div className="flex items-center gap-1.5">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-7xl">
+        {/* Header Section - Responsive Layout */}
+        <div className="mb-6 lg:mb-8">
+          {/* Mobile Header (< lg) */}
+          <div className="lg:hidden space-y-4">
+            <div className="flex items-center justify-between gap-2">
               <Button
                 onClick={() => navigate('/settings')}
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0"
+                className="h-auto py-1.5 px-2 gap-2"
               >
-                <Settings className="h-4 w-4" />
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={avatarUrl || ''} alt={`${displayName || 'User'} avatar`} />
+                  <AvatarFallback className="text-xs">{(displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start gap-0.5">
+                  <span className="text-sm font-medium leading-none">
+                    Hi, {displayName || 'User'}
+                  </span>
+                  <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-[10px] h-4 px-1.5">
+                    {role}
+                  </Badge>
+                </div>
               </Button>
-              <Button
-                onClick={signOut}
-                variant="outline"
-                size="sm"
-                className="h-8 w-8 p-0"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
+
+              <div className="flex items-center gap-1.5">
+                <Button
+                  onClick={() => navigate('/settings')}
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={signOut}
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="text-center">
+              <FirmHeader />
             </div>
           </div>
 
-          {/* Firm Header - Centered */}
-          <div className="text-center">
-            <FirmHeader />
+          {/* Desktop Header (≥ lg) */}
+          <div className="hidden lg:block">
+            <div className="flex items-start justify-between gap-6 mb-6">
+              {/* User Info - Top Right */}
+              <div className="flex-1"></div>
+              <div className="flex-1 flex justify-center">
+                <FirmHeader />
+              </div>
+              <div className="flex-1 flex items-center justify-end gap-3">
+                <Button
+                  onClick={() => navigate('/settings')}
+                  variant="ghost"
+                  className="gap-3"
+                >
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={avatarUrl || ''} alt={`${displayName || 'User'} avatar`} />
+                    <AvatarFallback>{(displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-medium">
+                      Hi, {displayName || 'User'}
+                    </span>
+                    <Badge variant={role === 'manager' ? 'default' : 'secondary'} className="text-xs">
+                      {role}
+                    </Badge>
+                  </div>
+                </Button>
+                <Button
+                  onClick={() => navigate('/settings')}
+                  variant="outline"
+                  size="icon"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={signOut}
+                  variant="outline"
+                  size="icon"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/new-project')}>
-            <CardHeader className="text-center p-3 sm:p-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-primary-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+            <CardHeader className="text-center p-3 lg:p-6">
+              <div className="w-10 h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-primary to-primary-light rounded-lg flex items-center justify-center mx-auto mb-2 lg:mb-3 group-hover:scale-110 transition-transform">
+                <Plus className="h-5 w-5 lg:h-7 lg:w-7 text-primary-foreground" />
               </div>
-              <CardTitle className="text-sm sm:text-base">New Project</CardTitle>
-              <CardDescription className="text-xs hidden sm:block">Create a new loan application</CardDescription>
+              <CardTitle className="text-sm lg:text-lg">New Project</CardTitle>
+              <CardDescription className="text-xs lg:text-sm hidden sm:block">Create a new loan application</CardDescription>
             </CardHeader>
           </Card>
 
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/calculator')}>
-            <CardHeader className="text-center p-3 sm:p-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-success to-success-light rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <Calculator className="h-5 w-5 sm:h-6 sm:w-6 text-success-foreground" />
+            <CardHeader className="text-center p-3 lg:p-6">
+              <div className="w-10 h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-success to-success-light rounded-lg flex items-center justify-center mx-auto mb-2 lg:mb-3 group-hover:scale-110 transition-transform">
+                <Calculator className="h-5 w-5 lg:h-7 lg:w-7 text-success-foreground" />
               </div>
-              <CardTitle className="text-sm sm:text-base">Calculator</CardTitle>
-              <CardDescription className="text-xs hidden sm:block">Financial calculations</CardDescription>
+              <CardTitle className="text-sm lg:text-lg">Calculator</CardTitle>
+              <CardDescription className="text-xs lg:text-sm hidden sm:block">Financial calculations</CardDescription>
             </CardHeader>
           </Card>
 
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/reports')}>
-            <CardHeader className="text-center p-3 sm:p-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-warning to-amber-400 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-warning-foreground" />
+            <CardHeader className="text-center p-3 lg:p-6">
+              <div className="w-10 h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-warning to-amber-400 rounded-lg flex items-center justify-center mx-auto mb-2 lg:mb-3 group-hover:scale-110 transition-transform">
+                <FileText className="h-5 w-5 lg:h-7 lg:w-7 text-warning-foreground" />
               </div>
-              <CardTitle className="text-sm sm:text-base">Reports</CardTitle>
-              <CardDescription className="text-xs hidden sm:block">Generated reports</CardDescription>
+              <CardTitle className="text-sm lg:text-lg">Reports</CardTitle>
+              <CardDescription className="text-xs lg:text-sm hidden sm:block">Generated reports</CardDescription>
             </CardHeader>
           </Card>
 
           <Card className="hover:shadow-medium transition-all duration-300 cursor-pointer group" 
                 onClick={() => navigate('/analytics')}>
-            <CardHeader className="text-center p-3 sm:p-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            <CardHeader className="text-center p-3 lg:p-6">
+              <div className="w-10 h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2 lg:mb-3 group-hover:scale-110 transition-transform">
+                <BarChart3 className="h-5 w-5 lg:h-7 lg:w-7 text-white" />
               </div>
-              <CardTitle className="text-sm sm:text-base">Analytics</CardTitle>
-              <CardDescription className="text-xs hidden sm:block">Performance metrics</CardDescription>
+              <CardTitle className="text-sm lg:text-lg">Analytics</CardTitle>
+              <CardDescription className="text-xs lg:text-sm hidden sm:block">Performance metrics</CardDescription>
             </CardHeader>
           </Card>
         </div>
 
         {/* Recent Projects */}
         <Card className="shadow-soft">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardHeader className="p-4 lg:p-6">
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-2xl">
+              <TrendingUp className="h-5 w-5 lg:h-6 lg:w-6" />
               Recent Projects
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs lg:text-base">
               Your latest loan application projects
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-4 lg:p-6 pt-0">
             {loading ? (
               <div className="text-center py-8 text-muted-foreground">
                 <p className="text-sm">Loading projects...</p>
@@ -213,31 +258,31 @@ const Dashboard = () => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 lg:space-y-4">
                 {projects.slice(0, 5).map((project) => (
-                  <div key={project.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div key={project.id} className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 p-3 lg:p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm sm:text-base text-foreground truncate">{project.project_name}</h3>
-                      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mt-1 flex-wrap">
+                      <h3 className="font-semibold text-sm lg:text-base text-foreground truncate">{project.project_name}</h3>
+                      <div className="flex items-center gap-2 lg:gap-4 text-xs lg:text-sm text-muted-foreground mt-1 flex-wrap">
                         <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                          <Calendar className="h-3 w-3 lg:h-4 lg:w-4" />
                           {new Date(project.created_at).toLocaleDateString()}
                         </span>
-                        <Badge variant={project.status === 'draft' ? 'secondary' : 'default'} className="text-[10px] sm:text-xs">
+                        <Badge variant={project.status === 'draft' ? 'secondary' : 'default'} className="text-[10px] lg:text-xs">
                           {project.status}
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex gap-2 self-end sm:self-auto">
+                    <div className="flex gap-2 self-end lg:self-auto">
                       <Button 
                         variant="outline" 
                         size="sm"
                         onClick={() => navigate(`/project/${project.id}`)}
-                        className="text-xs sm:text-sm flex-1 sm:flex-initial"
+                        className="text-xs lg:text-sm flex-1 lg:flex-initial"
                       >
-                        <span className="sm:hidden">View</span>
-                        <span className="hidden sm:inline">View Project</span>
-                        <ArrowRight className="h-3 w-3 ml-1" />
+                        <span className="lg:hidden">View</span>
+                        <span className="hidden lg:inline">View Project</span>
+                        <ArrowRight className="h-3 w-3 lg:h-4 lg:w-4 ml-1" />
                       </Button>
                       {hasPermission('delete_projects') && (
                         <Button 
@@ -247,9 +292,9 @@ const Dashboard = () => {
                             e.stopPropagation();
                             handleDeleteProject(project.id);
                           }}
-                          className="text-destructive hover:text-destructive-foreground hover:bg-destructive w-9 sm:w-auto p-0 sm:px-3"
+                          className="text-destructive hover:text-destructive-foreground hover:bg-destructive w-9 lg:w-auto p-0 lg:px-3"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-3 w-3 lg:h-4 lg:w-4" />
                         </Button>
                       )}
                     </div>

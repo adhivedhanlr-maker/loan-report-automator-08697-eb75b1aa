@@ -335,34 +335,34 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-4xl">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-4 sm:mb-6">
+        <div className="flex items-center gap-3 mb-4 lg:mb-6">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/")}
-            className="h-9 w-9"
+            className="h-9 w-9 lg:h-10 lg:w-10"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-2">
-              <SettingsIcon className="h-5 w-5 sm:h-8 sm:w-8" />
+            <h1 className="text-xl lg:text-3xl font-bold flex items-center gap-2">
+              <SettingsIcon className="h-5 w-5 lg:h-8 lg:w-8" />
               Settings
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Manage your application preferences and settings</p>
+            <p className="text-xs lg:text-sm text-muted-foreground hidden sm:block">Manage your application preferences and settings</p>
           </div>
         </div>
 
-        <Tabs defaultValue="account" className="space-y-4 sm:space-y-6">
-          <TabsList className="w-full h-auto flex flex-wrap gap-1 bg-muted p-1">
-            <TabsTrigger value="account" className="flex-1 min-w-[80px] text-xs sm:text-sm">Account</TabsTrigger>
-            {hasPermission('view_general_settings') && <TabsTrigger value="general" className="flex-1 min-w-[80px] text-xs sm:text-sm">General</TabsTrigger>}
-            {hasPermission('view_calculations_settings') && <TabsTrigger value="calculations" className="flex-1 min-w-[90px] text-xs sm:text-sm">Calculations</TabsTrigger>}
-            <TabsTrigger value="theme" className="flex-1 min-w-[70px] text-xs sm:text-sm">Theme</TabsTrigger>
-            {hasPermission('view_users_tab') && <TabsTrigger value="users" className="flex-1 min-w-[70px] text-xs sm:text-sm">Users</TabsTrigger>}
-            {hasPermission('view_data_tab') && <TabsTrigger value="data" className="flex-1 min-w-[60px] text-xs sm:text-sm">Data</TabsTrigger>}
+        <Tabs defaultValue="account" className="space-y-4 lg:space-y-6">
+          <TabsList className="w-full h-auto flex flex-wrap lg:flex-nowrap gap-1 bg-muted p-1">
+            <TabsTrigger value="account" className="flex-1 min-w-[80px] lg:min-w-0 text-xs lg:text-sm">Account</TabsTrigger>
+            {hasPermission('view_general_settings') && <TabsTrigger value="general" className="flex-1 min-w-[80px] lg:min-w-0 text-xs lg:text-sm">General</TabsTrigger>}
+            {hasPermission('view_calculations_settings') && <TabsTrigger value="calculations" className="flex-1 min-w-[90px] lg:min-w-0 text-xs lg:text-sm">Calculations</TabsTrigger>}
+            <TabsTrigger value="theme" className="flex-1 min-w-[70px] lg:min-w-0 text-xs lg:text-sm">Theme</TabsTrigger>
+            {hasPermission('view_users_tab') && <TabsTrigger value="users" className="flex-1 min-w-[70px] lg:min-w-0 text-xs lg:text-sm">Users</TabsTrigger>}
+            {hasPermission('view_data_tab') && <TabsTrigger value="data" className="flex-1 min-w-[60px] lg:min-w-0 text-xs lg:text-sm">Data</TabsTrigger>}
           </TabsList>
 
           {/* Account Settings */}
