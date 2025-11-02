@@ -22,6 +22,7 @@ import { generateDepreciationSchedule } from "@/utils/depreciationCalculations";
 import { generateLoanAmortization, getLoanSchemeDetails } from "@/utils/loanCalculations";
 import { generateProfitAndLossStatement } from "@/utils/plCalculations";
 import { useLoanProjects } from "@/hooks/useLoanProjects";
+import { useToast } from "@/hooks/use-toast";
 
 type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan' | 'pl' | 'introduction' | 'report';
 
@@ -89,6 +90,7 @@ const NewProject = () => {
   const [reportIntroduction, setReportIntroduction] = useState<ReportIntroduction | undefined>();
 
   const [viewingProjectId, setViewingProjectId] = useState<string | undefined>();
+  const { toast } = useToast();
 
   // Load existing project data if viewing
   useEffect(() => {
@@ -99,19 +101,22 @@ const NewProject = () => {
           const data = await getProjectDetails(id);
           if (data) {
             const bi = mapDbToBusinessInfo(data.business_info || {});
-            const fd = mapDbToFinanceData(data.finance_data || {});
+            const fd = data.finance_data ? mapDbToFinanceData(data.finance_data) : undefined;
             setBusinessInfo(bi);
-            setFinanceData(fd);
-            if (data.depreciation_schedule) {
+            if (fd) setFinanceData(fd);
+            const hasDep = !!data.depreciation_schedule;
+            const hasLoan = !!data.loan_amortization;
+            const hasPL = !!data.profit_loss;
+            if (hasDep) {
               setDepreciationSchedule(data.depreciation_schedule as unknown as DepreciationSchedule);
             }
-            if (data.loan_amortization) {
+            if (hasLoan) {
               setLoanAmortization(data.loan_amortization as unknown as LoanAmortizationSchedule);
             }
-            if (data.profit_loss) {
+            if (hasPL) {
               setProfitAndLoss(data.profit_loss as unknown as ProfitAndLossStatement);
             }
-            // Set default report introduction if not available
+            // Default report introduction
             setReportIntroduction({
               businessName: bi.shopName || '',
               narrative: '',
@@ -119,7 +124,16 @@ const NewProject = () => {
             });
             setIsViewingExisting(true);
             setViewingProjectId(id);
-            setCurrentStep('report');
+            const hasAll = !!(bi && fd && hasDep && hasLoan && hasPL);
+            if (hasAll) {
+              setCurrentStep('report');
+            } else {
+              setCurrentStep('detection');
+              toast({
+                title: 'No saved data found',
+                description: 'This project has no saved details yet. Start by selecting a template.',
+              });
+            }
           }
         } catch (error) {
           console.error('Error loading project from URL:', error);
@@ -150,7 +164,7 @@ const NewProject = () => {
     };
 
     loadProjectData();
-  }, [id, getProjectDetails]);
+  }, [id]);
 
   // Cleanup when component unmounts
   useEffect(() => {
