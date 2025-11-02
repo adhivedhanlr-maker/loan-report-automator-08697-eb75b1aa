@@ -25,6 +25,49 @@ import { useLoanProjects } from "@/hooks/useLoanProjects";
 
 type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan' | 'pl' | 'introduction' | 'report';
 
+// Helpers: map DB rows (snake_case) to app types (camelCase)
+const mapDbToBusinessInfo = (db: any): BusinessInfo => ({
+  shopName: db?.shop_name ?? '',
+  buildingLandmark: db?.building_landmark ?? undefined,
+  buildingNo: db?.building_no ?? undefined,
+  gstNo: db?.gst_no ?? undefined,
+  monthlyRent: typeof db?.monthly_rent === 'number' ? db.monthly_rent : Number(db?.monthly_rent ?? 0),
+  village: db?.village ?? undefined,
+  municipality: db?.municipality ?? undefined,
+  postOffice: db?.post_office ?? undefined,
+  taluk: db?.taluk ?? undefined,
+  block: db?.block ?? undefined,
+  district: db?.district ?? '',
+  pinCode: db?.pin_code ?? '',
+  gender: db?.gender ?? undefined,
+  proprietorName: db?.proprietor_name ?? '',
+  fatherName: db?.father_name ?? undefined,
+  houseName: db?.house_name ?? undefined,
+  contactNumber: db?.contact_number ?? '',
+  dateOfBirth: db?.date_of_birth ?? undefined,
+  panNo: db?.pan_no ?? undefined,
+  aadhaarNo: db?.aadhaar_no ?? undefined,
+  lineOfActivity: db?.line_of_activity ?? undefined,
+  unitStatus: db?.unit_status ?? undefined,
+  qualification: db?.qualification ?? undefined,
+  experience: typeof db?.experience === 'number' ? db.experience : Number(db?.experience ?? 0),
+  proposedBusiness: db?.proposed_business ?? '',
+  loanScheme: db?.loan_scheme ?? undefined,
+  loanYears: typeof db?.loan_years === 'number' ? db.loan_years : Number(db?.loan_years ?? 0),
+  bankName: db?.bank_name ?? undefined,
+  bankBranch: db?.bank_branch ?? undefined,
+});
+
+const mapDbToFinanceData = (db: any): FinanceData => ({
+  loanAmount: typeof db?.loan_amount === 'number' ? db.loan_amount : Number(db?.loan_amount ?? 0),
+  equity: typeof db?.equity === 'number' ? db.equity : Number(db?.equity ?? 0),
+  growthRate: typeof db?.growth_rate === 'number' ? db.growth_rate : Number(db?.growth_rate ?? 0),
+  fixedAssets: Array.isArray(db?.fixed_assets) ? db.fixed_assets : [],
+  salesMix: Array.isArray(db?.sales_mix) ? db.sales_mix : [],
+  materials: Array.isArray(db?.materials) ? db.materials : [],
+  fixedOPEX: Array.isArray(db?.fixed_opex) ? db.fixed_opex : [],
+});
+
 const NewProject = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -55,20 +98,28 @@ const NewProject = () => {
         try {
           const data = await getProjectDetails(id);
           if (data) {
-            setBusinessInfo(data.business_info as unknown as BusinessInfo);
-            setFinanceData(data.finance_data as unknown as FinanceData);
-            setDepreciationSchedule(data.depreciation_schedule as unknown as DepreciationSchedule);
-            setLoanAmortization(data.loan_amortization as unknown as LoanAmortizationSchedule);
-            setProfitAndLoss(data.profit_loss as unknown as ProfitAndLossStatement);
+            const bi = mapDbToBusinessInfo(data.business_info || {});
+            const fd = mapDbToFinanceData(data.finance_data || {});
+            setBusinessInfo(bi);
+            setFinanceData(fd);
+            if (data.depreciation_schedule) {
+              setDepreciationSchedule(data.depreciation_schedule as unknown as DepreciationSchedule);
+            }
+            if (data.loan_amortization) {
+              setLoanAmortization(data.loan_amortization as unknown as LoanAmortizationSchedule);
+            }
+            if (data.profit_loss) {
+              setProfitAndLoss(data.profit_loss as unknown as ProfitAndLossStatement);
+            }
             // Set default report introduction if not available
             setReportIntroduction({
-              businessName: data.business_info?.shop_name || '',
+              businessName: bi.shopName || '',
               narrative: '',
               objectives: []
             });
-            setCurrentStep('report');
             setIsViewingExisting(true);
             setViewingProjectId(id);
+            setCurrentStep('report');
           }
         } catch (error) {
           console.error('Error loading project from URL:', error);
@@ -111,23 +162,23 @@ const NewProject = () => {
 
   // Auto-generate schedules when finance data changes
   useEffect(() => {
-    if (financeData) {
-      const depSchedule = generateDepreciationSchedule(financeData.fixedAssets);
-      setDepreciationSchedule(depSchedule);
-      
-      const loanScheme = getLoanSchemeDetails('MUDRA');
-      const loanSched = generateLoanAmortization(financeData.loanAmount, loanScheme);
-      setLoanAmortization(loanSched);
-    }
-  }, [financeData]);
+    if (!financeData || isViewingExisting) return;
+    const assets = Array.isArray(financeData.fixedAssets) ? financeData.fixedAssets : [];
+    const depSchedule = generateDepreciationSchedule(assets);
+    setDepreciationSchedule(depSchedule);
+    const loanScheme = getLoanSchemeDetails('MUDRA');
+    const loanAmt = Number(financeData.loanAmount || 0);
+    const loanSched = generateLoanAmortization(loanAmt, loanScheme);
+    setLoanAmortization(loanSched);
+  }, [financeData, isViewingExisting]);
 
   // Auto-generate P&L when all required data is available
   useEffect(() => {
-    if (financeData && loanAmortization && depreciationSchedule) {
-      const pl = generateProfitAndLossStatement(financeData, loanAmortization, depreciationSchedule);
-      setProfitAndLoss(pl);
-    }
-  }, [financeData, loanAmortization, depreciationSchedule]);
+    if (!financeData || !loanAmortization || !depreciationSchedule) return;
+    if (isViewingExisting && profitAndLoss) return;
+    const pl = generateProfitAndLossStatement(financeData, loanAmortization, depreciationSchedule);
+    setProfitAndLoss(pl);
+  }, [financeData, loanAmortization, depreciationSchedule, isViewingExisting, profitAndLoss]);
 
   const handleBusinessTypeSelected = (template: BusinessTemplate | null, customBusinessName?: string) => {
     setSelectedTemplate(template);
