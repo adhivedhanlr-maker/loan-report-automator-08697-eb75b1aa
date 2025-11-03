@@ -14,6 +14,26 @@ interface BusinessTypeDetectionProps {
   onBack?: () => void;
 }
 
+// Helper to merge custom template data with base template
+const getMergedTemplate = (template: BusinessTemplate): BusinessTemplate => {
+  const customTemplates = localStorage.getItem('customBusinessTemplates');
+  if (!customTemplates) return template;
+  
+  try {
+    const custom = JSON.parse(customTemplates);
+    if (custom[template.id]) {
+      return {
+        ...template,
+        ...custom[template.id]
+      };
+    }
+  } catch (e) {
+    console.error('Error loading custom templates:', e);
+  }
+  
+  return template;
+};
+
 export const BusinessTypeDetection = ({ onBusinessTypeSelected, onBack }: BusinessTypeDetectionProps) => {
   const [proposedBusiness, setProposedBusiness] = useState("");
   const [detectedTemplate, setDetectedTemplate] = useState<BusinessTemplate | null>(null);
@@ -25,14 +45,14 @@ export const BusinessTypeDetection = ({ onBusinessTypeSelected, onBack }: Busine
     setProposedBusiness(value);
     if (value.length > 2) {
       const detected = detectBusinessType(value);
-      setDetectedTemplate(detected);
+      setDetectedTemplate(detected ? getMergedTemplate(detected) : null);
     } else {
       setDetectedTemplate(null);
     }
   };
 
 const handleTemplateSelect = (template: BusinessTemplate | null) => {
-    setSelectedTemplate(template);
+    setSelectedTemplate(template ? getMergedTemplate(template) : null);
     setCustomSelected(false);
   };
 
