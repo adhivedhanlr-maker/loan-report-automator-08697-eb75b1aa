@@ -18,7 +18,8 @@ import {
   User as UserIcon,
   Camera,
   Check,
-  X
+  X,
+  Plus
 } from "lucide-react";
 import {
   Card,
@@ -251,6 +252,49 @@ const Settings = () => {
     projectReminders: true
   });
 
+  interface TemplateSettings {
+    fixedAssetCategories: string[];
+    salesMixCategories: string[];
+    materialCategories: string[];
+    fixedOpexCategories: string[];
+  }
+
+  const [templateSettings, setTemplateSettings] = useState<TemplateSettings>(() => {
+    const saved = localStorage.getItem('templateSettings');
+    return saved ? JSON.parse(saved) : {
+      fixedAssetCategories: [
+        "Digital Printing Machine",
+        "Computer System",
+        "Lamination Machine",
+        "Furniture & Fixtures"
+      ],
+      salesMixCategories: [
+        "Printing Services",
+        "Design Services",
+        "Product Sales"
+      ],
+      materialCategories: [
+        "Paper Stock",
+        "Ink Cartridges",
+        "Raw Materials",
+        "Packaging Materials"
+      ],
+      fixedOpexCategories: [
+        "Rent",
+        "Salaries",
+        "Utilities",
+        "Maintenance"
+      ]
+    };
+  });
+
+  const [newCategory, setNewCategory] = useState({
+    fixedAsset: '',
+    salesMix: '',
+    material: '',
+    fixedOpex: ''
+  });
+
   const saveCalculationSettings = () => {
     localStorage.setItem('calculationSettings', JSON.stringify(calculationSettings));
     toast({
@@ -265,6 +309,38 @@ const Settings = () => {
       title: "Account Settings Saved",
       description: "Your firm details have been updated successfully.",
     });
+  };
+
+  const saveTemplateSettings = () => {
+    localStorage.setItem('templateSettings', JSON.stringify(templateSettings));
+    toast({
+      title: "Template Settings Saved",
+      description: "Template categories have been updated successfully.",
+    });
+  };
+
+  const addCategory = (type: keyof typeof newCategory) => {
+    const value = newCategory[type].trim();
+    if (!value) return;
+
+    const key = type === 'fixedAsset' ? 'fixedAssetCategories' 
+      : type === 'salesMix' ? 'salesMixCategories'
+      : type === 'material' ? 'materialCategories'
+      : 'fixedOpexCategories';
+
+    setTemplateSettings(prev => ({
+      ...prev,
+      [key]: [...prev[key], value]
+    }));
+
+    setNewCategory(prev => ({ ...prev, [type]: '' }));
+  };
+
+  const removeCategory = (type: 'fixedAssetCategories' | 'salesMixCategories' | 'materialCategories' | 'fixedOpexCategories', index: number) => {
+    setTemplateSettings(prev => ({
+      ...prev,
+      [type]: prev[type].filter((_, i) => i !== index)
+    }));
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -360,6 +436,7 @@ const Settings = () => {
             <TabsTrigger value="account" className="flex-1 min-w-[80px] lg:min-w-0 text-xs lg:text-sm">Account</TabsTrigger>
             {hasPermission('view_general_settings') && <TabsTrigger value="general" className="flex-1 min-w-[80px] lg:min-w-0 text-xs lg:text-sm">General</TabsTrigger>}
             {hasPermission('view_calculations_settings') && <TabsTrigger value="calculations" className="flex-1 min-w-[90px] lg:min-w-0 text-xs lg:text-sm">Calculations</TabsTrigger>}
+            <TabsTrigger value="templates" className="flex-1 min-w-[85px] lg:min-w-0 text-xs lg:text-sm">Templates</TabsTrigger>
             <TabsTrigger value="theme" className="flex-1 min-w-[70px] lg:min-w-0 text-xs lg:text-sm">Theme</TabsTrigger>
             {hasPermission('view_users_tab') && <TabsTrigger value="users" className="flex-1 min-w-[70px] lg:min-w-0 text-xs lg:text-sm">Users</TabsTrigger>}
             {hasPermission('view_data_tab') && <TabsTrigger value="data" className="flex-1 min-w-[60px] lg:min-w-0 text-xs lg:text-sm">Data</TabsTrigger>}
@@ -650,6 +727,168 @@ const Settings = () => {
             </Card>
           </TabsContent>
           )}
+
+          {/* Template Settings */}
+          <TabsContent value="templates" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <SettingsIcon className="h-5 w-5" />
+                  Template Categories
+                </CardTitle>
+                <CardDescription>
+                  Manage default categories for business templates
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Fixed Assets Categories */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">Fixed Assets</Label>
+                    <span className="text-xs text-muted-foreground">{templateSettings.fixedAssetCategories.length} items</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Add new asset category"
+                      value={newCategory.fixedAsset}
+                      onChange={(e) => setNewCategory(prev => ({ ...prev, fixedAsset: e.target.value }))}
+                      onKeyPress={(e) => e.key === 'Enter' && addCategory('fixedAsset')}
+                    />
+                    <Button onClick={() => addCategory('fixedAsset')} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {templateSettings.fixedAssetCategories.map((category, index) => (
+                      <div key={index} className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full">
+                        <span className="text-sm">{category}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          onClick={() => removeCategory('fixedAssetCategories', index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Sales Mix Categories */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">Sales Mix</Label>
+                    <span className="text-xs text-muted-foreground">{templateSettings.salesMixCategories.length} items</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Add new sales category"
+                      value={newCategory.salesMix}
+                      onChange={(e) => setNewCategory(prev => ({ ...prev, salesMix: e.target.value }))}
+                      onKeyPress={(e) => e.key === 'Enter' && addCategory('salesMix')}
+                    />
+                    <Button onClick={() => addCategory('salesMix')} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {templateSettings.salesMixCategories.map((category, index) => (
+                      <div key={index} className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full">
+                        <span className="text-sm">{category}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          onClick={() => removeCategory('salesMixCategories', index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Materials Categories */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">Materials</Label>
+                    <span className="text-xs text-muted-foreground">{templateSettings.materialCategories.length} items</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Add new material category"
+                      value={newCategory.material}
+                      onChange={(e) => setNewCategory(prev => ({ ...prev, material: e.target.value }))}
+                      onKeyPress={(e) => e.key === 'Enter' && addCategory('material')}
+                    />
+                    <Button onClick={() => addCategory('material')} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {templateSettings.materialCategories.map((category, index) => (
+                      <div key={index} className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full">
+                        <span className="text-sm">{category}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          onClick={() => removeCategory('materialCategories', index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Fixed OPEX Categories */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">Fixed Operating Expenses</Label>
+                    <span className="text-xs text-muted-foreground">{templateSettings.fixedOpexCategories.length} items</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Add new expense category"
+                      value={newCategory.fixedOpex}
+                      onChange={(e) => setNewCategory(prev => ({ ...prev, fixedOpex: e.target.value }))}
+                      onKeyPress={(e) => e.key === 'Enter' && addCategory('fixedOpex')}
+                    />
+                    <Button onClick={() => addCategory('fixedOpex')} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {templateSettings.fixedOpexCategories.map((category, index) => (
+                      <div key={index} className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full">
+                        <span className="text-sm">{category}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          onClick={() => removeCategory('fixedOpexCategories', index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Button onClick={saveTemplateSettings} className="w-full">
+                  Save Template Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Theme Settings */}
           <TabsContent value="theme" className="space-y-6">
