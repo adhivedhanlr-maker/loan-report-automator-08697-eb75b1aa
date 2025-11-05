@@ -83,6 +83,9 @@ export const SmartBusinessInfoForm = ({
     ...data
   });
 
+  // State for area type (rural/urban)
+  const [areaType, setAreaType] = useState<"RURAL" | "URBAN" | "">("");
+
   // State for dynamic family member fields
   const [familyMembers, setFamilyMembers] = useState<Array<{ relation: string; name: string }>>([]);
 
@@ -357,16 +360,32 @@ export const SmartBusinessInfoForm = ({
                 />
               </div>
               <div>
-                <Label htmlFor="municipality">
-                  Panchayath/Municipality <span className="text-destructive">*</span>
+                <Label htmlFor="areaType">
+                  Area Type <span className="text-destructive">*</span>
                 </Label>
-                <Input
-                  id="municipality"
-                  value={formData.municipality}
-                  onChange={(e) => handleInputChange('municipality', e.target.value)}
-                  placeholder="Panchayath or Municipality"
-                />
+                <Select value={areaType} onValueChange={(value) => setAreaType(value as "RURAL" | "URBAN")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Area Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="RURAL">Rural</SelectItem>
+                    <SelectItem value="URBAN">Urban</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+              {areaType && (
+                <div>
+                  <Label htmlFor="municipality">
+                    {areaType === "RURAL" ? "Panchayath" : "Municipality or Municipal Corporation"} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="municipality"
+                    value={formData.municipality}
+                    onChange={(e) => handleInputChange('municipality', e.target.value)}
+                    placeholder={areaType === "RURAL" ? "Panchayath name" : "Municipality or Municipal Corporation name"}
+                  />
+                </div>
+              )}
               <div>
                 <Label htmlFor="postOffice">Post Office</Label>
                 <Input
