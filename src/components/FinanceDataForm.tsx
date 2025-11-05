@@ -19,13 +19,25 @@ interface FinanceDataFormProps {
 export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataFormProps) => {
   const { toast } = useToast();
 
+  // Load default depreciation rate from settings
+  const getDefaultDepreciationRate = () => {
+    const saved = localStorage.getItem('calculationSettings');
+    if (saved) {
+      const settings = JSON.parse(saved);
+      return settings.defaultDepreciationRate ?? 10;
+    }
+    return 10;
+  };
+
+  const defaultDepreciationRate = getDefaultDepreciationRate();
+
   const [loanAmount, setLoanAmount] = useState(data?.loanAmount ?? 0);
   const [equity, setEquity] = useState(data?.equity ?? 0);
   const [growthRate, setGrowthRate] = useState(data?.growthRate ?? 0);
   
   const [fixedAssets, setFixedAssets] = useState<FixedAsset[]>(
     data?.fixedAssets || [
-      { name: "", cost: 0, depreciationRate: 10, annualDepreciation: 0 }
+      { name: "", cost: 0, depreciationRate: defaultDepreciationRate, annualDepreciation: 0 }
     ]
   );
   
@@ -82,7 +94,7 @@ export const FinanceDataForm = ({ data, onUpdate, onNext, onBack }: FinanceDataF
   const addFixedAsset = () => {
     setFixedAssets([
       ...fixedAssets,
-      { name: "", cost: 0, depreciationRate: 10, annualDepreciation: 0 }
+      { name: "", cost: 0, depreciationRate: defaultDepreciationRate, annualDepreciation: 0 }
     ]);
   };
 

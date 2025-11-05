@@ -44,6 +44,7 @@ import { ImageCropModal } from "@/components/ImageCropModal";
 interface CalculationSettings {
   defaultMargin: number;
   defaultTaxRate: number;
+  defaultDepreciationRate: number;
   currency: string;
   includeTaxInCalculations: boolean;
 }
@@ -235,6 +236,7 @@ const Settings = () => {
     return saved ? JSON.parse(saved) : {
       defaultMargin: 20,
       defaultTaxRate: 18,
+      defaultDepreciationRate: 10,
       currency: 'INR',
       includeTaxInCalculations: true
     };
@@ -636,6 +638,20 @@ const Settings = () => {
                         setCalculationSettings(prev => ({
                           ...prev,
                           defaultTaxRate: Number(e.target.value)
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="default-depreciation">Default Depreciation Rate (%)</Label>
+                    <Input
+                      id="default-depreciation"
+                      type="number"
+                      value={calculationSettings.defaultDepreciationRate}
+                      onChange={(e) =>
+                        setCalculationSettings(prev => ({
+                          ...prev,
+                          defaultDepreciationRate: Number(e.target.value)
                         }))
                       }
                     />
