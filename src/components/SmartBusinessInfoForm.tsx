@@ -6,9 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { BusinessInfo } from "@/types/AutomationTypes";
-import { BusinessTemplate } from "@/data/business-templates";
+import { BusinessTemplate, businessTemplates } from "@/data/business-templates";
+import { loadCustomTemplates } from "@/utils/customTemplateManager";
 import { ArrowLeft, ArrowRight, Building2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SmartBusinessInfoFormProps {
   selectedTemplate: BusinessTemplate | null;
@@ -86,8 +91,18 @@ export const SmartBusinessInfoForm = ({
   // State for area type (rural/urban)
   const [areaType, setAreaType] = useState<"RURAL" | "URBAN" | "">("");
 
+  // State for business type selection
+  const [businessTypeOpen, setBusinessTypeOpen] = useState(false);
+  const [availableTemplates, setAvailableTemplates] = useState<BusinessTemplate[]>([]);
+
   // State for dynamic family member fields
   const [familyMembers, setFamilyMembers] = useState<Array<{ relation: string; name: string }>>([]);
+
+  // Load all available templates (predefined + custom)
+  useEffect(() => {
+    const customTemplates = loadCustomTemplates();
+    setAvailableTemplates([...businessTemplates, ...customTemplates]);
+  }, []);
 
   // Auto-populate from template when it changes
   useEffect(() => {
@@ -200,12 +215,57 @@ export const SmartBusinessInfoForm = ({
               </div>
               <div>
                 <Label htmlFor="proposedBusiness">Type of Business *</Label>
-                <Input
-                  id="proposedBusiness"
-                  value={formData.proposedBusiness}
-                  onChange={(e) => handleInputChange('proposedBusiness', e.target.value)}
-                  placeholder="e.g., Digital Printing"
-                />
+                <Popover open={businessTypeOpen} onOpenChange={setBusinessTypeOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={businessTypeOpen}
+                      className="w-full justify-between"
+                    >
+                      {formData.proposedBusiness || "Select or enter business type..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0 bg-background" align="start">
+                    <Command>
+                      <CommandInput 
+                        placeholder="Search or enter business type..." 
+                        value={formData.proposedBusiness}
+                        onValueChange={(value) => handleInputChange('proposedBusiness', value)}
+                      />
+                      <CommandEmpty>
+                        Press Enter to use "{formData.proposedBusiness}" as custom type
+                      </CommandEmpty>
+                      <CommandGroup className="max-h-64 overflow-auto">
+                        {availableTemplates.map((template) => (
+                          <CommandItem
+                            key={template.id}
+                            value={template.name}
+                            onSelect={(value) => {
+                              handleInputChange('proposedBusiness', value);
+                              setBusinessTypeOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                formData.proposedBusiness === template.name ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <div className="flex flex-col">
+                              <span>{template.name}</span>
+                              <span className="text-xs text-muted-foreground">{template.category}</span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Select from existing templates or enter a custom business type
+                </p>
               </div>
               <div>
                 <Label htmlFor="lineOfActivity">Line of Activity</Label>

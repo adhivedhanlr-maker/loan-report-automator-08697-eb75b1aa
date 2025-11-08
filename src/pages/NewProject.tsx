@@ -8,6 +8,7 @@ import { LoanAmortizationView } from "@/components/LoanAmortizationView";
 import { ProfitLossStatementView } from "@/components/ProfitLossStatementView";
 import { ReportIntroductionForm } from "@/components/ReportIntroductionForm";
 import { ReportGeneration } from "@/components/ReportGeneration";
+import { TemplateRecommendation } from "@/components/TemplateRecommendation";
 import { 
   BusinessInfo, 
   FinanceData,
@@ -17,14 +18,15 @@ import {
   ReportIntroduction,
   CompleteProjectData
 } from "@/types/AutomationTypes";
-import { BusinessTemplate } from "@/data/business-templates";
+import { BusinessTemplate, businessTemplates, detectBusinessType } from "@/data/business-templates";
 import { generateDepreciationSchedule } from "@/utils/depreciationCalculations";
 import { generateLoanAmortization, getLoanSchemeDetails } from "@/utils/loanCalculations";
 import { generateProfitAndLossStatement } from "@/utils/plCalculations";
 import { useLoanProjects } from "@/hooks/useLoanProjects";
 import { useToast } from "@/hooks/use-toast";
+import { incrementTemplateUsage, getCustomTemplate } from "@/utils/customTemplateManager";
 
-type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan' | 'pl' | 'introduction' | 'report';
+type ProjectStep = 'detection' | 'business' | 'finance' | 'depreciation' | 'loan' | 'pl' | 'introduction' | 'template-save' | 'report';
 
 // Helpers: map DB rows (snake_case) to app types (camelCase)
 const mapDbToBusinessInfo = (db: any): BusinessInfo => ({
@@ -88,6 +90,7 @@ const NewProject = () => {
   const [loanAmortization, setLoanAmortization] = useState<LoanAmortizationSchedule | undefined>();
   const [profitAndLoss, setProfitAndLoss] = useState<ProfitAndLossStatement | undefined>();
   const [reportIntroduction, setReportIntroduction] = useState<ReportIntroduction | undefined>();
+  const [shouldShowTemplateSave, setShouldShowTemplateSave] = useState(false);
 
   const [viewingProjectId, setViewingProjectId] = useState<string | undefined>();
   const { toast } = useToast();
@@ -197,6 +200,12 @@ const NewProject = () => {
   const handleBusinessTypeSelected = (template: BusinessTemplate | null, customBusinessName?: string) => {
     setSelectedTemplate(template);
     setCustomBusiness(customBusinessName || "");
+    
+    // Increment usage count for custom templates
+    if (template && 'isCustom' in template && template.isCustom) {
+      incrementTemplateUsage(template.id);
+    }
+    
     setCurrentStep('business');
   };
 
@@ -205,7 +214,29 @@ const NewProject = () => {
   const handleDepreciationNext = () => setCurrentStep('loan');
   const handleLoanNext = () => setCurrentStep('pl');
   const handlePLNext = () => setCurrentStep('introduction');
-  const handleIntroductionNext = () => setCurrentStep('report');
+  const handleIntroductionNext = () => {
+    // Check if we should show template save
+    if (!isViewingExisting && businessInfo) {
+      const proposedBiz = businessInfo.proposedBusiness;
+      
+      // Check if this business type exists in predefined templates
+      const existsInPredefined = businessTemplates.some(
+        t => t.name.toLowerCase() === proposedBiz.toLowerCase()
+      );
+      
+      // Check if it exists in custom templates
+      const customTemplate = getCustomTemplate(`custom-${proposedBiz.toLowerCase().replace(/\s+/g, '-')}`);
+      
+      // If it doesn't exist or was entered as custom, show template save
+      if (!existsInPredefined && !customTemplate && !selectedTemplate) {
+        setShouldShowTemplateSave(true);
+        setCurrentStep('template-save');
+        return;
+      }
+    }
+    
+    setCurrentStep('report');
+  };
 
   const handleBackToDashboard = () => {
     navigate('/');
@@ -217,14 +248,34 @@ const NewProject = () => {
   const handleBackFromLoan = () => setCurrentStep('depreciation');
   const handleBackFromPL = () => setCurrentStep('loan');
   const handleBackFromIntroduction = () => setCurrentStep('pl');
+  const handleBackFromTemplateSave = () => setCurrentStep('introduction');
   const handleBackFromReport = () => {
     if (isViewingExisting) {
       localStorage.removeItem('viewingProjectId');
       localStorage.removeItem('viewingProjectData');
       navigate('/');
     } else {
-      setCurrentStep('introduction');
+      // Check if template save was shown
+      if (shouldShowTemplateSave) {
+        setCurrentStep('template-save');
+      } else {
+        setCurrentStep('introduction');
+      }
     }
+  };
+
+  const handleTemplateSave = (saved: boolean) => {
+    if (saved) {
+      toast({
+        title: "Template Saved",
+        description: "Your business configuration has been saved for future use",
+      });
+    }
+    setCurrentStep('report');
+  };
+
+  const handleTemplateSkip = () => {
+    setCurrentStep('report');
   };
 
   const getCompleteProjectData = (): CompleteProjectData | null => {
@@ -304,6 +355,14 @@ const NewProject = () => {
             onUpdate={setReportIntroduction}
             onNext={handleIntroductionNext}
             onBack={handleBackFromIntroduction}
+          />
+        )}
+
+        {currentStep === 'template-save' && getCompleteProjectData() && (
+          <TemplateRecommendation
+            projectData={getCompleteProjectData()!}
+            onSave={handleTemplateSave}
+            onSkip={handleTemplateSkip}
           />
         )}
         

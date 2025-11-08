@@ -320,14 +320,69 @@ export const businessTemplates: BusinessTemplate[] = [
   }
 ];
 
+/**
+ * Enhanced detection with fuzzy matching and custom template support
+ */
 export const detectBusinessType = (proposedBusiness: string): BusinessTemplate | null => {
-  const searchText = proposedBusiness.toLowerCase();
+  const searchText = proposedBusiness.toLowerCase().trim();
   
+  if (!searchText) return null;
+  
+  // First, check custom templates
+  try {
+    const customTemplatesStr = localStorage.getItem('customBusinessTemplates');
+    if (customTemplatesStr) {
+      const customTemplates = JSON.parse(customTemplatesStr);
+      for (const template of Object.values(customTemplates) as BusinessTemplate[]) {
+        const matches = template.keywords.some(keyword => 
+          searchText.includes(keyword.toLowerCase()) || 
+          keyword.toLowerCase().includes(searchText)
+        );
+        if (matches) {
+          return template;
+        }
+        // Check if template name matches
+        if (template.name.toLowerCase().includes(searchText) || 
+            searchText.includes(template.name.toLowerCase())) {
+          return template;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error checking custom templates:', error);
+  }
+  
+  // Then check predefined templates with enhanced matching
   for (const template of businessTemplates) {
-    const matches = template.keywords.some(keyword => 
+    // Exact keyword match
+    const exactMatch = template.keywords.some(keyword => 
       searchText.includes(keyword.toLowerCase())
     );
-    if (matches) {
+    if (exactMatch) {
+      return template;
+    }
+    
+    // Fuzzy match - check if any keyword is contained in search text
+    const fuzzyMatch = template.keywords.some(keyword => {
+      const keywordLower = keyword.toLowerCase();
+      // Check for partial matches (minimum 3 characters)
+      if (keywordLower.length >= 3 && searchText.includes(keywordLower)) {
+        return true;
+      }
+      // Check reverse - if search text is contained in keyword
+      if (searchText.length >= 3 && keywordLower.includes(searchText)) {
+        return true;
+      }
+      return false;
+    });
+    
+    if (fuzzyMatch) {
+      return template;
+    }
+    
+    // Check template name match
+    if (template.name.toLowerCase().includes(searchText) || 
+        searchText.includes(template.name.toLowerCase())) {
       return template;
     }
   }

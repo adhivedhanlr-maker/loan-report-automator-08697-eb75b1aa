@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { detectBusinessType, businessTemplates, BusinessTemplate } from "@/data/business-templates";
-import { Building, Search, Sparkles, ArrowRight } from "lucide-react";
+import { loadCustomTemplates, CustomTemplate } from "@/utils/customTemplateManager";
+import { Building, Search, Sparkles, ArrowRight, Star, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BusinessTypeDetectionProps {
@@ -40,6 +41,13 @@ export const BusinessTypeDetection = ({ onBusinessTypeSelected, onBack }: Busine
   const [selectedTemplate, setSelectedTemplate] = useState<BusinessTemplate | null>(null);
   const [showAllTemplates, setShowAllTemplates] = useState(false);
   const [customSelected, setCustomSelected] = useState(false);
+  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
+
+  // Load custom templates on mount
+  useEffect(() => {
+    const templates = loadCustomTemplates();
+    setCustomTemplates(templates);
+  }, []);
 
   const handleBusinessChange = (value: string) => {
     setProposedBusiness(value);
@@ -60,7 +68,13 @@ const handleTemplateSelect = (template: BusinessTemplate | null) => {
     onBusinessTypeSelected(selectedTemplate, proposedBusiness);
   };
 
-  const groupedTemplates = businessTemplates.reduce((acc, template) => {
+  // Combine predefined and custom templates, sorted by usage
+  const allTemplates = [
+    ...businessTemplates,
+    ...customTemplates.sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0))
+  ];
+
+  const groupedTemplates = allTemplates.reduce((acc, template) => {
     if (!acc[template.category]) {
       acc[template.category] = [];
     }
@@ -151,31 +165,55 @@ const handleTemplateSelect = (template: BusinessTemplate | null) => {
                   <div key={category}>
                     <h4 className="font-medium text-primary mb-2">{category}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {templates.map((template) => (
-                        <Card
-                          key={template.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            selectedTemplate?.id === template.id
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
-                          }`}
-                          onClick={() => handleTemplateSelect(template)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <h5 className="font-medium">{template.name}</h5>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {template.description}
-                                </p>
+                      {templates.map((template) => {
+                        const isCustom = 'isCustom' in template && template.isCustom;
+                        const isPopular = isCustom && (template as CustomTemplate).usageCount >= 3;
+                        
+                        return (
+                          <Card
+                            key={template.id}
+                            className={`cursor-pointer transition-all hover:shadow-md ${
+                              selectedTemplate?.id === template.id
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                            onClick={() => handleTemplateSelect(template)}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <h5 className="font-medium">{template.name}</h5>
+                                    {isCustom && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        <Star className="h-3 w-3 mr-1" />
+                                        Custom
+                                      </Badge>
+                                    )}
+                                    {isPopular && (
+                                      <Badge variant="outline" className="text-xs">
+                                        <TrendingUp className="h-3 w-3 mr-1" />
+                                        Popular
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {template.description}
+                                  </p>
+                                  {isCustom && (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      Used {(template as CustomTemplate).usageCount} times
+                                    </p>
+                                  )}
+                                </div>
+                                {selectedTemplate?.id === template.id && (
+                                  <Badge variant="default">Selected</Badge>
+                                )}
                               </div>
-                              {selectedTemplate?.id === template.id && (
-                                <Badge variant="default">Selected</Badge>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
